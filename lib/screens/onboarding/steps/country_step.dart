@@ -83,7 +83,7 @@ class _CountryStepState extends State<CountryStep> {
           const SizedBox(height: 10),
           const OnboardingLede(
             "You'll compete on both the global and country leaderboards. "
-            "Pick wisely — you can only switch once a quarter.",
+            "Pick wisely, you can only switch once a quarter.",
           ),
           const SizedBox(height: 24),
           _SearchInput(controller: _searchCtrl),
@@ -168,46 +168,46 @@ class _CountryRow extends StatelessWidget {
       onTap: onTap,
       margin: const EdgeInsets.only(bottom: 4),
       child: Row(
-          children: [
-            Text(country.flag, style: const TextStyle(fontSize: 26)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    country.name,
-                    style: tt.labelLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: SrColors.text,
-                    ),
+        children: [
+          Text(country.flag, style: const TextStyle(fontSize: 26)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  country.name,
+                  style: tt.labelLarge!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: SrColors.text,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${country.sapiens} sapiens',
-                    style: tt.labelMedium!.copyWith(
-                      fontWeight: FontWeight.normal,
-                      color: SrColors.textDim,
-                    ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${country.sapiens} sapiens',
+                  style: tt.labelMedium!.copyWith(
+                    fontWeight: FontWeight.normal,
+                    color: SrColors.textDim,
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          if (isSelected)
+            Container(
+              width: 22,
+              height: 22,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: SrColors.lime,
+              ),
+              child: const Icon(
+                Icons.check_rounded,
+                size: 13,
+                color: SrColors.textInk,
               ),
             ),
-            if (isSelected)
-              Container(
-                width: 22,
-                height: 22,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: SrColors.lime,
-                ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  size: 13,
-                  color: SrColors.textInk,
-                ),
-              ),
-          ],
+        ],
       ),
     );
   }

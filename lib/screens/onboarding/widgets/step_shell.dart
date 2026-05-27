@@ -32,7 +32,7 @@ class StepShell extends StatelessWidget {
             ),
             if (footer != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(22, 12, 22, 36),
+                padding: const EdgeInsets.fromLTRB(22, 12, 22, 0),
                 child: footer,
               ),
           ],

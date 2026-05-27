@@ -68,10 +68,7 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
         duration: const Duration(milliseconds: 400),
         child: IgnorePointer(
           ignoring: !_done,
-          child: ArenaButton(
-            label: 'What does this mean? →',
-            onTap: widget.onNext,
-          ),
+          child: ArenaButton(label: 'See my rank? →', onTap: widget.onNext),
         ),
       ),
       body: Column(

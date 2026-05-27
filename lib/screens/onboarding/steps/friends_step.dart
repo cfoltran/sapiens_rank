@@ -92,7 +92,7 @@ class _FriendsStepState extends State<FriendsStep> {
     final count = _followed.length;
     final ctaLabel = count > 0
         ? 'Follow $count & continue →'
-        : 'Skip — go solo';
+        : 'Skip & go solo';
 
     return StepShell(
       progress: widget.progress,
@@ -112,7 +112,7 @@ class _FriendsStepState extends State<FriendsStep> {
           _Headline(),
           const SizedBox(height: 8),
           const OnboardingLede(
-            "Some of them are below you. Some are above. Either way — you'll want to know.",
+            "Some of them are below you. Some are above. Either way, you'll want to know.",
           ),
           const SizedBox(height: 18),
           _FollowAllChip(onTap: _followAll),

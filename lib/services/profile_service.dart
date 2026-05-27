@@ -19,7 +19,6 @@ class ProfileService {
       'name': name,
       'age': age,
       'country': country,
-      'archetype': 'night-owl',
       'onboarding_done': true,
       'onboarding_step': 'done',
     });

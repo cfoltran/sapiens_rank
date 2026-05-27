@@ -58,7 +58,7 @@ class _AgeStepState extends State<AgeStep> {
           ),
           const SizedBox(height: 10),
           const OnboardingLede(
-            "We'll baseline you against your cohort — not against 18-year-old triathletes.",
+            "We'll baseline you against your cohort, not against 18-year-old triathletes.",
           ),
           const SizedBox(height: 48),
           _AgeSlider(age: _age, onChanged: (v) => setState(() => _age = v)),

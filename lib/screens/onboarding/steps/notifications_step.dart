@@ -53,7 +53,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
           const _Headline(),
           const SizedBox(height: 10),
           const OnboardingLede(
-            'Daily score updates. Fight invites. When a friend passes you — you\'ll know.',
+            'Daily score updates. Fight invites. When a friend passes you, you\'ll know.',
           ),
           const SizedBox(height: 28),
           const _NotifPreview(
@@ -66,7 +66,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
           const _NotifPreview(
             icon: '📈',
             title: 'You climbed 184 spots',
-            body: 'World rank is now #2,847 — top 0.4%',
+            body: 'World rank is now #2,847 - top 0.4%',
             time: '9m',
           ),
           const SizedBox(height: 8),

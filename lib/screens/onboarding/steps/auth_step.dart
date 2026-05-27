@@ -91,7 +91,7 @@ class _AuthStepState extends State<AuthStep> {
               ),
               const SizedBox(height: 10),
               const OnboardingLede(
-                "Your score, rank, and archetype are rea dy. Create an account to keep them.",
+                "Your score, rank are ready. Create an account to keep them.",
               ),
               const SizedBox(height: 40),
               if (_sent) ...[

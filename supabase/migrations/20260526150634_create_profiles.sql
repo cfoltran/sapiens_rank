@@ -3,7 +3,6 @@ create table public.profiles (
   name        text not null,
   age         int not null check (age between 16 and 80),
   country     text not null default 'FR',
-  archetype   text not null default 'night-owl',
   onboarding_step text not null default 'welcome',
   onboarding_done boolean not null default false,
   created_at  timestamptz not null default now(),

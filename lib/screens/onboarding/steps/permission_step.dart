@@ -177,8 +177,7 @@ class _PrivacyNote extends StatelessWidget {
                 ),
                 children: const [
                   TextSpan(
-                    text:
-                        'Your data never leaves your phone unencrypted. Only your ',
+                    text: 'Your data never leaves your phone. Only your ',
                   ),
                   TextSpan(
                     text: 'score and rank',

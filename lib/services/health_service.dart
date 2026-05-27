@@ -41,7 +41,6 @@ class HealthService {
     final weekAgo = now.subtract(const Duration(days: 7));
     final startOfToday = DateTime(now.year, now.month, now.day);
 
-    // Raw samples for HR, HRV, sleep, stand — no multi-source double-counting risk.
     List<HealthDataPoint> samples = [];
     try {
       final raw = await _health.getHealthDataFromTypes(
@@ -57,7 +56,6 @@ class HealthService {
       samples = _health.removeDuplicates(raw);
     } catch (_) {}
 
-    // Steps via HKStatisticsQuery — merges iPhone + Watch automatically.
     int? stepsToday;
     try {
       stepsToday = await _health.getTotalStepsInInterval(startOfToday, now);

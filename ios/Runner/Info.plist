@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>SapiensRank reads your health data to calculate your Sapiens Score and rank you against other users.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>SapiensRank may write workout data to Apple Health.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

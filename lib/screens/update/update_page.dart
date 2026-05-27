@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const playStoreUrl = '';
@@ -22,10 +21,7 @@ class UpdatePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Outdated Version',
-              
-            ),
+            Text('Outdated Version'),
             ElevatedButton(
               child: Text('Update'),
               onPressed: () => _launchInBrowserView(Uri.parse(url)),

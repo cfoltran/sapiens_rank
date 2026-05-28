@@ -38,34 +38,24 @@ class TodayData extends Equatable {
     required this.score,
     required this.scoreHistory,
     required this.scoreDelta,
-    required this.rankWorld,
-    required this.rankCountry,
-    required this.rankDelta,
+    this.rankWorld,
+    this.rankCountry,
+    this.rankDelta,
     required this.countryFlag,
     required this.streak,
     required this.metrics,
-    required this.topPct,
   });
 
   final int score;
   final List<int> scoreHistory;
   final int scoreDelta;
-  final int rankWorld;
-  final int rankCountry;
-  final int rankDelta;
+  final int? rankWorld;
+  final int? rankCountry;
+  final int? rankDelta;
   final String countryFlag;
   final int streak;
   final List<TodayMetric> metrics;
 
-  /// Top X% globally (e.g. 0.4 means top 0.4%)
-  final double topPct;
-
   @override
-  List<Object?> get props => [
-    score,
-    rankWorld,
-    rankCountry,
-    streak,
-    metrics,
-  ];
+  List<Object?> get props => [score, rankWorld, rankCountry, streak, metrics];
 }

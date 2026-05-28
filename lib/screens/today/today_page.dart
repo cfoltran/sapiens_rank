@@ -247,6 +247,8 @@ class _DeltaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (history.length < 2) return const SizedBox.shrink();
+
     final sign = scoreDelta >= 0 ? '+' : '';
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -290,7 +292,8 @@ class _RankTeaserCard extends StatelessWidget {
   final TodayData data;
   final VoidCallback? onTap;
 
-  static String _fmtRank(int rank) {
+  static String _fmtRank(int? rank) {
+    if (rank == null) return '---';
     if (rank < 1000) return rank.toString();
     return '${rank ~/ 1000},${(rank % 1000).toString().padLeft(3, '0')}';
   }
@@ -369,19 +372,26 @@ class _RankTeaserCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              '↑${data.rankDelta}',
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: SrColors.lime,
+                            if (data.rankDelta != null)
+                              Text(
+                                data.rankDelta! >= 0
+                                    ? '↑${data.rankDelta}'
+                                    : '↓${data.rankDelta!.abs()}',
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: data.rankDelta! >= 0
+                                      ? SrColors.lime
+                                      : SrColors.rose,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${data.countryFlag} #${data.rankCountry} · top ${data.topPct}% globally',
+                          data.rankCountry != null
+                              ? '${data.countryFlag} #${data.rankCountry}'
+                              : '${data.countryFlag} ranking soon...',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
                             color: SrColors.textMuted,

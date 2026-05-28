@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/services/health_service.dart';
+import 'package:sapiens_rank/services/score_service.dart';
 
 class TodayCubit extends Cubit<DataState<TodayData>> {
   TodayCubit() : super(const DataState.loading());
@@ -9,23 +11,29 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
   Future<void> load() async {
     emit(const DataState.loading());
     try {
-      final snap = await HealthService.instance.fetchTodaySnapshot();
+      // Fetch health data + remote data in parallel
+      final results = await Future.wait([
+        HealthService.instance.fetchDaySnapshot(), // today's live snapshot
+        ScoreService.instance.getMyRank(), // leaderboard entry
+        ScoreService.instance.getStreak(), // consecutive days
+        ScoreService.instance.getScoreHistory(), // last 14 days from DB
+      ]);
 
-      // Scoring algorithm (total max = 100 pts)
-      final sleepPts = (snap.sleepHours / 8.0).clamp(0.0, 1.0) * 25;
-      final stepsPts = (snap.steps / 10000.0).clamp(0.0, 1.0) * 25;
-      final kcalPts = (snap.kcal / 750.0).clamp(0.0, 1.0) * 20;
-      final standPts = (snap.standHours / 12.0).clamp(0.0, 1.0) * 15;
-      final hrvPts = snap.hrv != null
-          ? (snap.hrv! / 60.0).clamp(0.0, 1.0) * 15
-          : 0.0;
+      final snap = results[0] as HealthSnapshot;
+      final rank = results[1] as LeaderboardEntry?;
+      final streak = results[2] as int;
+      final dbHistory = results[3] as List<int>;
 
-      final score = (sleepPts + stepsPts + kcalPts + standPts + hrvPts).round();
+      final bd = ScoreBreakdown.compute(snap);
 
-      // Score history — last 13 days mocked, today appended
-      final history = [72, 78, 81, 75, 82, 79, 84, 88, 85, 80, 86, 89, 84];
-      final scoreHistory = [...history, score];
-      final scoreDelta = score - scoreHistory[scoreHistory.length - 2];
+      // Score history from DB — append today if not already included
+      final history = dbHistory.isNotEmpty &&
+              dbHistory.last == bd.score
+          ? dbHistory
+          : [...dbHistory, bd.score];
+      final scoreDelta = history.length >= 2
+          ? bd.score - history[history.length - 2]
+          : 0;
 
       final sleepH = snap.sleepHours.floor();
       final sleepMin = ((snap.sleepHours % 1) * 60).round();
@@ -39,7 +47,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           key: 'sleep',
           label: 'Sleep',
           iconName: 'sleep',
-          contrib: sleepPts.round(),
+          contrib: bd.sleepPts,
           target: 25,
           rawLabel: sleepH > 0
               ? '${sleepH}h ${sleepMin}m last night'
@@ -49,7 +57,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           key: 'steps',
           label: 'Steps',
           iconName: 'steps',
-          contrib: stepsPts.round(),
+          contrib: bd.stepsPts,
           target: 25,
           rawLabel: '${fmtSteps(snap.steps)} / 10,000',
         ),
@@ -57,7 +65,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           key: 'kcal',
           label: 'Active kcal',
           iconName: 'kcal',
-          contrib: kcalPts.round(),
+          contrib: bd.kcalPts,
           target: 20,
           rawLabel: '${snap.kcal.round()} / 750 kcal',
         ),
@@ -65,7 +73,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           key: 'stand',
           label: 'Stand hours',
           iconName: 'stand',
-          contrib: standPts.round(),
+          contrib: bd.standPts,
           target: 15,
           rawLabel: '${snap.standHours} / 12 hours',
         ),
@@ -73,7 +81,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           key: 'hrv',
           label: 'HRV',
           iconName: 'hrv',
-          contrib: hrvPts.round(),
+          contrib: bd.hrvPts,
           target: 15,
           rawLabel: snap.hrv != null
               ? '${snap.hrv!.round()}ms · ${snap.hrv! > 55 ? 'above avg' : 'below avg'}'
@@ -81,24 +89,35 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
         ),
       ];
 
+      final country = rank?.country ?? 'FR';
+      final flag = _countryFlag(country);
+
       emit(
         DataState.success(
           TodayData(
-            score: score,
-            scoreHistory: scoreHistory,
+            score: bd.score,
+            scoreHistory: history,
             scoreDelta: scoreDelta,
-            rankWorld: 2847, // TODO: from profile service
-            rankCountry: 412, // TODO: from profile service
-            rankDelta: 184, // TODO: from profile service
-            countryFlag: '🇫🇷',
-            streak: 12, // TODO: from profile service
+            rankWorld: rank?.rankWorld,
+            rankCountry: rank?.rankCountry,
+            rankDelta: rank?.rankDelta,
+            countryFlag: flag,
+            streak: streak,
             metrics: metrics,
-            topPct: 0.4,
           ),
         ),
       );
+
+      // Persist in background — don't block the UI
+      unawaited(ScoreService.instance.sync());
     } catch (e, st) {
       emit(DataState.error('fetch_failed', error: e, stackTrace: st));
     }
   }
+
+  static String _countryFlag(String code) => code
+      .toUpperCase()
+      .runes
+      .map((r) => String.fromCharCode(r + 0x1F1E6 - 0x41))
+      .join();
 }

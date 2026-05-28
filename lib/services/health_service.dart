@@ -42,6 +42,7 @@ class HealthService {
     HealthDataType.SLEEP_ASLEEP,
     HealthDataType.SLEEP_AWAKE,
     HealthDataType.SLEEP_IN_BED,
+    HealthDataType.SLEEP_LIGHT, // iOS 16+ Core stage
     HealthDataType.SLEEP_DEEP,
     HealthDataType.SLEEP_REM,
     HealthDataType.APPLE_STAND_TIME,
@@ -75,6 +76,9 @@ class HealthService {
           HealthDataType.RESTING_HEART_RATE,
           HealthDataType.HEART_RATE_VARIABILITY_SDNN,
           HealthDataType.SLEEP_ASLEEP,
+          HealthDataType.SLEEP_LIGHT,
+          HealthDataType.SLEEP_DEEP,
+          HealthDataType.SLEEP_REM,
           HealthDataType.APPLE_STAND_HOUR,
         ],
       );
@@ -121,15 +125,21 @@ class HealthService {
     double sleepLastNight() {
       final nightStart = startOfToday.subtract(const Duration(hours: 12));
       final nightEnd = startOfToday.add(const Duration(hours: 12));
-      final minutes = samples
-          .where(
-            (p) =>
-                p.type == HealthDataType.SLEEP_ASLEEP &&
-                p.dateFrom.isAfter(nightStart) &&
-                p.dateTo.isBefore(nightEnd),
-          )
-          .fold(0, (sum, p) => sum + p.dateTo.difference(p.dateFrom).inMinutes);
-      return minutes / 60.0;
+      bool inRange(HealthDataPoint p) =>
+          p.dateFrom.isAfter(nightStart) && p.dateTo.isBefore(nightEnd);
+      int sumType(HealthDataType t) => samples
+          .where((p) => p.type == t && inRange(p))
+          .fold(0, (s, p) => s + p.dateTo.difference(p.dateFrom).inMinutes);
+
+      // iOS 16+: sleep stored as stages (LIGHT = Core, DEEP, REM)
+      final stagesMins =
+          sumType(HealthDataType.SLEEP_LIGHT) +
+          sumType(HealthDataType.SLEEP_DEEP) +
+          sumType(HealthDataType.SLEEP_REM);
+      if (stagesMins > 0) return stagesMins / 60.0;
+
+      // Legacy / iPhone sleep
+      return sumType(HealthDataType.SLEEP_ASLEEP) / 60.0;
     }
 
     int standHoursToday() => samples
@@ -199,6 +209,9 @@ class HealthService {
           HealthDataType.RESTING_HEART_RATE,
           HealthDataType.HEART_RATE_VARIABILITY_SDNN,
           HealthDataType.SLEEP_ASLEEP,
+          HealthDataType.SLEEP_LIGHT,
+          HealthDataType.SLEEP_DEEP,
+          HealthDataType.SLEEP_REM,
           HealthDataType.APPLE_STAND_HOUR,
         ],
       );
@@ -245,15 +258,21 @@ class HealthService {
     double sleepLastNight() {
       final nightStart = startOfToday.subtract(const Duration(hours: 12));
       final nightEnd = startOfToday.add(const Duration(hours: 12));
-      final minutes = samples
-          .where(
-            (p) =>
-                p.type == HealthDataType.SLEEP_ASLEEP &&
-                p.dateFrom.isAfter(nightStart) &&
-                p.dateTo.isBefore(nightEnd),
-          )
-          .fold(0, (sum, p) => sum + p.dateTo.difference(p.dateFrom).inMinutes);
-      return minutes / 60.0;
+      bool inRange(HealthDataPoint p) =>
+          p.dateFrom.isAfter(nightStart) && p.dateTo.isBefore(nightEnd);
+      int sumType(HealthDataType t) => samples
+          .where((p) => p.type == t && inRange(p))
+          .fold(0, (s, p) => s + p.dateTo.difference(p.dateFrom).inMinutes);
+
+      // iOS 16+: sleep stored as stages (LIGHT = Core, DEEP, REM)
+      final stagesMins =
+          sumType(HealthDataType.SLEEP_LIGHT) +
+          sumType(HealthDataType.SLEEP_DEEP) +
+          sumType(HealthDataType.SLEEP_REM);
+      if (stagesMins > 0) return stagesMins / 60.0;
+
+      // Legacy / iPhone sleep
+      return sumType(HealthDataType.SLEEP_ASLEEP) / 60.0;
     }
 
     int standHoursToday() => samples

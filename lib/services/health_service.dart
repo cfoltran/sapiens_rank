@@ -1,5 +1,30 @@
 import 'package:health/health.dart';
 
+class HealthSnapshot {
+  const HealthSnapshot({
+    required this.sleepHours,
+    required this.steps,
+    required this.kcal,
+    required this.standHours,
+    this.hrv,
+    this.restingHr,
+  });
+
+  final double sleepHours;
+  final int steps;
+  final double kcal;
+  final int standHours;
+  final double? hrv;
+  final double? restingHr;
+
+  static const empty = HealthSnapshot(
+    sleepHours: 0,
+    steps: 0,
+    kcal: 0,
+    standHours: 0,
+  );
+}
+
 class HealthService {
   HealthService._();
 
@@ -17,6 +42,7 @@ class HealthService {
     HealthDataType.SLEEP_ASLEEP,
     HealthDataType.SLEEP_AWAKE,
     HealthDataType.SLEEP_IN_BED,
+    HealthDataType.SLEEP_LIGHT, // iOS 16+ Core stage
     HealthDataType.SLEEP_DEEP,
     HealthDataType.SLEEP_REM,
     HealthDataType.APPLE_STAND_TIME,
@@ -35,38 +61,42 @@ class HealthService {
     }
   }
 
-  Future<List<({String label, String value, String icon})>>
-  fetchSyncMetrics() async {
-    final now = DateTime.now();
-    final weekAgo = now.subtract(const Duration(days: 7));
-    final startOfToday = DateTime(now.year, now.month, now.day);
+  /// Returns a [HealthSnapshot] for [date] (defaults to today).
+  /// Uses the 7 days preceding [date] for context metrics (HRV, RHR).
+  Future<HealthSnapshot> fetchDaySnapshot([DateTime? date]) async {
+    final anchor = date ?? DateTime.now();
+    final dayStart = DateTime(anchor.year, anchor.month, anchor.day);
+    final dayEnd = dayStart.add(const Duration(days: 1));
+    final weekBefore = dayStart.subtract(const Duration(days: 7));
 
     List<HealthDataPoint> samples = [];
     try {
       final raw = await _health.getHealthDataFromTypes(
-        startTime: weekAgo,
-        endTime: now,
+        startTime: weekBefore,
+        endTime: dayEnd,
         types: [
           HealthDataType.RESTING_HEART_RATE,
           HealthDataType.HEART_RATE_VARIABILITY_SDNN,
           HealthDataType.SLEEP_ASLEEP,
+          HealthDataType.SLEEP_LIGHT,
+          HealthDataType.SLEEP_DEEP,
+          HealthDataType.SLEEP_REM,
           HealthDataType.APPLE_STAND_HOUR,
         ],
       );
       samples = _health.removeDuplicates(raw);
     } catch (_) {}
 
-    int? stepsToday;
+    int steps = 0;
     try {
-      stepsToday = await _health.getTotalStepsInInterval(startOfToday, now);
+      steps = (await _health.getTotalStepsInInterval(dayStart, dayEnd)) ?? 0;
     } catch (_) {}
 
-    // Active kcal — prefer Watch source to avoid iPhone+Watch double-counting.
-    double kcalToday = 0;
+    double kcal = 0;
     try {
       final raw = await _health.getHealthDataFromTypes(
-        startTime: startOfToday,
-        endTime: now,
+        startTime: dayStart,
+        endTime: dayEnd,
         types: [HealthDataType.ACTIVE_ENERGY_BURNED],
       );
       final pts = _health
@@ -76,10 +106,9 @@ class HealthService {
       final watchPts = pts
           .where((p) => p.sourceName.toLowerCase().contains('watch'))
           .toList();
-      kcalToday = (watchPts.isNotEmpty ? watchPts : pts).fold(
+      kcal = (watchPts.isNotEmpty ? watchPts : pts).fold(
         0.0,
-        (sum, p) =>
-            sum + (p.value as NumericHealthValue).numericValue.toDouble(),
+        (s, p) => s + (p.value as NumericHealthValue).numericValue.toDouble(),
       );
     } catch (_) {}
 
@@ -93,68 +122,79 @@ class HealthService {
       return (pts.first.value as NumericHealthValue).numericValue.toDouble();
     }
 
-    double sleepLastNight() {
-      final nightStart = startOfToday.subtract(const Duration(hours: 12));
-      final nightEnd = startOfToday.add(const Duration(hours: 12));
-      final minutes = samples
-          .where(
-            (p) =>
-                p.type == HealthDataType.SLEEP_ASLEEP &&
-                p.dateFrom.isAfter(nightStart) &&
-                p.dateTo.isBefore(nightEnd),
-          )
-          .fold(0, (sum, p) => sum + p.dateTo.difference(p.dateFrom).inMinutes);
-      return minutes / 60.0;
+    // Night anchored to dayStart: captures previous evening → morning.
+    double sleepHours() {
+      final nightStart = dayStart.subtract(const Duration(hours: 12));
+      final nightEnd = dayStart.add(const Duration(hours: 12));
+      bool inRange(HealthDataPoint p) =>
+          p.dateFrom.isAfter(nightStart) && p.dateTo.isBefore(nightEnd);
+      int sumType(HealthDataType t) => samples
+          .where((p) => p.type == t && inRange(p))
+          .fold(0, (s, p) => s + p.dateTo.difference(p.dateFrom).inMinutes);
+
+      // iOS 16+: stages (LIGHT = Core, DEEP, REM)
+      final stages =
+          sumType(HealthDataType.SLEEP_LIGHT) +
+          sumType(HealthDataType.SLEEP_DEEP) +
+          sumType(HealthDataType.SLEEP_REM);
+      if (stages > 0) return stages / 60.0;
+
+      return sumType(HealthDataType.SLEEP_ASLEEP) / 60.0;
     }
 
-    int standHoursToday() => samples
+    int standHours() => samples
         .where(
           (p) =>
               p.type == HealthDataType.APPLE_STAND_HOUR &&
-              p.dateFrom.toLocal().isAfter(startOfToday),
+              p.dateFrom.toLocal().isAfter(dayStart) &&
+              p.dateFrom.toLocal().isBefore(dayEnd),
         )
         .length;
 
-    String fmt(double? v, String unit) {
-      if (v == null || v == 0) return '--';
-      return '${v.round()} $unit';
-    }
+    return HealthSnapshot(
+      sleepHours: sleepHours(),
+      steps: steps,
+      kcal: kcal,
+      standHours: standHours(),
+      hrv: latestOf(HealthDataType.HEART_RATE_VARIABILITY_SDNN),
+      restingHr: latestOf(HealthDataType.RESTING_HEART_RATE),
+    );
+  }
 
-    String fmtSteps(int? v) {
-      if (v == null || v == 0) return '--';
+  /// Formatted metrics for the onboarding sync step.
+  Future<List<({String label, String value, String icon})>>
+  fetchSyncMetrics() async {
+    final snap = await fetchDaySnapshot();
+
+    String fmt(double? v, String unit) =>
+        (v == null || v == 0) ? '--' : '${v.round()} $unit';
+
+    String fmtSteps(int v) {
+      if (v == 0) return '--';
       return v >= 1000
           ? '${v ~/ 1000},${(v % 1000).toString().padLeft(3, '0')}'
           : '$v';
     }
 
-    final sleep = sleepLastNight();
-    final stand = standHoursToday();
-
     return [
-      (
-        label: 'Resting HR',
-        value: fmt(latestOf(HealthDataType.RESTING_HEART_RATE), 'bpm'),
-        icon: '❤️',
-      ),
-      (
-        label: 'HRV (SDNN)',
-        value: fmt(latestOf(HealthDataType.HEART_RATE_VARIABILITY_SDNN), 'ms'),
-        icon: '📊',
-      ),
+      (label: 'Resting HR', value: fmt(snap.restingHr, 'bpm'), icon: '❤️'),
+      (label: 'HRV (SDNN)', value: fmt(snap.hrv, 'ms'), icon: '📊'),
       (
         label: 'Sleep',
-        value: sleep > 0 ? '${sleep.toStringAsFixed(1)} h' : '--',
+        value: snap.sleepHours > 0
+            ? '${snap.sleepHours.toStringAsFixed(1)} h'
+            : '--',
         icon: '😴',
       ),
-      (label: 'Steps today', value: fmtSteps(stepsToday), icon: '🦶'),
+      (label: 'Steps today', value: fmtSteps(snap.steps), icon: '🦶'),
       (
         label: 'Active kcal',
-        value: fmt(kcalToday > 0 ? kcalToday : null, 'kcal'),
+        value: fmt(snap.kcal > 0 ? snap.kcal : null, 'kcal'),
         icon: '🔥',
       ),
       (
         label: 'Stand hours',
-        value: stand > 0 ? '$stand / 12' : '--',
+        value: snap.standHours > 0 ? '${snap.standHours} / 12' : '--',
         icon: '🧍',
       ),
     ];

@@ -69,7 +69,6 @@ class HealthService {
     final dayEnd = dayStart.add(const Duration(days: 1));
     final weekBefore = dayStart.subtract(const Duration(days: 7));
 
-    // ── Samples: HRV / RHR (week context) + sleep stages + stand ───────────
     List<HealthDataPoint> samples = [];
     try {
       final raw = await _health.getHealthDataFromTypes(
@@ -88,13 +87,11 @@ class HealthService {
       samples = _health.removeDuplicates(raw);
     } catch (_) {}
 
-    // ── Steps (HKStatisticsQuery — deduplicates iPhone + Watch) ─────────────
     int steps = 0;
     try {
       steps = (await _health.getTotalStepsInInterval(dayStart, dayEnd)) ?? 0;
     } catch (_) {}
 
-    // ── Active kcal (prefer Watch source) ───────────────────────────────────
     double kcal = 0;
     try {
       final raw = await _health.getHealthDataFromTypes(
@@ -106,21 +103,21 @@ class HealthService {
           .removeDuplicates(raw)
           .where((p) => p.value is NumericHealthValue)
           .toList();
-      final watchPts =
-          pts.where((p) => p.sourceName.toLowerCase().contains('watch')).toList();
+      final watchPts = pts
+          .where((p) => p.sourceName.toLowerCase().contains('watch'))
+          .toList();
       kcal = (watchPts.isNotEmpty ? watchPts : pts).fold(
         0.0,
         (s, p) => s + (p.value as NumericHealthValue).numericValue.toDouble(),
       );
     } catch (_) {}
 
-    // ── Helpers ─────────────────────────────────────────────────────────────
-
     double? latestOf(HealthDataType type) {
-      final pts = samples
-          .where((p) => p.type == type && p.value is NumericHealthValue)
-          .toList()
-        ..sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
+      final pts =
+          samples
+              .where((p) => p.type == type && p.value is NumericHealthValue)
+              .toList()
+            ..sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
       if (pts.isEmpty) return null;
       return (pts.first.value as NumericHealthValue).numericValue.toDouble();
     }
@@ -136,9 +133,10 @@ class HealthService {
           .fold(0, (s, p) => s + p.dateTo.difference(p.dateFrom).inMinutes);
 
       // iOS 16+: stages (LIGHT = Core, DEEP, REM)
-      final stages = sumType(HealthDataType.SLEEP_LIGHT)
-          + sumType(HealthDataType.SLEEP_DEEP)
-          + sumType(HealthDataType.SLEEP_REM);
+      final stages =
+          sumType(HealthDataType.SLEEP_LIGHT) +
+          sumType(HealthDataType.SLEEP_DEEP) +
+          sumType(HealthDataType.SLEEP_REM);
       if (stages > 0) return stages / 60.0;
 
       return sumType(HealthDataType.SLEEP_ASLEEP) / 60.0;
@@ -179,8 +177,8 @@ class HealthService {
     }
 
     return [
-      (label: 'Resting HR',  value: fmt(snap.restingHr, 'bpm'), icon: '❤️'),
-      (label: 'HRV (SDNN)',  value: fmt(snap.hrv, 'ms'),         icon: '📊'),
+      (label: 'Resting HR', value: fmt(snap.restingHr, 'bpm'), icon: '❤️'),
+      (label: 'HRV (SDNN)', value: fmt(snap.hrv, 'ms'), icon: '📊'),
       (
         label: 'Sleep',
         value: snap.sleepHours > 0
@@ -188,8 +186,12 @@ class HealthService {
             : '--',
         icon: '😴',
       ),
-      (label: 'Steps today', value: fmtSteps(snap.steps),        icon: '🦶'),
-      (label: 'Active kcal', value: fmt(snap.kcal > 0 ? snap.kcal : null, 'kcal'), icon: '🔥'),
+      (label: 'Steps today', value: fmtSteps(snap.steps), icon: '🦶'),
+      (
+        label: 'Active kcal',
+        value: fmt(snap.kcal > 0 ? snap.kcal : null, 'kcal'),
+        icon: '🔥',
+      ),
       (
         label: 'Stand hours',
         value: snap.standHours > 0 ? '${snap.standHours} / 12' : '--',

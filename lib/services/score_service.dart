@@ -1,8 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
-// ─── Score breakdown ──────────────────────────────────────────────────────────
-
 class ScoreBreakdown {
   const ScoreBreakdown({
     required this.score,
@@ -21,13 +19,23 @@ class ScoreBreakdown {
   final int hrvPts;
 
   /// Canonical scoring algorithm (total max = 100 pts).
+  ///
+  /// When HRV data is unavailable (no Apple Watch), its 15 pts are
+  /// redistributed proportionally so the user can still reach 100/100:
+  ///   sleep 25→29 · steps 25→29 · kcal 20→24 · stand 15→18 · hrv 0
   static ScoreBreakdown compute(HealthSnapshot snap) {
-    final sleep = (snap.sleepHours / 8.0).clamp(0.0, 1.0) * 25;
-    final steps = (snap.steps / 10000.0).clamp(0.0, 1.0) * 25;
-    final kcal = (snap.kcal / 750.0).clamp(0.0, 1.0) * 20;
-    final stand = (snap.standHours / 12.0).clamp(0.0, 1.0) * 15;
-    final hrv =
-        snap.hrv != null ? (snap.hrv! / 60.0).clamp(0.0, 1.0) * 15 : 0.0;
+    final hasHrv = snap.hrv != null;
+    final sleepMax = hasHrv ? 25.0 : 29.0;
+    final stepsMax = hasHrv ? 25.0 : 29.0;
+    final kcalMax = hasHrv ? 20.0 : 24.0;
+    final standMax = hasHrv ? 15.0 : 18.0;
+
+    final sleep = (snap.sleepHours / 8.0).clamp(0.0, 1.0) * sleepMax;
+    final steps = (snap.steps / 10000.0).clamp(0.0, 1.0) * stepsMax;
+    final kcal = (snap.kcal / 750.0).clamp(0.0, 1.0) * kcalMax;
+    final stand = (snap.standHours / 12.0).clamp(0.0, 1.0) * standMax;
+    final hrv = hasHrv ? (snap.hrv! / 60.0).clamp(0.0, 1.0) * 15 : 0.0;
+
     return ScoreBreakdown(
       score: (sleep + steps + kcal + stand + hrv).round(),
       sleepPts: sleep.round(),
@@ -38,8 +46,6 @@ class ScoreBreakdown {
     );
   }
 }
-
-// ─── Leaderboard entry ────────────────────────────────────────────────────────
 
 class LeaderboardEntry {
   const LeaderboardEntry({
@@ -68,8 +74,6 @@ class LeaderboardEntry {
   );
 }
 
-// ─── Score service ────────────────────────────────────────────────────────────
-
 class ScoreService {
   ScoreService._();
   static final ScoreService instance = ScoreService._();
@@ -77,8 +81,6 @@ class ScoreService {
   final _db = Supabase.instance.client;
 
   String? get _userId => _db.auth.currentUser?.id;
-
-  // ── Sync (called on app open) ──────────────────────────────────────────────
 
   /// Backfills any missing days between [latest_sync] and today (max 7),
   /// then updates [latest_sync] on the profile.
@@ -132,8 +134,6 @@ class ScoreService {
     } catch (_) {}
   }
 
-  // ── Queries ────────────────────────────────────────────────────────────────
-
   Future<LeaderboardEntry?> getMyRank() async {
     final uid = _userId;
     if (uid == null) return null;
@@ -158,7 +158,10 @@ class ScoreService {
           .from('scores')
           .select('score')
           .eq('user_id', uid)
-          .gte('date', _isoDate(DateTime.now().subtract(Duration(days: days - 1))))
+          .gte(
+            'date',
+            _isoDate(DateTime.now().subtract(Duration(days: days - 1))),
+          )
           .order('date')
           .limit(days);
       return rows.map<int>((r) => r['score'] as int).toList();
@@ -180,8 +183,9 @@ class ScoreService {
           .limit(365);
 
       if (rows.isEmpty) return 0;
-      final dates =
-          rows.map((r) => DateTime.parse(r['date'] as String)).toList();
+      final dates = rows
+          .map((r) => DateTime.parse(r['date'] as String))
+          .toList();
 
       int streak = 1;
       for (int i = 1; i < dates.length; i++) {
@@ -196,8 +200,6 @@ class ScoreService {
       return 0;
     }
   }
-
-  // ── Utils ──────────────────────────────────────────────────────────────────
 
   static DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
   static String _isoDate(DateTime d) =>

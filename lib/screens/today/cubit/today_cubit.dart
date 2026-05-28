@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
@@ -11,11 +10,15 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
   Future<void> load() async {
     emit(const DataState.loading());
     try {
+      // Sync first so today's score is in DB before we read the streak.
+      // getStreak() reads DB; if today hasn't been upserted yet it returns 0.
+      await ScoreService.instance.sync();
+
       // Fetch health data + remote data in parallel
       final results = await Future.wait([
         HealthService.instance.fetchDaySnapshot(), // today's live snapshot
         ScoreService.instance.getMyRank(), // leaderboard entry
-        ScoreService.instance.getStreak(), // consecutive days
+        ScoreService.instance.getStreak(), // consecutive days (DB is up-to-date)
         ScoreService.instance.getScoreHistory(), // last 14 days from DB
       ]);
 
@@ -108,8 +111,6 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
         ),
       );
 
-      // Persist in background — don't block the UI
-      unawaited(ScoreService.instance.sync());
     } catch (e, st) {
       emit(DataState.error('fetch_failed', error: e, stackTrace: st));
     }

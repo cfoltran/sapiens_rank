@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
+import 'package:sapiens_rank/screens/world/world_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialTab = 0});
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         index: _tab,
         children: [
           TodayPage(onNavigateToWorld: () => _switchTab(1)),
-          const _PlaceholderTab(label: 'World'),
+          const WorldPage(),
           const _PlaceholderTab(label: 'Fight'),
           const _PlaceholderTab(label: 'Profile'),
         ],

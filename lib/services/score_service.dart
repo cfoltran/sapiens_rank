@@ -55,6 +55,7 @@ class LeaderboardEntry {
     this.rankCountry,
     this.rankDelta,
     this.country,
+    this.displayName,
   });
 
   final String userId;
@@ -63,15 +64,20 @@ class LeaderboardEntry {
   final int? rankCountry;
   final int? rankDelta;
   final String? country;
+  final String? displayName;
 
-  factory LeaderboardEntry.fromJson(Map<String, dynamic> j) => LeaderboardEntry(
-    userId: j['user_id'] as String,
-    score: (j['score'] as num).toDouble(),
-    rankWorld: j['rank_world'] as int?,
-    rankCountry: j['rank_country'] as int?,
-    rankDelta: j['rank_delta'] as int?,
-    country: j['country'] as String?,
-  );
+  factory LeaderboardEntry.fromJson(Map<String, dynamic> j) {
+    final profiles = j['profiles'] as Map<String, dynamic>?;
+    return LeaderboardEntry(
+      userId: j['user_id'] as String,
+      score: (j['score'] as num).toDouble(),
+      rankWorld: j['rank_world'] as int?,
+      rankCountry: j['rank_country'] as int?,
+      rankDelta: j['rank_delta'] as int?,
+      country: j['country'] as String?,
+      displayName: profiles?['name'] as String?,
+    );
+  }
 }
 
 class ScoreService {
@@ -165,6 +171,30 @@ class ScoreService {
           .order('date')
           .limit(days);
       return rows.map<int>((r) => r['score'] as int).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<LeaderboardEntry>> getTopLeaderboard({
+    String? country,
+    int limit = 12,
+  }) async {
+    try {
+      var query = _db.from('leaderboard').select(
+        'user_id, score, rank_world, rank_country, country, rank_delta, profiles(name)',
+      );
+      if (country != null) {
+        return (await (query
+                .eq('country', country)
+                .order('rank_country')
+                .limit(limit)))
+            .map<LeaderboardEntry>((r) => LeaderboardEntry.fromJson(r))
+            .toList();
+      }
+      return (await (query.order('rank_world').limit(limit)))
+          .map<LeaderboardEntry>((r) => LeaderboardEntry.fromJson(r))
+          .toList();
     } catch (_) {
       return [];
     }

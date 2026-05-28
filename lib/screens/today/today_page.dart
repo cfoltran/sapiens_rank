@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/today_skeleton.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_cubit.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/screens/today/widgets/score_ring.dart';
@@ -27,7 +28,7 @@ class _TodayPageState extends State<TodayPage> {
       child: BlocBuilder<TodayCubit, DataState<TodayData>>(
         builder: (ctx, state) {
           if (state.status == DataStatus.loading) {
-            return const _LoadingBody();
+            return const TodayLoadingSkeleton();
           }
           if (state.status == DataStatus.error) {
             return _ErrorBody(onRetry: () => ctx.read<TodayCubit>().load());
@@ -47,27 +48,6 @@ class _TodayPageState extends State<TodayPage> {
   }
 }
 
-// ─── Loading ────────────────────────────────────────────────────────────────
-
-class _LoadingBody extends StatelessWidget {
-  const _LoadingBody();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: SrColors.bg,
-      body: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(SrColors.lime),
-          strokeWidth: 2,
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Error ──────────────────────────────────────────────────────────────────
-
 class _ErrorBody extends StatelessWidget {
   const _ErrorBody({required this.onRetry});
 
@@ -83,9 +63,9 @@ class _ErrorBody extends StatelessWidget {
           children: [
             Text(
               'Could not load health data',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: SrColors.textMuted,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(color: SrColors.textMuted),
             ),
             const SizedBox(height: 16),
             GestureDetector(
@@ -104,8 +84,6 @@ class _ErrorBody extends StatelessWidget {
     );
   }
 }
-
-// ─── Loaded ─────────────────────────────────────────────────────────────────
 
 class _LoadedBody extends StatelessWidget {
   const _LoadedBody({
@@ -137,7 +115,10 @@ class _LoadedBody extends StatelessWidget {
               const SizedBox(height: 16),
               Center(child: ScoreRing(score: data.score.toDouble())),
               const SizedBox(height: 10),
-              _DeltaRow(scoreDelta: data.scoreDelta, history: data.scoreHistory),
+              _DeltaRow(
+                scoreDelta: data.scoreDelta,
+                history: data.scoreHistory,
+              ),
               const SizedBox(height: 20),
               _RankTeaserCard(data: data, onTap: onNavigateToWorld),
               const SizedBox(height: 8),
@@ -159,85 +140,41 @@ class _LoadedBody extends StatelessWidget {
   }
 }
 
-// ─── Date header ────────────────────────────────────────────────────────────
-
 class _DateHeader extends StatelessWidget {
   const _DateHeader({required this.streak});
 
   final int streak;
 
-  static const _dayNames = [
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT',
-    'SUN',
-  ];
-  static const _monthNames = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC',
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final dayStr = _dayNames[now.weekday - 1];
-    final monthStr = _monthNames[now.month - 1];
-    final dateStr = '$dayStr · $monthStr ${now.day}';
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          dateStr,
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: SrColors.textDim,
-            letterSpacing: 11 * 0.18,
-          ),
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: SrColors.lime.withAlpha(26),
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: SrColors.lime.withAlpha(68)),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: SrColors.lime.withAlpha(26),
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: SrColors.lime.withAlpha(68)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🔥', style: TextStyle(fontSize: 11)),
-              const SizedBox(width: 5),
-              Text(
-                '$streak d streak',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: SrColors.lime,
-                ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('🔥', style: TextStyle(fontSize: 11)),
+            const SizedBox(width: 5),
+            Text(
+              '$streak d streak',
+              style: GoogleFonts.jetBrainsMono(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: SrColors.lime,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
-
-// ─── Delta row ───────────────────────────────────────────────────────────────
 
 class _DeltaRow extends StatelessWidget {
   const _DeltaRow({required this.scoreDelta, required this.history});
@@ -284,8 +221,6 @@ class _DeltaRow extends StatelessWidget {
   }
 }
 
-// ─── Rank teaser card ────────────────────────────────────────────────────────
-
 class _RankTeaserCard extends StatelessWidget {
   const _RankTeaserCard({required this.data, this.onTap});
 
@@ -321,10 +256,7 @@ class _RankTeaserCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
-                    colors: [
-                      SrColors.amber.withAlpha(34),
-                      Colors.transparent,
-                    ],
+                    colors: [SrColors.amber.withAlpha(34), Colors.transparent],
                     stops: const [0.0, 0.7],
                   ),
                 ),
@@ -416,8 +348,6 @@ class _RankTeaserCard extends StatelessWidget {
   }
 }
 
-// ─── Metric card ─────────────────────────────────────────────────────────────
-
 class _MetricCard extends StatelessWidget {
   const _MetricCard({
     required this.metric,
@@ -477,7 +407,11 @@ class _MetricCard extends StatelessWidget {
                       color: const Color(0x0DFFFFFF),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_icon(metric.iconName), color: SrColors.lime, size: 18),
+                    child: Icon(
+                      _icon(metric.iconName),
+                      color: SrColors.lime,
+                      size: 18,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -537,8 +471,8 @@ class _MetricCard extends StatelessWidget {
                                 duration: const Duration(milliseconds: 600),
                                 curve: Curves.easeOutCubic,
                                 height: 4,
-                                width: constraints.maxWidth *
-                                    pct.clamp(0.0, 1.0),
+                                width:
+                                    constraints.maxWidth * pct.clamp(0.0, 1.0),
                                 decoration: BoxDecoration(
                                   color: barColor,
                                   borderRadius: BorderRadius.circular(2),

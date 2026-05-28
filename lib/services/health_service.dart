@@ -1,5 +1,30 @@
 import 'package:health/health.dart';
 
+class HealthSnapshot {
+  const HealthSnapshot({
+    required this.sleepHours,
+    required this.steps,
+    required this.kcal,
+    required this.standHours,
+    this.hrv,
+    this.restingHr,
+  });
+
+  final double sleepHours;
+  final int steps;
+  final double kcal;
+  final int standHours;
+  final double? hrv;
+  final double? restingHr;
+
+  static const empty = HealthSnapshot(
+    sleepHours: 0,
+    steps: 0,
+    kcal: 0,
+    standHours: 0,
+  );
+}
+
 class HealthService {
   HealthService._();
 
@@ -158,5 +183,94 @@ class HealthService {
         icon: '🧍',
       ),
     ];
+  }
+
+  Future<HealthSnapshot> fetchTodaySnapshot() async {
+    final now = DateTime.now();
+    final weekAgo = now.subtract(const Duration(days: 7));
+    final startOfToday = DateTime(now.year, now.month, now.day);
+
+    List<HealthDataPoint> samples = [];
+    try {
+      final raw = await _health.getHealthDataFromTypes(
+        startTime: weekAgo,
+        endTime: now,
+        types: [
+          HealthDataType.RESTING_HEART_RATE,
+          HealthDataType.HEART_RATE_VARIABILITY_SDNN,
+          HealthDataType.SLEEP_ASLEEP,
+          HealthDataType.APPLE_STAND_HOUR,
+        ],
+      );
+      samples = _health.removeDuplicates(raw);
+    } catch (_) {}
+
+    int stepsToday = 0;
+    try {
+      stepsToday =
+          (await _health.getTotalStepsInInterval(startOfToday, now)) ?? 0;
+    } catch (_) {}
+
+    double kcalToday = 0;
+    try {
+      final raw = await _health.getHealthDataFromTypes(
+        startTime: startOfToday,
+        endTime: now,
+        types: [HealthDataType.ACTIVE_ENERGY_BURNED],
+      );
+      final pts = _health
+          .removeDuplicates(raw)
+          .where((p) => p.value is NumericHealthValue)
+          .toList();
+      final watchPts = pts
+          .where((p) => p.sourceName.toLowerCase().contains('watch'))
+          .toList();
+      kcalToday = (watchPts.isNotEmpty ? watchPts : pts).fold(
+        0.0,
+        (sum, p) =>
+            sum + (p.value as NumericHealthValue).numericValue.toDouble(),
+      );
+    } catch (_) {}
+
+    double? latestOf(HealthDataType type) {
+      final pts =
+          samples
+              .where((p) => p.type == type && p.value is NumericHealthValue)
+              .toList()
+            ..sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
+      if (pts.isEmpty) return null;
+      return (pts.first.value as NumericHealthValue).numericValue.toDouble();
+    }
+
+    double sleepLastNight() {
+      final nightStart = startOfToday.subtract(const Duration(hours: 12));
+      final nightEnd = startOfToday.add(const Duration(hours: 12));
+      final minutes = samples
+          .where(
+            (p) =>
+                p.type == HealthDataType.SLEEP_ASLEEP &&
+                p.dateFrom.isAfter(nightStart) &&
+                p.dateTo.isBefore(nightEnd),
+          )
+          .fold(0, (sum, p) => sum + p.dateTo.difference(p.dateFrom).inMinutes);
+      return minutes / 60.0;
+    }
+
+    int standHoursToday() => samples
+        .where(
+          (p) =>
+              p.type == HealthDataType.APPLE_STAND_HOUR &&
+              p.dateFrom.toLocal().isAfter(startOfToday),
+        )
+        .length;
+
+    return HealthSnapshot(
+      sleepHours: sleepLastNight(),
+      steps: stepsToday,
+      kcal: kcalToday,
+      standHours: standHoursToday(),
+      hrv: latestOf(HealthDataType.HEART_RATE_VARIABILITY_SDNN),
+      restingHr: latestOf(HealthDataType.RESTING_HEART_RATE),
+    );
   }
 }

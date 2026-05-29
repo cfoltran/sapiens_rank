@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/screens/onboarding/cubit/onboarding_cubit.dart';
+import 'package:sapiens_rank/services/auth_service.dart';
 import 'package:sapiens_rank/screens/onboarding/cubit/onboarding_state.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/age_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/auth_step.dart';
@@ -128,7 +129,7 @@ class _StepRouter extends StatelessWidget {
       OnboardingStep.notifications => NotificationsStep(onNext: cubit.next),
       OnboardingStep.done => DoneStep(
         firstName: state.data.name,
-        onEnter: cubit.next,
+        onEnter: context.read<AuthService>().setOnboardingDone,
       ),
     };
   }

@@ -4,10 +4,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logging/logging.dart';
 
 const _kThemeModeKey = 'theme_mode';
+const _kOnboardingDoneKey = 'onboarding_done';
 
 class AuthService with ChangeNotifier {
   AuthService() {
-    _loadThemeMode();
+    _loadPrefs();
     _supabase.auth.onAuthStateChange.listen(
       (event) => _authStateChanged(event.session?.user),
     );
@@ -16,25 +17,33 @@ class AuthService with ChangeNotifier {
   final SupabaseClient _supabase = Supabase.instance.client;
   final Logger logger = Logger('AuthService');
   ThemeMode _themeMode = ThemeMode.system;
-  // ProfileModel? _profile;
+  bool _onboardingDone = false;
 
   ThemeMode get themeMode => _themeMode;
-  bool get isLoggedIn => Supabase.instance.client.auth.currentSession != null;
-  // ProfileModel? get profile => _profile;
+  bool get isLoggedIn => _supabase.auth.currentSession != null;
 
-  // set profile(ProfileModel? value) {
-  //   _profile = value;
-  //   notifyListeners();
-  // }
+  bool get onboardingDone => _onboardingDone;
 
-  Future<void> _loadThemeMode() async {
+  Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_kThemeModeKey);
-    _themeMode = switch (saved) {
+
+    final savedTheme = prefs.getString(_kThemeModeKey);
+    _themeMode = switch (savedTheme) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
+
+    // Onboarding: if pref is not set but a session already exists, the user
+    // is returning after a reinstall — treat them as done.
+    final savedOnboarding = prefs.getBool(_kOnboardingDoneKey);
+    if (savedOnboarding != null) {
+      _onboardingDone = savedOnboarding;
+    } else if (isLoggedIn) {
+      _onboardingDone = true;
+      await prefs.setBool(_kOnboardingDoneKey, true);
+    }
+
     notifyListeners();
   }
 
@@ -49,9 +58,19 @@ class AuthService with ChangeNotifier {
     });
   }
 
+  Future<void> setOnboardingDone() async {
+    _onboardingDone = true;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kOnboardingDoneKey, true);
+  }
+
   void _authStateChanged(User? user) async => notifyListeners();
 
   Future<void> signOut() async {
+    _onboardingDone = false;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kOnboardingDoneKey);
     notifyListeners();
     await _supabase.auth.signOut();
   }

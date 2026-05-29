@@ -1,48 +1,52 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
+import 'package:sapiens_rank/services/notification_service.dart';
 
 class NotificationsStep extends StatefulWidget {
-  const NotificationsStep({
-    super.key,
-    required this.progress,
-    required this.total,
-    required this.onNext,
-    required this.onBack,
-  });
+  const NotificationsStep({super.key, required this.onNext});
 
-  final int progress;
-  final int total;
   final VoidCallback onNext;
-  final VoidCallback onBack;
 
   @override
   State<NotificationsStep> createState() => _NotificationsStepState();
 }
 
 class _NotificationsStepState extends State<NotificationsStep> {
+  bool _loading = false;
   bool _granted = false;
 
-  void _grant() {
-    setState(() => _granted = true);
-    Timer(const Duration(milliseconds: 600), () {
-      if (mounted) widget.onNext();
+  Future<void> _requestPermission() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+    final granted = await NotificationService.instance.requestPermission();
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _granted = granted;
     });
+    await Future.delayed(const Duration(milliseconds: 700));
+    if (mounted) widget.onNext();
   }
 
   @override
   Widget build(BuildContext context) {
     return StepShell(
-      progress: widget.progress,
-      total: widget.total,
+      progress: 0,
+      total: 0,
       footer: Column(
         children: [
-          ArenaButton(label: 'Yes, keep me in the loop 🔔', onTap: _grant),
+          ArenaButton(
+            label: _loading ? 'Authorizing…' : 'Yes, keep me in the loop 🔔',
+            onTap: _loading ? null : _requestPermission,
+          ),
           const SizedBox(height: 8),
-          ArenaSecondaryButton(label: 'Not now', onTap: widget.onNext),
+          ArenaSecondaryButton(
+            label: 'Not now',
+            onTap: _loading ? () {} : widget.onNext,
+          ),
         ],
       ),
       body: Column(
@@ -66,7 +70,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
           const _NotifPreview(
             icon: '📈',
             title: 'You climbed 184 spots',
-            body: 'World rank is now #2,847 - top 0.4%',
+            body: 'World rank is now #2,847 — top 0.4%',
             time: '9m',
           ),
           const SizedBox(height: 8),
@@ -80,7 +84,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
           if (_granted) ...[
             const SizedBox(height: 24),
             AnimatedOpacity(
-              opacity: _granted ? 1 : 0,
+              opacity: 1,
               duration: const Duration(milliseconds: 400),
               child: Center(
                 child: Text(

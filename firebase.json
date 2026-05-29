@@ -1,0 +1,22 @@
+{
+    "flutter": {
+        "platforms": {
+            "ios": {
+                "default": {
+                    "projectId": "sapiensrank",
+                    "appId": "1:566594913746:ios:2a20e6fde1ab663fbeb40b",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "sapiensrank",
+                    "configurations": {
+                        "ios": "1:566594913746:ios:2a20e6fde1ab663fbeb40b"
+                    }
+                }
+            }
+        }
+    }
+}

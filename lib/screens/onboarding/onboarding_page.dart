@@ -7,6 +7,7 @@ import 'package:sapiens_rank/screens/onboarding/steps/auth_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/country_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/done_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/name_step.dart';
+import 'package:sapiens_rank/screens/onboarding/steps/notifications_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/permission_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/rank_reveal_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/score_reveal_step.dart';
@@ -124,24 +125,7 @@ class _StepRouter extends StatelessWidget {
         firstName: state.data.name,
         onAuth: cubit.completeAuth,
       ),
-      // OnboardingStep.friends => FriendsStep(
-      //   progress: state.progressIndex,
-      //   total: state.progressTotal,
-      //   onNext: cubit.next,
-      //   onBack: cubit.back,
-      // ),
-      // OnboardingStep.firstFight => FirstFightStep(
-      //   progress: state.progressIndex,
-      //   total: state.progressTotal,
-      //   onNext: cubit.next,
-      //   onBack: cubit.back,
-      // ),
-      // OnboardingStep.notifications => NotificationsStep(
-      //   progress: state.progressIndex,
-      //   total: state.progressTotal,
-      //   onNext: cubit.next,
-      //   onBack: cubit.back,
-      // ),
+      OnboardingStep.notifications => NotificationsStep(onNext: cubit.next),
       OnboardingStep.done => DoneStep(
         firstName: state.data.name,
         onEnter: cubit.next,

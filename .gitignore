@@ -1,3 +1,6 @@
+# Secrets
+supabase/functions/push/service-account.json
+
 # Miscellaneous
 *.class
 *.log

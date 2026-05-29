@@ -73,7 +73,10 @@ class FightCubit extends Cubit<DataState<FightData>> {
               ),
             );
 
-          case 'done':
+          case ChallengeStatus.cancelled:
+            break;
+
+          case ChallengeStatus.done:
             final standings = await _service.getStandings(c.id);
             final participants = _mapParticipants(
               c.challengeParticipants,

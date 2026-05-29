@@ -18,7 +18,7 @@ final GoRouter router = GoRouter(
         }
 
         final authService = context.watch<AuthService>();
-        if (!authService.isLoggedIn) {
+        if (!authService.isLoggedIn || !authService.onboardingDone) {
           return const OnboardingPage();
         }
 

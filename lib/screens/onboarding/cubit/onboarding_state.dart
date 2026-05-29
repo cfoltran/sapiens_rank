@@ -10,9 +10,7 @@ enum OnboardingStep {
   scoreReveal,
   rankReveal,
   auth,
-  // friends,
-  // firstFight,
-  // notifications,
+  notifications,
   done,
 }
 
@@ -48,6 +46,7 @@ class OnboardingState extends Equatable {
         (s) =>
             s != OnboardingStep.welcome &&
             s != OnboardingStep.auth &&
+            s != OnboardingStep.notifications &&
             s != OnboardingStep.done,
       )
       .length;
@@ -60,7 +59,9 @@ class OnboardingState extends Equatable {
   }
 
   bool get showsProgress =>
-      step != OnboardingStep.welcome && step != OnboardingStep.auth;
+      step != OnboardingStep.welcome &&
+      step != OnboardingStep.auth &&
+      step != OnboardingStep.notifications;
 
   OnboardingState copyWith({OnboardingStep? step, OnboardingData? data}) =>
       OnboardingState(step: step ?? this.step, data: data ?? this.data);

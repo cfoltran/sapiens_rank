@@ -33,7 +33,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       age: state.data.age,
       country: state.data.country,
     );
-    emit(state.copyWith(step: OnboardingStep.done));
+    emit(state.copyWith(step: OnboardingStep.notifications));
   }
 
   void updateName(String name) =>

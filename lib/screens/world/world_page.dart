@@ -90,51 +90,54 @@ class _LoadedBody extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _Header(data: data),
+                  const SizedBox(height: 16),
+                  _ScopeFilter(data: data),
+                ],
+              ),
+            ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _Header(data: data),
-                    const SizedBox(height: 16),
-                    _ScopeFilter(data: data),
-                    const SizedBox(height: 24),
-                    if (players.length >= 3) _Podium(players: players),
-                    const SizedBox(height: 16),
-                    // Section labels
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'RANK',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 10,
-                              color: SrColors.textDim,
-                              letterSpacing: 10 * 0.2,
-                            ),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(18, 24, 18, 16),
+                children: [
+                  if (players.length >= 3) _Podium(players: players),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'RANK',
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 10,
+                            color: SrColors.textDim,
+                            letterSpacing: 10 * 0.2,
                           ),
-                          Text(
-                            'SCORE',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 10,
-                              color: SrColors.textDim,
-                              letterSpacing: 10 * 0.2,
-                            ),
+                        ),
+                        Text(
+                          'SCORE',
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 10,
+                            color: SrColors.textDim,
+                            letterSpacing: 10 * 0.2,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+                  ),
+                  const SizedBox(height: 4),
+                  ...listPlayers.map((p) => _PlayerRow(player: p)),
+                  if (showGap) ...[
                     const SizedBox(height: 4),
-                    ...listPlayers.map((p) => _PlayerRow(player: p)),
-                    if (showGap) ...[
-                      const SizedBox(height: 4),
-                      _GapIndicator(gapCount: myRank - players.length),
-                    ],
+                    _GapIndicator(gapCount: myRank - players.length),
                   ],
-                ),
+                ],
               ),
             ),
             _YouCard(data: data),

@@ -90,23 +90,21 @@ Deno.serve(async (req) => {
 
     if (userIds.length === 0) {
       const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("fcm_token")
-        .not("fcm_token", "is", null);
+        .from("device_tokens")
+        .select("fcm_token");
 
       if (error) {
-        throw new Error(`Error fetching all profiles: ${error.message}`);
+        throw new Error(`Error fetching all device tokens: ${error.message}`);
       }
       profiles = data;
     } else {
       const { data, error } = await supabaseClient
-        .from("profiles")
+        .from("device_tokens")
         .select("fcm_token")
-        .in("id", userIds)
-        .not("fcm_token", "is", null);
+        .in("user_id", userIds);
 
       if (error) {
-        throw new Error(`Error fetching profiles: ${error.message}`);
+        throw new Error(`Error fetching device tokens: ${error.message}`);
       }
       profiles = data;
     }

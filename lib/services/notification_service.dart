@@ -43,9 +43,8 @@ class NotificationService {
       final uid = Supabase.instance.client.auth.currentUser?.id;
       if (uid == null) return;
       await Supabase.instance.client
-          .from('profiles')
-          .update({'fcm_token': token})
-          .eq('id', uid);
+          .from('device_tokens')
+          .upsert({'user_id': uid, 'fcm_token': token});
     } catch (e) {
       _log.warning('Failed to save FCM token: $e');
     }

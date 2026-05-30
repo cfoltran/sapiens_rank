@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/screens/fight/fight_page.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
 import 'package:sapiens_rank/screens/world/world_page.dart';
 
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           TodayPage(onNavigateToWorld: () => _switchTab(1)),
           const WorldPage(),
-          const _PlaceholderTab(label: 'Fight'),
+          const FightPage(),
           const _PlaceholderTab(label: 'Profile'),
         ],
       ),

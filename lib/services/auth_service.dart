@@ -68,10 +68,10 @@ class AuthService with ChangeNotifier {
   void _authStateChanged(User? user) async => notifyListeners();
 
   Future<void> signOut() async {
+    await _supabase.auth.signOut();
     _onboardingDone = false;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kOnboardingDoneKey);
     notifyListeners();
-    await _supabase.auth.signOut();
   }
 }

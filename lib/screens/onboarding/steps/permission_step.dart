@@ -102,7 +102,7 @@ class _HealthKitCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0x08FFFFFF),
+        color: SrColors.tintXs,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: SrColors.line),
       ),
@@ -112,7 +112,7 @@ class _HealthKitCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: const Color(0x0DFFFFFF),
+              color: SrColors.tintSm,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -158,9 +158,9 @@ class _PrivacyNote extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0x0D5CE1FF),
+        color: SrColors.cyanSubtle,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0x335CE1FF)),
+        border: Border.all(color: SrColors.cyanBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

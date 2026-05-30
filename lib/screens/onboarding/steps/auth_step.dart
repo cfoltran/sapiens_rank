@@ -143,7 +143,7 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: Color(0x18FFFFFF))),
+        const Expanded(child: Divider(color: SrColors.lineStrong)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
@@ -154,7 +154,7 @@ class _Divider extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(child: Divider(color: Color(0x18FFFFFF))),
+        const Expanded(child: Divider(color: SrColors.lineStrong)),
       ],
     );
   }
@@ -231,9 +231,9 @@ class _SentConfirmation extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0x14D9FF3D),
+        color: SrColors.limeSubtle,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x40D9FF3D)),
+        border: Border.all(color: SrColors.limeBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -21,16 +21,16 @@ class DkTheme {
 
   static ThemeData light() => ThemeData(
         brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF5F0E3),
+        scaffoldBackgroundColor: SrColors.bgLight,
         textTheme: SrTextStyles.textTheme,
         colorScheme: const ColorScheme.light(
           primary: SrColors.lime,
           secondary: SrColors.amber,
-          surface: Color(0xFFFBF7EC),
+          surface: SrColors.surfaceLight,
           error: SrColors.error,
           onPrimary: SrColors.textInk,
           onSecondary: SrColors.textInk,
-          onSurface: Color(0xFF15130F),
+          onSurface: SrColors.textInk,
           onError: SrColors.text,
         ),
       );

@@ -150,7 +150,7 @@ class _NotifPreview extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: muted ? const Color(0x05FFFFFF) : const Color(0x0AFFFFFF),
+          color: muted ? SrColors.tintXxs : SrColors.tintXs,
           border: Border.all(color: SrColors.line),
         ),
         child: Row(

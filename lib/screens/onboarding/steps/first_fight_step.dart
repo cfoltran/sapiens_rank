@@ -107,8 +107,8 @@ class _FaceOffCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [SrColors.bgElev2, SrColors.bgElev],
         ),
-        border: Border.all(color: const Color(0x44FF4D97)),
-        boxShadow: const [BoxShadow(color: Color(0x1AFF4D97), blurRadius: 40)],
+        border: Border.all(color: SrColors.magentaBorder),
+        boxShadow: const [BoxShadow(color: SrColors.magentaFaint, blurRadius: 40)],
       ),
       child: Stack(
         children: [
@@ -121,7 +121,7 @@ class _FaceOffCard extends StatelessWidget {
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [Color(0x22FF4D97), Colors.transparent],
+                  colors: [SrColors.magentaGlow, Colors.transparent],
                   stops: [0.0, 0.7],
                 ),
               ),
@@ -186,7 +186,7 @@ class _Fighter extends StatelessWidget {
           height: 56,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isMe ? SrColors.lime : const Color(0xFFF5D76E),
+            color: isMe ? SrColors.lime : SrColors.yellow,
             boxShadow: isMe
                 ? [
                     BoxShadow(

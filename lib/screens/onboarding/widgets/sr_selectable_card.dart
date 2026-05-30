@@ -33,7 +33,7 @@ class SrSelectableCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           color: isSelected
               ? accentColor.withAlpha(26)
-              : const Color(0x08FFFFFF),
+              : SrColors.tintXs,
           border: Border.all(color: isSelected ? accentColor : SrColors.line),
         ),
         child: child,

@@ -404,7 +404,7 @@ class _MetricCard extends StatelessWidget {
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: const Color(0x0DFFFFFF),
+                      color: SrColors.tintSm,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -463,7 +463,7 @@ class _MetricCard extends StatelessWidget {
                                 height: 4,
                                 width: constraints.maxWidth,
                                 decoration: BoxDecoration(
-                                  color: const Color(0x0DFFFFFF),
+                                  color: SrColors.tintSm,
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                               ),

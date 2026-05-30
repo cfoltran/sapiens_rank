@@ -131,7 +131,7 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = _strokeWidth
-        ..color = const Color(0x0FFFFFFF),
+        ..color = SrColors.tintSm,
     );
 
     // Tick marks at 25 / 50 / 75 %

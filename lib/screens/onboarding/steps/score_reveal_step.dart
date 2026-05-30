@@ -182,7 +182,7 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeW
-        ..color = const Color(0x0FFFFFFF),
+        ..color = SrColors.tintSm,
     );
 
     if (fraction <= 0) return;

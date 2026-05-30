@@ -297,7 +297,7 @@ class _MetricRow extends StatelessWidget {
                 ],
               ),
             ),
-            if (!isLast) const Divider(height: 1, color: Color(0x0DFFFFFF)),
+            if (!isLast) const Divider(height: 1, color: SrColors.tintSm),
           ],
         ),
       ),

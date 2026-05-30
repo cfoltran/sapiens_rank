@@ -86,7 +86,7 @@ class _Dot extends StatelessWidget {
       height: 3,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
-        color: isLit ? SrColors.lime : const Color(0x0AFFFFFF),
+        color: isLit ? SrColors.lime : SrColors.tintXs,
         boxShadow: isActive
             ? [BoxShadow(color: SrColors.lime.withAlpha(136), blurRadius: 8)]
             : null,

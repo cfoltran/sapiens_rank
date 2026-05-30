@@ -257,9 +257,9 @@ class _StatsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0x14FF4D97),
+        color: SrColors.magentaSubtle,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x44FF4D97)),
+        border: Border.all(color: SrColors.magentaBorder),
       ),
       child: Row(
         children: [
@@ -341,7 +341,7 @@ class _CountryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0x0AFFFFFF),
+        color: SrColors.tintXs,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: SrColors.line),
       ),

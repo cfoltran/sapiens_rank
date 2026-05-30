@@ -97,12 +97,12 @@ class _SrTabBar extends StatelessWidget {
                 filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xC61D1A14),
+                    color: SrColors.navBg,
                     borderRadius: BorderRadius.circular(28),
                     border: Border.all(color: SrColors.lineStrong),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x80000000),
+                        color: SrColors.shadow,
                         blurRadius: 40,
                         offset: Offset(0, 12),
                       ),

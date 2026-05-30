@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
@@ -185,20 +186,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
     return name.substring(0, math.min(2, name.length)).toUpperCase();
   }
 
-  static const _palette = [
-    Color(0xFFFF6B7A),
-    Color(0xFF7CB6FF),
-    Color(0xFFF0A64A),
-    Color(0xFFC5A3FF),
-    Color(0xFF9BE7C4),
-    Color(0xFFFFB84A),
-    Color(0xFF7CE5FF),
-    Color(0xFFFF9B7A),
-    Color(0xFFD9FF3D),
-    Color(0xFFB5A8FF),
-    Color(0xFFF5D76E),
-    Color(0xFFFF7AD9),
-  ];
+  static const _palette = SrColors.avatarPalette;
 
   static Color _avatarColor(String userId) {
     final hash = userId.codeUnits.fold(0, (a, b) => a + b);

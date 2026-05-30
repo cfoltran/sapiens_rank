@@ -7,9 +7,6 @@ import 'package:sapiens_rank/screens/fight/cubit/fight_cubit.dart';
 import 'package:sapiens_rank/screens/fight/cubit/fight_state.dart';
 import 'package:sapiens_rank/screens/fight/sheets/composer_sheet.dart';
 
-const _tintXs = Color(0x08FFFFFF);
-const _tintSm = Color(0x0DFFFFFF);
-const _tintLg = Color(0x1FFFFFFF);
 
 enum _FightTab { live, pending, history }
 
@@ -248,7 +245,7 @@ class _TabSwitcher extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: _tintXs,
+        color: SrColors.tintXs,
         borderRadius: BorderRadius.circular(100),
       ),
       child: Row(
@@ -585,14 +582,14 @@ class _RoyaleCard extends StatelessWidget {
                                     child: Stack(
                                       fit: StackFit.expand,
                                       children: [
-                                        Container(color: _tintSm),
+                                        Container(color: SrColors.tintSm),
                                         FractionallySizedBox(
                                           alignment: Alignment.centerLeft,
                                           widthFactor: widthFactor,
                                           child: Container(
                                             color: p.isMe
                                                 ? SrColors.lime
-                                                : _tintLg,
+                                                : SrColors.tintLg,
                                           ),
                                         ),
                                       ],
@@ -851,7 +848,7 @@ class _StatusStrip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: const BoxDecoration(
-        color: _tintXs,
+        color: SrColors.tintXs,
         border: Border(bottom: BorderSide(color: SrColors.line)),
       ),
       child: Row(
@@ -932,7 +929,7 @@ class _StakeBanner extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: _tintSm,
+              color: SrColors.tintSm,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(

@@ -318,7 +318,7 @@ class _Podium extends StatelessWidget {
           child: _PodiumSlot(
             player: p2,
             blockHeight: 100,
-            color: const Color(0xFFE0D5B8),
+            color: SrColors.sand,
             avatarSize: 50,
           ),
         ),
@@ -623,7 +623,7 @@ class _YouCard extends StatelessWidget {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xD926221A), Color(0xFA26221A)],
+                  colors: [SrColors.bgElev2Fade, SrColors.bgElev2Opaque],
                 ),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
@@ -728,7 +728,7 @@ class _YouAvatar extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF7CB6FF), Color(0xFF4A7EAF)],
+          colors: [SrColors.blue, SrColors.blueDeep],
         ),
       ),
       child: Center(

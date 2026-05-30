@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/world/cubit/world_state.dart';
 import 'package:sapiens_rank/services/score_service.dart';
@@ -80,20 +81,7 @@ class WorldCubit extends Cubit<DataState<WorldData>> {
   }
 
   static Color _avatarColor(String userId) {
-    const palette = [
-      Color(0xFFFF6B7A),
-      Color(0xFF7CB6FF),
-      Color(0xFFF0A64A),
-      Color(0xFFC5A3FF),
-      Color(0xFF9BE7C4),
-      Color(0xFFFFB84A),
-      Color(0xFF7CE5FF),
-      Color(0xFFFF9B7A),
-      Color(0xFFD9FF3D),
-      Color(0xFFB5A8FF),
-      Color(0xFFF5D76E),
-      Color(0xFFFF7AD9),
-    ];
+    const palette = SrColors.avatarPalette;
     final hash = userId.codeUnits.fold(0, (a, b) => a + b);
     return palette[hash % palette.length];
   }

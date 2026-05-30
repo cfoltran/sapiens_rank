@@ -5,9 +5,6 @@ import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/screens/fight/cubit/fight_state.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
 
-const _tintXs = Color(0x08FFFFFF);
-const _tintSm = Color(0x0DFFFFFF);
-const _tintMd = Color(0x14FFFFFF);
 
 class Reward {
   const Reward({
@@ -174,20 +171,7 @@ class _ComposerSheetState extends State<ComposerSheet> {
     return name.substring(0, math.min(2, name.length)).toUpperCase();
   }
 
-  static const _palette = [
-    Color(0xFFFF6B7A),
-    Color(0xFF7CB6FF),
-    Color(0xFFF0A64A),
-    Color(0xFFC5A3FF),
-    Color(0xFF9BE7C4),
-    Color(0xFFFFB84A),
-    Color(0xFF7CE5FF),
-    Color(0xFFFF9B7A),
-    Color(0xFFD9FF3D),
-    Color(0xFFB5A8FF),
-    Color(0xFFF5D76E),
-    Color(0xFFFF7AD9),
-  ];
+  static const _palette = SrColors.avatarPalette;
 
   static Color _avatarColor(String userId) {
     final hash = userId.codeUnits.fold(0, (a, b) => a + b);
@@ -300,7 +284,7 @@ class _ComposerSheetState extends State<ComposerSheet> {
                         decoration: BoxDecoration(
                           color: (_canContinue && !_sending)
                               ? SrColors.lime
-                              : _tintSm,
+                              : SrColors.tintSm,
                           borderRadius: BorderRadius.circular(100),
                           boxShadow: (_canContinue && !_sending)
                               ? [
@@ -374,7 +358,7 @@ class _ComposerHeader extends StatelessWidget {
               height: 6,
               margin: const EdgeInsets.only(left: 4),
               decoration: BoxDecoration(
-                color: (active || done) ? SrColors.lime : _tintMd,
+                color: (active || done) ? SrColors.lime : SrColors.tintMd,
                 borderRadius: BorderRadius.circular(100),
               ),
             );
@@ -426,7 +410,7 @@ class _StepPickOpponent extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? SrColors.lime.withAlpha(0x1A) : _tintXs,
+                color: isSelected ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isSelected ? SrColors.lime : Colors.transparent,
@@ -613,7 +597,7 @@ class _StepSetRules extends StatelessWidget {
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: active ? SrColors.lime.withAlpha(0x1A) : _tintXs,
+                    color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: active ? SrColors.lime : SrColors.line,
@@ -642,7 +626,7 @@ class _StepSetRules extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: _tintMd,
+                                color: SrColors.tintMd,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -691,7 +675,7 @@ class _StepSetRules extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.symmetric(vertical: 9),
                   decoration: BoxDecoration(
-                    color: active ? SrColors.lime.withAlpha(0x1A) : _tintXs,
+                    color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
                     borderRadius: BorderRadius.circular(100),
                     border: Border.all(
                       color: active ? SrColors.lime : SrColors.line,
@@ -754,7 +738,7 @@ class _StepPickReward extends StatelessWidget {
                 duration: const Duration(milliseconds: 150),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: active ? SrColors.lime.withAlpha(0x1A) : _tintXs,
+                  color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: active ? SrColors.lime : SrColors.line,
@@ -813,7 +797,7 @@ class _StepPickReward extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: active ? SrColors.lime.withAlpha(0x1A) : _tintXs,
+                color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: active ? SrColors.lime : SrColors.line,

@@ -61,7 +61,7 @@ class SrTextField extends StatelessWidget {
             ? const BoxConstraints(minWidth: 0)
             : null,
         filled: true,
-        fillColor: const Color(0x0AFFFFFF),
+        fillColor: SrColors.tintXs,
         contentPadding:
             contentPadding ??
             const EdgeInsets.symmetric(horizontal: 20, vertical: 18),

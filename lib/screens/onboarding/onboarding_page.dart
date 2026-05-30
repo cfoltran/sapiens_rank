@@ -13,6 +13,7 @@ import 'package:sapiens_rank/screens/onboarding/steps/permission_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/rank_reveal_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/score_reveal_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/sync_step.dart';
+import 'package:sapiens_rank/screens/onboarding/sheets/login_sheet.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/welcome_step.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -71,7 +72,13 @@ class _StepRouter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (state.step) {
-      OnboardingStep.welcome => WelcomeStep(onNext: cubit.next, onLogin: () {}),
+      OnboardingStep.welcome => WelcomeStep(
+          onNext: cubit.next,
+          onLogin: () => LoginSheet.show(
+            context,
+            onAuth: context.read<AuthService>().setOnboardingDone,
+          ),
+        ),
       OnboardingStep.permission => PermissionStep(
         progress: state.progressIndex,
         total: state.progressTotal,

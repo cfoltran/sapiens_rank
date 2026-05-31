@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 /// Animated Sapiens Score ring.
 class ScoreRing extends StatefulWidget {
@@ -56,7 +57,7 @@ class _ScoreRingState extends State<ScoreRing>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
-                    colors: [SrColors.lime.withAlpha(28), Colors.transparent],
+                    colors: [SrColors.lime.withAlpha(context.isDark ? 28 : 18), Colors.transparent],
                     stops: const [0.0, 0.65],
                   ),
                 ),
@@ -66,7 +67,11 @@ class _ScoreRingState extends State<ScoreRing>
             RepaintBoundary(
               child: CustomPaint(
                 size: Size(size, size),
-                painter: _RingPainter(progress: _anim.value / 100.0),
+                painter: _RingPainter(
+                  progress: _anim.value / 100.0,
+                  trackColor: context.srTrack,
+                  tickColor: context.srTick,
+                ),
               ),
             ),
             // Center label
@@ -78,7 +83,7 @@ class _ScoreRingState extends State<ScoreRing>
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: SrColors.textMuted,
+                    color: context.srTextMuted,
                     letterSpacing: 10 * 0.18,
                   ),
                 ),
@@ -88,7 +93,7 @@ class _ScoreRingState extends State<ScoreRing>
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 88,
                     fontWeight: FontWeight.w600,
-                    color: SrColors.text,
+                    color: context.srText,
                     height: 1.0,
                     letterSpacing: 88 * -0.04,
                   ),
@@ -98,7 +103,7 @@ class _ScoreRingState extends State<ScoreRing>
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                     letterSpacing: 10 * 0.1,
                   ),
                 ),
@@ -112,9 +117,15 @@ class _ScoreRingState extends State<ScoreRing>
 }
 
 class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.progress});
+  const _RingPainter({
+    required this.progress,
+    required this.trackColor,
+    required this.tickColor,
+  });
 
   final double progress;
+  final Color trackColor;
+  final Color tickColor;
 
   static const double _strokeWidth = 14.0;
 
@@ -131,12 +142,12 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = _strokeWidth
-        ..color = SrColors.tintSm,
+        ..color = trackColor,
     );
 
     // Tick marks at 25 / 50 / 75 %
     final tickPaint = Paint()
-      ..color = Colors.white.withAlpha(38)
+      ..color = tickColor
       ..strokeWidth = 1.0;
     for (final pct in [0.25, 0.5, 0.75]) {
       final angle = pct * 2 * pi - pi / 2;
@@ -155,7 +166,7 @@ class _RingPainter extends CustomPainter {
 
     final sweepAngle = progress * 2 * pi;
 
-    // Glow halo (wider, transparent, blurred)
+    // Glow halo
     canvas.drawArc(
       rect,
       -pi / 2,
@@ -189,5 +200,8 @@ class _RingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_RingPainter old) => old.progress != progress;
+  bool shouldRepaint(_RingPainter old) =>
+      old.progress != progress ||
+      old.trackColor != trackColor ||
+      old.tickColor != tickColor;
 }

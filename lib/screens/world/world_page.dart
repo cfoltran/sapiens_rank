@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/world_skeleton.dart';
 import 'package:sapiens_rank/screens/world/cubit/world_cubit.dart';
 import 'package:sapiens_rank/screens/world/cubit/world_state.dart';
@@ -39,7 +40,7 @@ class _ErrorBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -48,7 +49,7 @@ class _ErrorBody extends StatelessWidget {
               'Could not load leaderboard',
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
-                color: SrColors.textMuted,
+                color: context.srTextMuted,
               ),
             ),
             const SizedBox(height: 16),
@@ -85,7 +86,7 @@ class _LoadedBody extends StatelessWidget {
     final showGap = myRank != null && myRank > (players.length + 3);
 
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -116,7 +117,7 @@ class _LoadedBody extends StatelessWidget {
                           'RANK',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
-                            color: SrColors.textDim,
+                            color: context.srTextDim,
                             letterSpacing: 10 * 0.2,
                           ),
                         ),
@@ -124,7 +125,7 @@ class _LoadedBody extends StatelessWidget {
                           'SCORE',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
-                            color: SrColors.textDim,
+                            color: context.srTextDim,
                             letterSpacing: 10 * 0.2,
                           ),
                         ),
@@ -167,7 +168,7 @@ class _Header extends StatelessWidget {
                 'LEADERBOARD · LIVE',
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 11,
-                  color: SrColors.textDim,
+                  color: context.srTextDim,
                   letterSpacing: 11 * 0.15,
                 ),
               ),
@@ -177,7 +178,7 @@ class _Header extends StatelessWidget {
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 30,
                   fontWeight: FontWeight.w700,
-                  color: SrColors.text,
+                  color: context.srText,
                   height: 1.0,
                 ),
               ),
@@ -192,7 +193,7 @@ class _Header extends StatelessWidget {
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: SrColors.text,
+                color: context.srText,
               ),
             ),
             const SizedBox(height: 2),
@@ -282,7 +283,7 @@ class _SrChip extends StatelessWidget {
           color: active ? SrColors.lime : Colors.transparent,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: active ? SrColors.lime : SrColors.lineStrong,
+            color: active ? SrColors.lime : context.srLineStrong,
             width: 1.5,
           ),
         ),
@@ -291,7 +292,7 @@ class _SrChip extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: active ? SrColors.textInk : SrColors.text,
+            color: active ? SrColors.textInk : context.srText,
           ),
         ),
       ),
@@ -306,7 +307,6 @@ class _Podium extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Visual order: 2nd · 1st · 3rd
     final p2 = players[1];
     final p1 = players[0];
     final p3 = players[2];
@@ -367,12 +367,11 @@ class _PodiumSlot extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Crown above #1 avatar; spacer keeps other slots aligned
         if (crown) ...[
           const Text('👑', style: TextStyle(fontSize: 22)),
           const SizedBox(height: 4),
         ] else
-          const SizedBox(height: 26), // same height as crown + gap
+          const SizedBox(height: 26),
         _Avatar(player: player, size: avatarSize),
         const SizedBox(height: 6),
         Text(
@@ -380,7 +379,7 @@ class _PodiumSlot extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: SrColors.text,
+            color: context.srText,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -390,7 +389,7 @@ class _PodiumSlot extends StatelessWidget {
           '@${_handle(player.displayName)}',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 9,
-            color: SrColors.textDim,
+            color: context.srTextDim,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -448,7 +447,6 @@ class _PodiumBlock extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Glow line at the very top of the block
             Positioned(
               top: 0,
               left: 8,
@@ -464,7 +462,6 @@ class _PodiumBlock extends StatelessWidget {
                 ),
               ),
             ),
-            // Score + rank — top-aligned with paddingTop 14 (matches design)
             Padding(
               padding: const EdgeInsets.only(top: 14),
               child: Align(
@@ -487,7 +484,7 @@ class _PodiumBlock extends StatelessWidget {
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 11,
                         letterSpacing: 11 * 0.1,
-                        color: SrColors.textMuted,
+                        color: context.srTextMuted,
                       ),
                     ),
                   ],
@@ -520,7 +517,7 @@ class _PlayerRow extends StatelessWidget {
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: SrColors.textMuted,
+                color: context.srTextMuted,
               ),
             ),
           ),
@@ -536,7 +533,7 @@ class _PlayerRow extends StatelessWidget {
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: SrColors.text,
+                    color: context.srText,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -545,7 +542,7 @@ class _PlayerRow extends StatelessWidget {
                   '@$handle',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -559,7 +556,7 @@ class _PlayerRow extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: SrColors.text,
+              color: context.srText,
             ),
           ),
         ],
@@ -579,21 +576,17 @@ class _GapIndicator extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          const Expanded(
-            child: Divider(color: SrColors.lineStrong, thickness: 1),
-          ),
+          Expanded(child: Divider(color: context.srLineStrong, thickness: 1)),
           const SizedBox(width: 10),
           Text(
             '· · · $gapCount sapiens · · ·',
             style: GoogleFonts.jetBrainsMono(
               fontSize: 10,
-              color: SrColors.textDim,
+              color: context.srTextDim,
             ),
           ),
           const SizedBox(width: 10),
-          const Expanded(
-            child: Divider(color: SrColors.lineStrong, thickness: 1),
-          ),
+          Expanded(child: Divider(color: context.srLineStrong, thickness: 1)),
         ],
       ),
     );
@@ -620,10 +613,10 @@ class _YouCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [SrColors.bgElev2Fade, SrColors.bgElev2Opaque],
+                  colors: [context.srBgElev2Fade, context.srBgElev2Opaque],
                 ),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
@@ -640,7 +633,6 @@ class _YouCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Rank
                   Text(
                     myRank != null ? '#$myRank' : '---',
                     style: GoogleFonts.jetBrainsMono(
@@ -650,10 +642,8 @@ class _YouCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  // Avatar with lime ring
                   _YouAvatar(size: 36),
                   const SizedBox(width: 12),
-                  // Center: name + delta + subtitle
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -665,7 +655,7 @@ class _YouCard extends StatelessWidget {
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: SrColors.text,
+                                color: context.srText,
                               ),
                             ),
                             if (delta != null) ...[
@@ -679,19 +669,18 @@ class _YouCard extends StatelessWidget {
                           '${data.myStreak}d streak',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
-                            color: SrColors.textMuted,
+                            color: context.srTextMuted,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // Score
                   Text(
                     data.myScore.toStringAsFixed(0),
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 28,
                       fontWeight: FontWeight.w600,
-                      color: SrColors.text,
+                      color: context.srText,
                       height: 1.0,
                     ),
                   ),
@@ -803,7 +792,6 @@ class _Avatar extends StatelessWidget {
       ),
     );
 
-    // Flag badge
     if (player.flag != null) {
       avatar = Stack(
         clipBehavior: Clip.none,
@@ -815,8 +803,8 @@ class _Avatar extends StatelessWidget {
             child: Container(
               width: size * 0.38,
               height: size * 0.38,
-              decoration: const BoxDecoration(
-                color: SrColors.bg,
+              decoration: BoxDecoration(
+                color: context.srBg,
                 shape: BoxShape.circle,
               ),
               child: Center(

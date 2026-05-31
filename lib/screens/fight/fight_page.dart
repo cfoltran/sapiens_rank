@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/fight/cubit/fight_cubit.dart';
 import 'package:sapiens_rank/screens/fight/cubit/fight_state.dart';
 import 'package:sapiens_rank/screens/fight/sheets/composer_sheet.dart';
-
 
 enum _FightTab { live, pending, history }
 
@@ -64,7 +64,7 @@ class _FightViewState extends State<_FightView> {
         final liveCount = data?.live.length ?? 0;
 
         return Scaffold(
-          backgroundColor: SrColors.bg,
+          backgroundColor: context.srBg,
           body: Column(
             children: [
               Padding(
@@ -174,7 +174,7 @@ class _Header extends StatelessWidget {
                 'CHALLENGES · $liveCount LIVE',
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 11,
-                  color: SrColors.textDim,
+                  color: context.srTextDim,
                   letterSpacing: 0.15 * 11,
                 ),
               ),
@@ -184,7 +184,7 @@ class _Header extends StatelessWidget {
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 30,
                   fontWeight: FontWeight.w600,
-                  color: SrColors.text,
+                  color: context.srText,
                   letterSpacing: -0.03 * 30,
                   height: 1.1,
                 ),
@@ -245,7 +245,7 @@ class _TabSwitcher extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: SrColors.tintXs,
+        color: context.srTintXs,
         borderRadius: BorderRadius.circular(100),
       ),
       child: Row(
@@ -259,7 +259,7 @@ class _TabSwitcher extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: active ? SrColors.bgElev2 : Colors.transparent,
+                  color: active ? context.srBgElev2 : Colors.transparent,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Center(
@@ -268,7 +268,7 @@ class _TabSwitcher extends StatelessWidget {
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: active ? SrColors.text : SrColors.textMuted,
+                      color: active ? context.srText : context.srTextMuted,
                     ),
                   ),
                 ),
@@ -299,9 +299,9 @@ class _DuelCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(18),
       child: Container(
         decoration: BoxDecoration(
-          color: SrColors.bgElev,
+          color: context.srBgElev,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: SrColors.lineStrong),
+          border: Border.all(color: context.srLineStrong),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -321,7 +321,7 @@ class _DuelCard extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.text,
+                            color: context.srText,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -330,7 +330,7 @@ class _DuelCard extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 36,
                             fontWeight: FontWeight.w700,
-                            color: meWinning ? SrColors.lime : SrColors.text,
+                            color: meWinning ? SrColors.lime : context.srText,
                             letterSpacing: -0.04 * 36,
                             height: 1,
                           ),
@@ -345,7 +345,7 @@ class _DuelCard extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: SrColors.textDim,
+                          color: context.srTextDim,
                           letterSpacing: 0.1 * 14,
                         ),
                       ),
@@ -382,7 +382,7 @@ class _DuelCard extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.text,
+                            color: context.srText,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -391,7 +391,7 @@ class _DuelCard extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 36,
                             fontWeight: FontWeight.w700,
-                            color: !meWinning ? SrColors.amber : SrColors.text,
+                            color: !meWinning ? SrColors.amber : context.srText,
                             letterSpacing: -0.04 * 36,
                             height: 1,
                           ),
@@ -450,7 +450,7 @@ class _DuelCard extends StatelessWidget {
                         'SAPIENS SCORE',
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
-                          color: SrColors.textDim,
+                          color: context.srTextDim,
                           letterSpacing: 0.1 * 9,
                         ),
                       ),
@@ -492,9 +492,9 @@ class _RoyaleCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(18),
       child: Container(
         decoration: BoxDecoration(
-          color: SrColors.bgElev,
+          color: context.srBgElev,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: SrColors.lineStrong),
+          border: Border.all(color: context.srLineStrong),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -538,7 +538,7 @@ class _RoyaleCard extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                                 color: i == 0
                                     ? SrColors.lime
-                                    : SrColors.textMuted,
+                                    : context.srTextMuted,
                               ),
                             ),
                           ),
@@ -559,7 +559,7 @@ class _RoyaleCard extends StatelessWidget {
                                         fontWeight: p.isMe
                                             ? FontWeight.w600
                                             : FontWeight.w500,
-                                        color: SrColors.text,
+                                        color: context.srText,
                                       ),
                                     ),
                                     Text(
@@ -569,7 +569,7 @@ class _RoyaleCard extends StatelessWidget {
                                         fontWeight: FontWeight.w600,
                                         color: p.isMe
                                             ? SrColors.lime
-                                            : SrColors.text,
+                                            : context.srText,
                                       ),
                                     ),
                                   ],
@@ -582,14 +582,14 @@ class _RoyaleCard extends StatelessWidget {
                                     child: Stack(
                                       fit: StackFit.expand,
                                       children: [
-                                        Container(color: SrColors.tintSm),
+                                        Container(color: context.srTintSm),
                                         FractionallySizedBox(
                                           alignment: Alignment.centerLeft,
                                           widthFactor: widthFactor,
                                           child: Container(
                                             color: p.isMe
                                                 ? SrColors.lime
-                                                : SrColors.tintLg,
+                                                : context.srTintLg,
                                           ),
                                         ),
                                       ],
@@ -634,9 +634,9 @@ class _PendingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: SrColors.bgElev,
+        color: context.srBgElev,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: SrColors.lineStrong),
+        border: Border.all(color: context.srLineStrong),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -666,7 +666,7 @@ class _PendingCard extends StatelessWidget {
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: SrColors.text,
+                      color: context.srText,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -674,7 +674,7 @@ class _PendingCard extends StatelessWidget {
                     '${fight.stakeIcon} ${fight.stakeLabel}',
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 11,
-                      color: SrColors.textMuted,
+                      color: context.srTextMuted,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -689,13 +689,13 @@ class _PendingCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    border: Border.all(color: SrColors.lineStrong),
+                    border: Border.all(color: context.srLineStrong),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.close,
                     size: 16,
-                    color: SrColors.textMuted,
+                    color: context.srTextMuted,
                   ),
                 ),
               )
@@ -707,13 +707,13 @@ class _PendingCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        border: Border.all(color: SrColors.lineStrong),
+                        border: Border.all(color: context.srLineStrong),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close,
                         size: 16,
-                        color: SrColors.textMuted,
+                        color: context.srTextMuted,
                       ),
                     ),
                   ),
@@ -758,9 +758,9 @@ class _HistoryRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: SrColors.bgElev,
+        color: context.srBgElev,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: SrColors.line),
+        border: Border.all(color: context.srLine),
       ),
       child: Row(
         children: [
@@ -777,7 +777,7 @@ class _HistoryRow extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: SrColors.text,
+                        color: context.srText,
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -788,7 +788,7 @@ class _HistoryRow extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: won == null
-                            ? SrColors.textDim.withAlpha(0x1F)
+                            ? context.srTextDim.withAlpha(0x1F)
                             : won
                             ? SrColors.lime.withAlpha(0x1F)
                             : SrColors.rose.withAlpha(0x1F),
@@ -800,7 +800,7 @@ class _HistoryRow extends StatelessWidget {
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
                           color: won == null
-                              ? SrColors.textDim
+                              ? context.srTextDim
                               : won
                               ? SrColors.lime
                               : SrColors.rose,
@@ -815,7 +815,7 @@ class _HistoryRow extends StatelessWidget {
                   '${fight.myScore.toStringAsFixed(0)}–${fight.opponentScore.toStringAsFixed(0)} · ${fight.stakeLabel} · ${fight.dateFormatted}',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 10,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                   ),
                 ),
               ],
@@ -826,10 +826,10 @@ class _HistoryRow extends StatelessWidget {
             style: GoogleFonts.jetBrainsMono(
               fontSize: 18,
               color: won == null
-                  ? SrColors.textDim
+                  ? context.srTextDim
                   : won
                   ? SrColors.lime
-                  : SrColors.textDim,
+                  : context.srTextDim,
             ),
           ),
         ],
@@ -847,9 +847,9 @@ class _StatusStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: const BoxDecoration(
-        color: SrColors.tintXs,
-        border: Border(bottom: BorderSide(color: SrColors.line)),
+      decoration: BoxDecoration(
+        color: context.srTintXs,
+        border: Border(bottom: BorderSide(color: context.srLine)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -875,7 +875,7 @@ class _StatusStrip extends StatelessWidget {
                 label,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10,
-                  color: SrColors.text,
+                  color: context.srText,
                   letterSpacing: 0.15 * 10,
                 ),
               ),
@@ -885,7 +885,7 @@ class _StatusStrip extends StatelessWidget {
             text: TextSpan(
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
-                color: SrColors.textMuted,
+                color: context.srTextMuted,
               ),
               children: [
                 const TextSpan(text: 'ends in '),
@@ -929,7 +929,7 @@ class _StakeBanner extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: SrColors.tintSm,
+              color: context.srTintSm,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -945,7 +945,7 @@ class _StakeBanner extends StatelessWidget {
                   'WINNER TAKES',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 9,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                     letterSpacing: 0.15 * 9,
                   ),
                 ),
@@ -955,7 +955,7 @@ class _StakeBanner extends StatelessWidget {
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: SrColors.text,
+                    color: context.srText,
                   ),
                 ),
               ],
@@ -991,7 +991,7 @@ class _Avatar extends StatelessWidget {
               color: player.avatarColor.withAlpha(0x33),
               border: ring
                   ? Border.all(color: player.avatarColor, width: 2)
-                  : Border.all(color: SrColors.line, width: 1),
+                  : Border.all(color: context.srLine, width: 1),
             ),
             child: Center(
               child: Text(
@@ -1011,9 +1011,9 @@ class _Avatar extends StatelessWidget {
             child: Container(
               width: badgeSize,
               height: badgeSize,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: SrColors.bgElev2,
+                color: context.srBgElev2,
               ),
               child: Center(
                 child: Text(
@@ -1042,7 +1042,7 @@ class _EmptyState extends StatelessWidget {
           label,
           style: GoogleFonts.jetBrainsMono(
             fontSize: 12,
-            color: SrColors.textDim,
+            color: context.srTextDim,
           ),
         ),
       ),

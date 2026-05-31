@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class SrBottomSheet extends StatelessWidget {
   const SrBottomSheet({
@@ -24,7 +24,8 @@ class SrBottomSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => SrBottomSheet(title: title, padding: padding, child: child),
+      builder: (_) =>
+          SrBottomSheet(title: title, padding: padding, child: child),
     );
   }
 
@@ -33,10 +34,10 @@ class SrBottomSheet extends StatelessWidget {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: SrColors.bgElev,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(top: BorderSide(color: SrColors.lineStrong)),
+      decoration: BoxDecoration(
+        color: context.srBgElev,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(top: BorderSide(color: context.srLineStrong)),
       ),
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Column(
@@ -47,7 +48,7 @@ class SrBottomSheet extends StatelessWidget {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: SrColors.lineStrong,
+              color: context.srLineStrong,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -60,7 +61,7 @@ class SrBottomSheet extends StatelessWidget {
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: SrColors.text,
+                  color: context.srText,
                 ),
               ),
             ),

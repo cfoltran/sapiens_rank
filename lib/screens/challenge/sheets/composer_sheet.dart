@@ -2,9 +2,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
-
 
 class Reward {
   const Reward({
@@ -155,11 +155,12 @@ class _ComposerSheetState extends State<ComposerSheet> {
         stakeIcon: _reward!.icon,
         stakeLabel: _reward!.label,
       );
-      if (mounted)
+      if (mounted) {
         setState(() {
           _sent = true;
           _sending = false;
         });
+      }
       await Future.delayed(const Duration(milliseconds: 1400));
       if (mounted) Navigator.of(context).pop();
     }
@@ -186,11 +187,12 @@ class _ComposerSheetState extends State<ComposerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final canAct = _canContinue && !_sending;
     return Container(
-      decoration: const BoxDecoration(
-        color: SrColors.bgElev2,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(top: BorderSide(color: SrColors.lineStrong)),
+      decoration: BoxDecoration(
+        color: context.srBgElev2,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(top: BorderSide(color: context.srLineStrong)),
       ),
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.88,
@@ -203,7 +205,7 @@ class _ComposerSheetState extends State<ComposerSheet> {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: SrColors.lineStrong,
+              color: context.srLineStrong,
               borderRadius: BorderRadius.circular(100),
             ),
           ),
@@ -260,7 +262,7 @@ class _ComposerSheetState extends State<ComposerSheet> {
                           vertical: 14,
                         ),
                         decoration: BoxDecoration(
-                          border: Border.all(color: SrColors.lineStrong),
+                          border: Border.all(color: context.srLineStrong),
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
@@ -268,7 +270,7 @@ class _ComposerSheetState extends State<ComposerSheet> {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.text,
+                            color: context.srText,
                           ),
                         ),
                       ),
@@ -277,19 +279,17 @@ class _ComposerSheetState extends State<ComposerSheet> {
                   ],
                   Expanded(
                     child: GestureDetector(
-                      onTap: (_canContinue && !_sending) ? _next : null,
+                      onTap: canAct ? _next : null,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
-                          color: (_canContinue && !_sending)
-                              ? SrColors.lime
-                              : SrColors.tintSm,
+                          color: canAct ? context.srLime : context.srTintSm,
                           borderRadius: BorderRadius.circular(100),
-                          boxShadow: (_canContinue && !_sending)
+                          boxShadow: canAct
                               ? [
                                   BoxShadow(
-                                    color: SrColors.lime.withAlpha(0x44),
+                                    color: context.srLime.withAlpha(0x44),
                                     blurRadius: 20,
                                   ),
                                 ]
@@ -310,9 +310,9 @@ class _ComposerSheetState extends State<ComposerSheet> {
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: (_canContinue && !_sending)
+                                    color: canAct
                                         ? SrColors.textInk
-                                        : SrColors.textDim,
+                                        : context.srTextDim,
                                   ),
                                 ),
                         ),
@@ -344,7 +344,7 @@ class _ComposerHeader extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: SrColors.text,
+            color: context.srText,
             letterSpacing: -0.02 * 20,
           ),
         ),
@@ -358,7 +358,7 @@ class _ComposerHeader extends StatelessWidget {
               height: 6,
               margin: const EdgeInsets.only(left: 4),
               decoration: BoxDecoration(
-                color: (active || done) ? SrColors.lime : SrColors.tintMd,
+                color: (active || done) ? context.srLime : context.srTintMd,
                 borderRadius: BorderRadius.circular(100),
               ),
             );
@@ -384,9 +384,9 @@ class _StepPickOpponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 40),
-        child: Center(child: CircularProgressIndicator(color: SrColors.lime)),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Center(child: CircularProgressIndicator(color: context.srLime)),
       );
     }
     return Column(
@@ -396,7 +396,7 @@ class _StepPickOpponent extends StatelessWidget {
           'PLAYERS · ${users.length}',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
-            color: SrColors.textDim,
+            color: context.srTextDim,
             letterSpacing: 0.15 * 10,
           ),
         ),
@@ -410,10 +410,12 @@ class _StepPickOpponent extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
+                color: isSelected
+                    ? context.srLime.withAlpha(0x1A)
+                    : context.srTintXs,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected ? SrColors.lime : Colors.transparent,
+                  color: isSelected ? context.srLime : Colors.transparent,
                 ),
               ),
               child: Row(
@@ -429,14 +431,14 @@ class _StepPickOpponent extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.text,
+                            color: context.srText,
                           ),
                         ),
                         Text(
                           '@${u.firstName.toLowerCase()}',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
-                            color: SrColors.textMuted,
+                            color: context.srTextMuted,
                           ),
                         ),
                       ],
@@ -449,7 +451,7 @@ class _StepPickOpponent extends StatelessWidget {
                         'SCORE',
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
-                          color: SrColors.textDim,
+                          color: context.srTextDim,
                           letterSpacing: 0.1 * 9,
                         ),
                       ),
@@ -459,7 +461,7 @@ class _StepPickOpponent extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: SrColors.text,
+                          color: context.srText,
                         ),
                       ),
                     ],
@@ -501,7 +503,7 @@ class _ComposerAvatar extends StatelessWidget {
               color: user.avatarColor.withAlpha(0x33),
               border: ring
                   ? Border.all(color: user.avatarColor, width: 2)
-                  : Border.all(color: SrColors.line, width: 1),
+                  : Border.all(color: context.srLine, width: 1),
             ),
             child: Center(
               child: Text(
@@ -521,9 +523,9 @@ class _ComposerAvatar extends StatelessWidget {
             child: Container(
               width: badgeSize,
               height: badgeSize,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: SrColors.bgElev2,
+                color: context.srBgElev2,
               ),
               child: Center(
                 child: Text(
@@ -573,7 +575,7 @@ class _StepSetRules extends StatelessWidget {
           'METRIC',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
-            color: SrColors.textDim,
+            color: context.srTextDim,
             letterSpacing: 0.15 * 10,
           ),
         ),
@@ -597,10 +599,12 @@ class _StepSetRules extends StatelessWidget {
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
+                    color: active
+                        ? context.srLime.withAlpha(0x1A)
+                        : context.srTintXs,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: active ? SrColors.lime : SrColors.line,
+                      color: active ? context.srLime : context.srLine,
                     ),
                   ),
                   child: Column(
@@ -615,7 +619,7 @@ class _StepSetRules extends StatelessWidget {
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: SrColors.text,
+                                color: context.srText,
                               ),
                             ),
                           ),
@@ -626,14 +630,14 @@ class _StepSetRules extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: SrColors.tintMd,
+                                color: context.srTintMd,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 'Soon',
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 8,
-                                  color: SrColors.textDim,
+                                  color: context.srTextDim,
                                 ),
                               ),
                             ),
@@ -643,7 +647,7 @@ class _StepSetRules extends StatelessWidget {
                         sub,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
-                          color: SrColors.textDim,
+                          color: context.srTextDim,
                         ),
                       ),
                     ],
@@ -658,7 +662,7 @@ class _StepSetRules extends StatelessWidget {
           'DURATION',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
-            color: SrColors.textDim,
+            color: context.srTextDim,
             letterSpacing: 0.15 * 10,
           ),
         ),
@@ -675,10 +679,12 @@ class _StepSetRules extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.symmetric(vertical: 9),
                   decoration: BoxDecoration(
-                    color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
+                    color: active
+                        ? context.srLime.withAlpha(0x1A)
+                        : context.srTintXs,
                     borderRadius: BorderRadius.circular(100),
                     border: Border.all(
-                      color: active ? SrColors.lime : SrColors.line,
+                      color: active ? context.srLime : context.srLine,
                     ),
                   ),
                   child: Center(
@@ -687,7 +693,9 @@ class _StepSetRules extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: active ? SrColors.lime : SrColors.textMuted,
+                        color: active
+                            ? context.srLimeText
+                            : context.srTextMuted,
                       ),
                     ),
                   ),
@@ -718,7 +726,7 @@ class _StepPickReward extends StatelessWidget {
           'PARTNER REWARDS',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
-            color: SrColors.textDim,
+            color: context.srTextDim,
             letterSpacing: 0.15 * 10,
           ),
         ),
@@ -738,10 +746,12 @@ class _StepPickReward extends StatelessWidget {
                 duration: const Duration(milliseconds: 150),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
+                  color: active
+                      ? context.srLime.withAlpha(0x1A)
+                      : context.srTintXs,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: active ? SrColors.lime : SrColors.line,
+                    color: active ? context.srLime : context.srLine,
                   ),
                 ),
                 child: Row(
@@ -758,14 +768,14 @@ class _StepPickReward extends StatelessWidget {
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: SrColors.text,
+                              color: context.srText,
                             ),
                           ),
                           Text(
                             r.desc,
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 9,
-                              color: SrColors.textDim,
+                              color: context.srTextDim,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -783,7 +793,7 @@ class _StepPickReward extends StatelessWidget {
           '✦  OR · INVITE YOUR OPPONENT',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
-            color: SrColors.textDim,
+            color: context.srTextDim,
             letterSpacing: 0.15 * 10,
           ),
         ),
@@ -797,10 +807,12 @@ class _StepPickReward extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: active ? SrColors.lime.withAlpha(0x1A) : SrColors.tintXs,
+                color: active
+                    ? context.srLime.withAlpha(0x1A)
+                    : context.srTintXs,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: active ? SrColors.lime : SrColors.line,
+                  color: active ? context.srLime : context.srLine,
                 ),
               ),
               child: Row(
@@ -809,15 +821,15 @@ class _StepPickReward extends StatelessWidget {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: SrColors.lime.withAlpha(0x1A),
+                      color: context.srLime.withAlpha(0x1A),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
                       child: Text(
                         r.icon,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
-                          color: SrColors.lime,
+                          color: context.srLimeText,
                         ),
                       ),
                     ),
@@ -836,14 +848,14 @@ class _StepPickReward extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.text,
+                            color: context.srText,
                           ),
                         ),
                         Text(
                           r.desc,
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
-                            color: SrColors.textDim,
+                            color: context.srTextDim,
                           ),
                         ),
                       ],
@@ -876,7 +888,7 @@ class _SentConfirmation extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 22,
               fontWeight: FontWeight.w600,
-              color: SrColors.text,
+              color: context.srText,
               letterSpacing: -0.02 * 22,
             ),
           ),
@@ -885,7 +897,7 @@ class _SentConfirmation extends StatelessWidget {
             '$opponentName will be notified',
             style: GoogleFonts.jetBrainsMono(
               fontSize: 12,
-              color: SrColors.textMuted,
+              color: context.srTextMuted,
             ),
           ),
         ],

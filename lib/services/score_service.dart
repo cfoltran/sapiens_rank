@@ -176,6 +176,33 @@ class ScoreService {
     }
   }
 
+  /// Returns scored days as (date, score) pairs, ordered ascending.
+  /// Only days with actual data are returned — callers should position
+  /// them relative to the window start/end for accurate charting.
+  Future<List<(DateTime, int)>> getScoreHistoryDated({int days = 30}) async {
+    final uid = _userId;
+    if (uid == null) return [];
+    try {
+      final rows = await _db
+          .from('scores')
+          .select('date, score')
+          .eq('user_id', uid)
+          .gte(
+            'date',
+            _isoDate(DateTime.now().subtract(Duration(days: days - 1))),
+          )
+          .order('date')
+          .limit(days);
+      return rows
+          .map<(DateTime, int)>(
+            (r) => (DateTime.parse(r['date'] as String), r['score'] as int),
+          )
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   Future<List<LeaderboardEntry>> getTopLeaderboard({
     String? country,
     int limit = 12,

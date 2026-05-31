@@ -1,12 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/screens/fight/fight_page.dart';
+import 'package:sapiens_rank/screens/profile/profile_page.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
 import 'package:sapiens_rank/screens/world/world_page.dart';
-import 'package:sapiens_rank/services/auth_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialTab = 0});
@@ -39,110 +38,10 @@ class _HomePageState extends State<HomePage> {
           TodayPage(onNavigateToWorld: () => _switchTab(1)),
           const WorldPage(),
           const FightPage(),
-          const _ProfileTab(),
+          const ProfilePage(),
         ],
       ),
       bottomNavigationBar: _SrTabBar(selected: _tab, onTap: _switchTab),
-    );
-  }
-}
-
-class _ProfileTab extends StatelessWidget {
-  const _ProfileTab();
-
-  @override
-  Widget build(BuildContext context) {
-    final auth = context.read<AuthService>();
-    return Scaffold(
-      backgroundColor: SrColors.bg,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-          children: [
-            Text(
-              'Profile',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: SrColors.text,
-              ),
-            ),
-            const SizedBox(height: 40),
-            _SettingsRow(
-              icon: Icons.logout,
-              label: 'Sign out',
-              color: SrColors.rose,
-              onTap: () async {
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (dialogContext) => AlertDialog(
-                    backgroundColor: SrColors.bgElev,
-                    title: Text(
-                      'Sign out?',
-                      style: TextStyle(color: SrColors.text),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        child: Text('Cancel', style: TextStyle(color: SrColors.textMuted)),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        child: Text('Sign out', style: TextStyle(color: SrColors.rose)),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirmed == true) auth.signOut();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = color ?? SrColors.text;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: SrColors.tintXs,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: SrColors.line),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: c),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: c,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

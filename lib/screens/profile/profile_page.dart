@@ -109,6 +109,8 @@ class _LoadedBody extends StatelessWidget {
             const SizedBox(height: 18),
             _TrendCard(data: data),
             const SizedBox(height: 18),
+            _ThemeSelector(),
+            const SizedBox(height: 18),
             _SignOutRow(),
           ],
         ),
@@ -183,7 +185,11 @@ class _IdentityCard extends StatelessWidget {
               _StatDivider(),
               _StatCell(label: 'W / L', value: '--'),
               _StatDivider(),
-              _StatCell(label: 'STREAK', value: '${data.streak}d', accent: true),
+              _StatCell(
+                label: 'STREAK',
+                value: '${data.streak}d',
+                accent: true,
+              ),
             ],
           ),
         ],
@@ -543,6 +549,96 @@ class _BigChartPainter extends CustomPainter {
       old.entries != entries || old.limeColor != limeColor;
 }
 
+class _ThemeSelector extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthService>();
+    final current = auth.themeMode;
+
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: context.srTintXs,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.srLine),
+      ),
+      child: Row(
+        children: [
+          _ThemeOption(
+            icon: Icons.light_mode_rounded,
+            label: 'Light',
+            selected: current == ThemeMode.light,
+            onTap: () => auth.setThemeMode(ThemeMode.light),
+          ),
+          _ThemeOption(
+            icon: Icons.phone_iphone_rounded,
+            label: 'System',
+            selected: current == ThemeMode.system,
+            onTap: () => auth.setThemeMode(ThemeMode.system),
+          ),
+          _ThemeOption(
+            icon: Icons.dark_mode_rounded,
+            label: 'Dark',
+            selected: current == ThemeMode.dark,
+            onTap: () => auth.setThemeMode(ThemeMode.dark),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: selected ? context.srBgElev : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: selected ? Border.all(color: context.srLine) : null,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: selected ? context.srLimeText : context.srTextDim,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 11,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  color: selected ? context.srText : context.srTextDim,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _SignOutRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -564,7 +660,10 @@ class _SignOutRow extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
-                child: Text('Sign out', style: TextStyle(color: context.srRose)),
+                child: Text(
+                  'Sign out',
+                  style: TextStyle(color: context.srRose),
+                ),
               ),
             ],
           ),

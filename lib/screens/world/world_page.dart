@@ -595,7 +595,7 @@ class _YouCard extends StatelessWidget {
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: SrColors.lime,
+                      color: context.srLimeText,
                     ),
                   ),
                   const SizedBox(width: 10),

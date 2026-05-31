@@ -17,7 +17,8 @@ class ProfileData extends Equatable {
   final DateTime joinedAt;
   final int lifetimeAvg;
   final int streak;
-  final List<int> scoreHistory30d;
+  /// Each entry is (date, score). Only days with data — positioned by date in chart.
+  final List<(DateTime, int)> scoreHistory30d;
 
   /// Difference between avg of last 15 days vs first 15 days
   final double trendDelta;
@@ -64,5 +65,5 @@ class ProfileData extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, lifetimeAvg, streak, scoreHistory30d];
+  List<Object?> get props => [name, lifetimeAvg, streak];
 }

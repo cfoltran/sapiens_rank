@@ -417,7 +417,7 @@ class _TrendCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           if (data.scoreHistory30d.length >= 2)
-            _BigChart(data: data.scoreHistory30d)
+            _BigChart(entries: data.scoreHistory30d, windowDays: 30)
           else
             const SizedBox(height: 100),
         ],
@@ -427,24 +427,32 @@ class _TrendCard extends StatelessWidget {
 }
 
 class _BigChart extends StatelessWidget {
-  const _BigChart({required this.data});
-  final List<int> data;
+  const _BigChart({required this.entries, required this.windowDays});
+  final List<(DateTime, int)> entries;
+  final int windowDays;
 
   @override
   Widget build(BuildContext context) {
+    final windowStart = DateTime.now().subtract(Duration(days: windowDays - 1));
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
           height: 100,
           child: RepaintBoundary(
-            child: CustomPaint(painter: _BigChartPainter(data: data)),
+            child: CustomPaint(
+              painter: _BigChartPainter(
+                entries: entries,
+                windowStart: windowStart,
+                windowDays: windowDays,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 6),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: ['30d ago', '20d', '10d', 'today'].map((l) {
+          children: ['${windowDays}d ago', '20d', '10d', 'today'].map((l) {
             return Text(
               l,
               style: GoogleFonts.jetBrainsMono(
@@ -461,36 +469,52 @@ class _BigChart extends StatelessWidget {
 }
 
 class _BigChartPainter extends CustomPainter {
-  const _BigChartPainter({required this.data});
-  final List<int> data;
+  const _BigChartPainter({
+    required this.entries,
+    required this.windowStart,
+    required this.windowDays,
+  });
+  final List<(DateTime, int)> entries;
+  final DateTime windowStart;
+  final int windowDays;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (data.length < 2) return;
+    if (entries.length < 2) return;
 
-    final rawMin = data.reduce((a, b) => a < b ? a : b).toDouble();
-    final rawMax = data.reduce((a, b) => a > b ? a : b).toDouble();
-    // Expand range a bit so the line isn't clipped
+    final scores = entries.map((e) => e.$2).toList();
+    final rawMin = scores.reduce((a, b) => a < b ? a : b).toDouble();
+    final rawMax = scores.reduce((a, b) => a > b ? a : b).toDouble();
     final min = (rawMin - 5).clamp(0.0, 90.0);
     final max = (rawMax + 5).clamp(10.0, 100.0);
     final span = max - min == 0 ? 1.0 : max - min;
 
-    final pts = List.generate(data.length, (i) {
-      final x = (i / (data.length - 1)) * size.width;
-      final y = size.height - ((data[i] - min) / span) * (size.height - 12) - 6;
+    // Position each point based on its actual date within the window
+    final windowEnd = windowStart.add(Duration(days: windowDays - 1));
+    final totalMs = windowEnd.difference(windowStart).inMilliseconds.toDouble();
+
+    final pts = entries.map((e) {
+      final date = e.$1;
+      final score = e.$2;
+      final dayMs = date.difference(windowStart).inMilliseconds.toDouble();
+      final x = (dayMs / totalMs).clamp(0.0, 1.0) * size.width;
+      final y = size.height - ((score - min) / span) * (size.height - 12) - 6;
       return Offset(x, y);
-    });
+    }).toList();
 
     // Grid lines
     final gridPaint = Paint()
       ..color = SrColors.tintXs
       ..strokeWidth = 1;
     for (final p in [0.25, 0.5, 0.75]) {
-      final y = size.height * p;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+      canvas.drawLine(
+        Offset(0, size.height * p),
+        Offset(size.width, size.height * p),
+        gridPaint,
+      );
     }
 
-    // Fill path
+    // Fill
     final fillPath = Path()..moveTo(pts.first.dx, pts.first.dy);
     for (final pt in pts.skip(1)) {
       fillPath.lineTo(pt.dx, pt.dy);
@@ -499,7 +523,6 @@ class _BigChartPainter extends CustomPainter {
       ..lineTo(pts.last.dx, size.height)
       ..lineTo(pts.first.dx, size.height)
       ..close();
-
     canvas.drawPath(
       fillPath,
       Paint()
@@ -532,7 +555,7 @@ class _BigChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_BigChartPainter old) => old.data != data;
+  bool shouldRepaint(_BigChartPainter old) => old.entries != entries;
 }
 
 class _SignOutRow extends StatelessWidget {

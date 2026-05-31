@@ -28,30 +28,26 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
           .select('score')
           .eq('user_id', uid);
       final streak = await ScoreService.instance.getStreak();
-      final history30d = await ScoreService.instance.getScoreHistory(days: 30);
-
-      final allScores = allScoresRaw;
+      final history30d = await ScoreService.instance.getScoreHistoryDated(days: 30);
 
       final name = (profile['name'] as String?) ?? 'Sapien';
       final country = (profile['country'] as String?) ?? 'FR';
       final createdAt = DateTime.parse(profile['created_at'] as String);
 
-      final lifetimeAvg = allScores.isEmpty
+      final lifetimeAvg = allScoresRaw.isEmpty
           ? 0
-          : (allScores.map((r) => r['score'] as int).reduce((a, b) => a + b) /
-                    allScores.length)
+          : (allScoresRaw.map((r) => r['score'] as int).reduce((a, b) => a + b) /
+                    allScoresRaw.length)
                 .round();
 
-      // Trend: compare second half vs first half of 30-day window
+      // Trend: compare second half vs first half of available data
       double trendDelta = 0;
       String trendLabel = 'Stable';
       if (history30d.length >= 4) {
-        final half = history30d.length ~/ 2;
-        final firstHalf = history30d.sublist(0, half);
-        final secondHalf = history30d.sublist(half);
-        final firstAvg = firstHalf.reduce((a, b) => a + b) / firstHalf.length;
-        final secondAvg =
-            secondHalf.reduce((a, b) => a + b) / secondHalf.length;
+        final scores = history30d.map((e) => e.$2).toList();
+        final half = scores.length ~/ 2;
+        final firstAvg = scores.sublist(0, half).reduce((a, b) => a + b) / half;
+        final secondAvg = scores.sublist(half).reduce((a, b) => a + b) / (scores.length - half);
         trendDelta = secondAvg - firstAvg;
         if (trendDelta > 1) trendLabel = 'Climbing';
         if (trendDelta < -1) trendLabel = 'Declining';

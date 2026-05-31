@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/common/data/countries.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_selectable_card.dart';
@@ -23,10 +25,10 @@ class CountryStep extends StatefulWidget {
   final VoidCallback onBack;
 
   @override
-  State<CountryStep> createState() => _CountryStepState();
+  State<CountryStep> createState() => SrCountryStepState();
 }
 
-class _CountryStepState extends State<CountryStep> {
+class SrCountryStepState extends State<CountryStep> {
   late String _selected;
   String _query = '';
   late final TextEditingController _searchCtrl;
@@ -45,14 +47,14 @@ class _CountryStepState extends State<CountryStep> {
     super.dispose();
   }
 
-  List<_Country> get _filtered {
-    if (_query.isEmpty) return _kCountries;
+  List<SrCountry> get _filtered {
+    if (_query.isEmpty) return kCountries;
     final q = _query.toLowerCase();
-    return _kCountries.where((c) => c.name.toLowerCase().contains(q)).toList();
+    return kCountries.where((c) => c.name.toLowerCase().contains(q)).toList();
   }
 
   String get _selectedFlag =>
-      _kCountries.firstWhere((c) => c.code == _selected).flag;
+      kCountries.firstWhere((c) => c.code == _selected).flag;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +80,7 @@ class _CountryStepState extends State<CountryStep> {
             'Plant your flag.',
             style: Theme.of(
               context,
-            ).textTheme.displayMedium!.copyWith(color: SrColors.text),
+            ).textTheme.displayMedium!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 10),
           const OnboardingLede(
@@ -88,7 +90,7 @@ class _CountryStepState extends State<CountryStep> {
           const SizedBox(height: 24),
           _SearchInput(controller: _searchCtrl),
           const SizedBox(height: 14),
-          _CountryList(
+          SrCountryList(
             countries: _filtered,
             selected: _selected,
             onSelect: (code) => setState(() => _selected = code),
@@ -112,8 +114,8 @@ class _SearchInput extends StatelessWidget {
       hintText: 'Search country...',
       style: tt.bodyMedium,
       borderRadius: 14,
-      borderColor: SrColors.lineStrong,
-      focusedBorderColor: SrColors.lineStrong,
+      borderColor: context.srLineStrong,
+      focusedBorderColor: context.srLineStrong,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       prefixIcon: const Padding(
         padding: EdgeInsets.only(left: 14, right: 8),
@@ -123,14 +125,14 @@ class _SearchInput extends StatelessWidget {
   }
 }
 
-class _CountryList extends StatelessWidget {
-  const _CountryList({
+class SrCountryList extends StatelessWidget {
+  const SrCountryList({
     required this.countries,
     required this.selected,
     required this.onSelect,
   });
 
-  final List<_Country> countries;
+  final List<SrCountry> countries;
   final String selected;
   final void Function(String code) onSelect;
 
@@ -139,7 +141,7 @@ class _CountryList extends StatelessWidget {
     return Column(
       children: [
         for (final c in countries)
-          _CountryRow(
+          SrCountryRow(
             country: c,
             isSelected: c.code == selected,
             onTap: () => onSelect(c.code),
@@ -149,14 +151,14 @@ class _CountryList extends StatelessWidget {
   }
 }
 
-class _CountryRow extends StatelessWidget {
-  const _CountryRow({
+class SrCountryRow extends StatelessWidget {
+  const SrCountryRow({
     required this.country,
     required this.isSelected,
     required this.onTap,
   });
 
-  final _Country country;
+  final SrCountry country;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -179,7 +181,7 @@ class _CountryRow extends StatelessWidget {
                   country.name,
                   style: tt.labelLarge!.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: SrColors.text,
+                    color: context.srText,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -187,7 +189,7 @@ class _CountryRow extends StatelessWidget {
                   '${country.sapiens} sapiens',
                   style: tt.labelMedium!.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                   ),
                 ),
               ],
@@ -197,9 +199,9 @@ class _CountryRow extends StatelessWidget {
             Container(
               width: 22,
               height: 22,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: SrColors.lime,
+                color: context.srLime,
               ),
               child: const Icon(
                 Icons.check_rounded,
@@ -213,41 +215,3 @@ class _CountryRow extends StatelessWidget {
   }
 }
 
-class _Country {
-  const _Country({
-    required this.code,
-    required this.flag,
-    required this.name,
-    required this.sapiens,
-  });
-
-  final String code;
-  final String flag;
-  final String name;
-  final String sapiens;
-}
-
-const _kCountries = [
-  _Country(code: 'FR', flag: '🇫🇷', name: 'France', sapiens: '184K'),
-  _Country(code: 'US', flag: '🇺🇸', name: 'United States', sapiens: '512K'),
-  _Country(code: 'GB', flag: '🇬🇧', name: 'United Kingdom', sapiens: '143K'),
-  _Country(code: 'DE', flag: '🇩🇪', name: 'Germany', sapiens: '167K'),
-  _Country(code: 'JP', flag: '🇯🇵', name: 'Japan', sapiens: '224K'),
-  _Country(code: 'KR', flag: '🇰🇷', name: 'South Korea', sapiens: '98K'),
-  _Country(code: 'IN', flag: '🇮🇳', name: 'India', sapiens: '301K'),
-  _Country(code: 'BR', flag: '🇧🇷', name: 'Brazil', sapiens: '88K'),
-  _Country(code: 'CA', flag: '🇨🇦', name: 'Canada', sapiens: '76K'),
-  _Country(code: 'AU', flag: '🇦🇺', name: 'Australia', sapiens: '64K'),
-  _Country(code: 'ES', flag: '🇪🇸', name: 'Spain', sapiens: '92K'),
-  _Country(code: 'IT', flag: '🇮🇹', name: 'Italy', sapiens: '102K'),
-  _Country(code: 'NL', flag: '🇳🇱', name: 'Netherlands', sapiens: '52K'),
-  _Country(code: 'SE', flag: '🇸🇪', name: 'Sweden', sapiens: '38K'),
-  _Country(code: 'NO', flag: '🇳🇴', name: 'Norway', sapiens: '22K'),
-  _Country(code: 'CH', flag: '🇨🇭', name: 'Switzerland', sapiens: '31K'),
-  _Country(code: 'BE', flag: '🇧🇪', name: 'Belgium', sapiens: '28K'),
-  _Country(code: 'PT', flag: '🇵🇹', name: 'Portugal', sapiens: '24K'),
-  _Country(code: 'AE', flag: '🇦🇪', name: 'UAE', sapiens: '19K'),
-  _Country(code: 'SG', flag: '🇸🇬', name: 'Singapore', sapiens: '21K'),
-  _Country(code: 'MX', flag: '🇲🇽', name: 'Mexico', sapiens: '67K'),
-  _Country(code: 'CN', flag: '🇨🇳', name: 'China', sapiens: '442K'),
-];

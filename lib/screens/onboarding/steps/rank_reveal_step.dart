@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/common/data/countries.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -91,30 +93,31 @@ class _RankRevealStepState extends State<RankRevealStep>
   Widget build(BuildContext context) {
     final landed = _phase == _Phase.landed;
     final tt = Theme.of(context).textTheme;
+    final limeColor = context.srLime;
 
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: Stack(
         children: [
-          // Full-screen dot field
           Positioned.fill(
             child: AnimatedBuilder(
               animation: _dotsCtrl,
-              builder: (_, _) =>
-                  CustomPaint(painter: _DotsPainter(tick: _dotsCtrl.value)),
+              builder: (_, _) => CustomPaint(
+                painter: _DotsPainter(
+                  tick: _dotsCtrl.value,
+                  limeColor: limeColor,
+                ),
+              ),
             ),
           ),
-          // Content
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Progress bar
                 StepProgressDots(
                   progress: widget.progress,
                   total: widget.total,
                 ),
-                // Body
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(22, 24, 22, 16),
@@ -140,6 +143,7 @@ class _RankRevealStepState extends State<RankRevealStep>
                                 ? _from
                                 : _currentNumber,
                             isLanding: landed,
+                            limeColor: limeColor,
                           ),
                         ),
                         Text(
@@ -147,7 +151,7 @@ class _RankRevealStepState extends State<RankRevealStep>
                           style: tt.labelMedium!.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
-                            color: SrColors.textMuted,
+                            color: context.srTextMuted,
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -161,7 +165,6 @@ class _RankRevealStepState extends State<RankRevealStep>
                     ),
                   ),
                 ),
-                // Footer
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22, 12, 22, 36),
                   child: AnimatedOpacity(
@@ -205,24 +208,29 @@ class _IntroText extends StatelessWidget {
       '$firstName, you are',
       style: Theme.of(context).textTheme.titleLarge!.copyWith(
         fontWeight: FontWeight.w500,
-        color: SrColors.textMuted,
+        color: context.srTextMuted,
       ),
     );
   }
 }
 
 class _RankNumber extends StatelessWidget {
-  const _RankNumber({required this.number, required this.isLanding});
+  const _RankNumber({
+    required this.number,
+    required this.isLanding,
+    required this.limeColor,
+  });
   final int number;
   final bool isLanding;
+  final Color limeColor;
 
   @override
   Widget build(BuildContext context) {
     return ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
+      shaderCallback: (bounds) => LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [SrColors.lime, SrColors.magenta],
+        colors: [limeColor, SrColors.magenta],
       ).createShader(bounds),
       blendMode: BlendMode.srcIn,
       child: Text(
@@ -273,7 +281,7 @@ class _StatsCard extends StatelessWidget {
                   text: TextSpan(
                     style: tt.bodyMedium!.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: SrColors.text,
+                      color: context.srText,
                     ),
                     children: const [
                       TextSpan(text: 'Higher than '),
@@ -290,7 +298,7 @@ class _StatsCard extends StatelessWidget {
                   'Out of 2,401,839 ranked today',
                   style: tt.labelSmall!.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: SrColors.textMuted,
+                    color: context.srTextMuted,
                   ),
                 ),
               ],
@@ -306,44 +314,19 @@ class _CountryCard extends StatelessWidget {
   const _CountryCard({required this.countryCode});
   final String countryCode;
 
-  static const _flags = {
-    'FR': ('🇫🇷', 'France'),
-    'US': ('🇺🇸', 'United States'),
-    'GB': ('🇬🇧', 'United Kingdom'),
-    'DE': ('🇩🇪', 'Germany'),
-    'JP': ('🇯🇵', 'Japan'),
-    'KR': ('🇰🇷', 'South Korea'),
-    'IN': ('🇮🇳', 'India'),
-    'BR': ('🇧🇷', 'Brazil'),
-    'CA': ('🇨🇦', 'Canada'),
-    'AU': ('🇦🇺', 'Australia'),
-    'ES': ('🇪🇸', 'Spain'),
-    'IT': ('🇮🇹', 'Italy'),
-    'NL': ('🇳🇱', 'Netherlands'),
-    'SE': ('🇸🇪', 'Sweden'),
-    'NO': ('🇳🇴', 'Norway'),
-    'CH': ('🇨🇭', 'Switzerland'),
-    'BE': ('🇧🇪', 'Belgium'),
-    'PT': ('🇵🇹', 'Portugal'),
-    'AE': ('🇦🇪', 'UAE'),
-    'SG': ('🇸🇬', 'Singapore'),
-    'MX': ('🇲🇽', 'Mexico'),
-    'CN': ('🇨🇳', 'China'),
-  };
-
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final entry = _flags[countryCode] ?? ('🌍', 'Global');
-    final flag = entry.$1;
-    final name = entry.$2;
+    final country = countryByCode(countryCode);
+    final flag = country.flag;
+    final name = country.name;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: SrColors.tintXs,
+        color: context.srTintXs,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: SrColors.line),
+        border: Border.all(color: context.srLine),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -358,13 +341,13 @@ class _CountryCard extends StatelessWidget {
                 style: tt.labelSmall!.copyWith(
                   fontSize: 9,
                   fontWeight: FontWeight.normal,
-                  color: SrColors.textDim,
+                  color: context.srTextDim,
                   letterSpacing: 1.5,
                 ),
               ),
               Text(
                 '#412',
-                style: tt.titleSmall!.copyWith(color: SrColors.text),
+                style: tt.titleSmall!.copyWith(color: context.srText),
               ),
             ],
           ),
@@ -375,12 +358,13 @@ class _CountryCard extends StatelessWidget {
 }
 
 class _DotsPainter extends CustomPainter {
-  const _DotsPainter({required this.tick});
+  const _DotsPainter({required this.tick, required this.limeColor});
   final double tick;
+  final Color limeColor;
 
   static final _dots = _generate();
 
-  static List<({double x, double y, double size, double phase, Color color})>
+  static List<({double x, double y, double size, double phase, bool isMagenta})>
   _generate() {
     final rng = Random(42);
     return List.generate(90, (_) {
@@ -390,11 +374,7 @@ class _DotsPainter extends CustomPainter {
         y: rng.nextDouble(),
         size: rng.nextDouble() * 2 + 0.5,
         phase: rng.nextDouble() * 2 * pi,
-        color: r > 0.85
-            ? SrColors.magenta
-            : r > 0.70
-            ? SrColors.lime
-            : Colors.white,
+        isMagenta: r > 0.85,
       );
     });
   }
@@ -404,14 +384,16 @@ class _DotsPainter extends CustomPainter {
     for (final d in _dots) {
       final opacity = (0.1 + 0.5 * (0.5 + 0.5 * sin(tick * 2 * pi + d.phase)))
           .clamp(0.0, 1.0);
+      final color = d.isMagenta ? SrColors.magenta : limeColor;
       canvas.drawCircle(
         Offset(d.x * size.width, d.y * size.height),
         d.size,
-        Paint()..color = d.color.withAlpha((opacity * 255).round()),
+        Paint()..color = color.withAlpha((opacity * 255).round()),
       );
     }
   }
 
   @override
-  bool shouldRepaint(_DotsPainter old) => old.tick != tick;
+  bool shouldRepaint(_DotsPainter old) =>
+      old.tick != tick || old.limeColor != limeColor;
 }

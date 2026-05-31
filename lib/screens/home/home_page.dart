@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/fight/fight_page.dart';
 import 'package:sapiens_rank/screens/profile/profile_page.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: IndexedStack(
         index: _tab,
         children: [
@@ -77,20 +77,19 @@ class _SrTabBar extends StatelessWidget {
                 filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: SrColors.navBg,
+                    color: context.srNavBg,
                     borderRadius: BorderRadius.circular(28),
-                    border: Border.all(color: SrColors.lineStrong),
-                    boxShadow: const [
+                    border: Border.all(color: context.srLineStrong),
+                    boxShadow: [
                       BoxShadow(
-                        color: SrColors.shadow,
+                        color: context.srShadow,
                         blurRadius: 40,
-                        offset: Offset(0, 12),
+                        offset: const Offset(0, 12),
                       ),
                     ],
                   ),
                   child: Stack(
                     children: [
-                      // Inset highlight at top
                       Positioned(
                         top: 0,
                         left: 0,
@@ -98,14 +97,15 @@ class _SrTabBar extends StatelessWidget {
                         height: 1,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(15),
+                            color: context.isDark
+                                ? Colors.white.withAlpha(15)
+                                : Colors.black.withAlpha(8),
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(28),
                             ),
                           ),
                         ),
                       ),
-                      // Sliding active pill
                       AnimatedPositioned(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
@@ -115,13 +115,12 @@ class _SrTabBar extends StatelessWidget {
                         width: tabW,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: SrColors.bgElev2,
+                            color: context.srBgElev2,
                             borderRadius: BorderRadius.circular(22),
-                            border: Border.all(color: SrColors.lineStrong),
+                            border: Border.all(color: context.srLineStrong),
                           ),
                         ),
                       ),
-                      // Tab buttons
                       Row(
                         children: List.generate(
                           _tabs.length,
@@ -132,16 +131,12 @@ class _SrTabBar extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AnimatedTheme(
-                                    data: Theme.of(context),
-                                    duration: const Duration(milliseconds: 200),
-                                    child: Icon(
-                                      _tabs[i].icon,
-                                      size: 20,
-                                      color: i == selected
-                                          ? SrColors.lime
-                                          : SrColors.textMuted,
-                                    ),
+                                  Icon(
+                                    _tabs[i].icon,
+                                    size: 20,
+                                    color: i == selected
+                                        ? context.srLimeText
+                                        : context.srTextMuted,
                                   ),
                                   const SizedBox(height: 3),
                                   Text(
@@ -150,8 +145,8 @@ class _SrTabBar extends StatelessWidget {
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
                                       color: i == selected
-                                          ? SrColors.lime
-                                          : SrColors.textMuted,
+                                          ? context.srLimeText
+                                          : context.srTextMuted,
                                       letterSpacing: 0.2,
                                     ),
                                   ),

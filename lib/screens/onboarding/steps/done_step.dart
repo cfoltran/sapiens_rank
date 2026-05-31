@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 
@@ -41,15 +42,20 @@ class _DoneStepState extends State<DoneStep>
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final limeColor = context.srLime;
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: Stack(
         children: [
           Positioned.fill(
             child: AnimatedBuilder(
               animation: _dotsCtrl,
-              builder: (_, _) =>
-                  CustomPaint(painter: _DotsPainter(tick: _dotsCtrl.value)),
+              builder: (_, _) => CustomPaint(
+                painter: _DotsPainter(
+                  tick: _dotsCtrl.value,
+                  limeColor: limeColor,
+                ),
+              ),
             ),
           ),
           SafeArea(
@@ -59,7 +65,7 @@ class _DoneStepState extends State<DoneStep>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const _LogoMark(),
+                      _LogoMark(),
                       const SizedBox(height: 32),
                       const OnboardingEyebrow(
                         "You're in.",
@@ -69,19 +75,21 @@ class _DoneStepState extends State<DoneStep>
                       Text(
                         'Welcome to\nthe ranks,',
                         textAlign: TextAlign.center,
-                        style: tt.displayLarge!.copyWith(color: SrColors.text),
+                        style: tt.displayLarge!.copyWith(color: context.srText),
                       ),
                       Text(
                         '$_firstName.',
                         textAlign: TextAlign.center,
-                        style: tt.displayLarge!.copyWith(color: SrColors.lime),
+                        style: tt.displayLarge!.copyWith(
+                          color: context.srLimeText,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Text(
                         '2.4M Sapiens. One leaderboard.\nToday is your chance to climb.',
                         textAlign: TextAlign.center,
                         style: tt.bodyLarge!.copyWith(
-                          color: SrColors.textMuted,
+                          color: context.srTextMuted,
                         ),
                       ),
                     ],
@@ -104,8 +112,6 @@ class _DoneStepState extends State<DoneStep>
 }
 
 class _LogoMark extends StatelessWidget {
-  const _LogoMark();
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -113,10 +119,10 @@ class _LogoMark extends StatelessWidget {
       height: 84,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        color: SrColors.lime,
+        color: context.srLime,
         boxShadow: [
           BoxShadow(
-            color: SrColors.lime.withAlpha(80),
+            color: context.srLime.withAlpha(80),
             blurRadius: 32,
             spreadRadius: 2,
           ),
@@ -138,12 +144,13 @@ class _LogoMark extends StatelessWidget {
 }
 
 class _DotsPainter extends CustomPainter {
-  const _DotsPainter({required this.tick});
+  const _DotsPainter({required this.tick, required this.limeColor});
   final double tick;
+  final Color limeColor;
 
   static final _dots = _generate();
 
-  static List<({double x, double y, double size, double phase, Color color})>
+  static List<({double x, double y, double size, double phase, bool isMagenta})>
   _generate() {
     final rng = Random(77);
     return List.generate(80, (_) {
@@ -153,11 +160,7 @@ class _DotsPainter extends CustomPainter {
         y: rng.nextDouble(),
         size: rng.nextDouble() * 2 + 0.5,
         phase: rng.nextDouble() * 2 * pi,
-        color: r > 0.85
-            ? SrColors.magenta
-            : r > 0.70
-            ? SrColors.lime
-            : Colors.white,
+        isMagenta: r > 0.85,
       );
     });
   }
@@ -167,14 +170,16 @@ class _DotsPainter extends CustomPainter {
     for (final d in _dots) {
       final opacity = (0.08 + 0.45 * (0.5 + 0.5 * sin(tick * 2 * pi + d.phase)))
           .clamp(0.0, 1.0);
+      final color = d.isMagenta ? SrColors.magenta : limeColor;
       canvas.drawCircle(
         Offset(d.x * size.width, d.y * size.height),
         d.size,
-        Paint()..color = d.color.withAlpha((opacity * 255).round()),
+        Paint()..color = color.withAlpha((opacity * 255).round()),
       );
     }
   }
 
   @override
-  bool shouldRepaint(_DotsPainter old) => old.tick != tick;
+  bool shouldRepaint(_DotsPainter old) =>
+      old.tick != tick || old.limeColor != limeColor;
 }

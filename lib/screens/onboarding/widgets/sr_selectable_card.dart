@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class SrSelectableCard extends StatelessWidget {
   const SrSelectableCard({
@@ -7,7 +7,7 @@ class SrSelectableCard extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     required this.child,
-    this.accentColor = SrColors.lime,
+    this.accentColor,
     this.borderRadius = 14,
     this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     this.margin,
@@ -16,13 +16,14 @@ class SrSelectableCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
   final Widget child;
-  final Color accentColor;
+  final Color? accentColor;
   final double borderRadius;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
+    final accent = accentColor ?? context.srLime;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -31,10 +32,8 @@ class SrSelectableCard extends StatelessWidget {
         padding: padding,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          color: isSelected
-              ? accentColor.withAlpha(26)
-              : SrColors.tintXs,
-          border: Border.all(color: isSelected ? accentColor : SrColors.line),
+          color: isSelected ? accent.withAlpha(26) : context.srTintXs,
+          border: Border.all(color: isSelected ? accent : context.srLine),
         ),
         child: child,
       ),

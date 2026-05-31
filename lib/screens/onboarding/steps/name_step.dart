@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_text_field.dart';
@@ -82,7 +83,7 @@ class _NameStepState extends State<NameStep> {
             'What should the\nworld call you?',
             style: Theme.of(
               context,
-            ).textTheme.displayMedium!.copyWith(color: SrColors.text),
+            ).textTheme.displayMedium!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 10),
           const OnboardingLede(
@@ -118,10 +119,10 @@ class _AvatarPreview extends StatelessWidget {
             height: 104,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: SrColors.lime,
+              color: context.srLime,
               boxShadow: [
                 BoxShadow(
-                  color: SrColors.lime.withAlpha(60),
+                  color: context.srLime.withAlpha(60),
                   blurRadius: 28,
                   spreadRadius: 2,
                 ),
@@ -145,7 +146,7 @@ class _AvatarPreview extends StatelessWidget {
             handle,
             style: tt.labelMedium!.copyWith(
               fontWeight: FontWeight.normal,
-              color: SrColors.textMuted,
+              color: context.srTextMuted,
               letterSpacing: 0.6,
             ),
           ),
@@ -164,7 +165,7 @@ class _NameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final borderColor = hasText ? SrColors.lime : SrColors.lineStrong;
+    final borderColor = hasText ? context.srLime : context.srLineStrong;
 
     return SrTextField(
       controller: controller,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 
 class WelcomeStep extends StatefulWidget {
@@ -41,7 +42,7 @@ class _WelcomeStepState extends State<WelcomeStep>
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -62,10 +63,10 @@ class _WelcomeStepState extends State<WelcomeStep>
                             height: 7,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: SrColors.lime,
+                              color: context.srLime,
                               boxShadow: [
                                 BoxShadow(
-                                  color: SrColors.lime.withAlpha(
+                                  color: context.srLime.withAlpha(
                                     (80 + (_blinkCtrl.value * 120).round()),
                                   ),
                                   blurRadius: 6,
@@ -79,7 +80,7 @@ class _WelcomeStepState extends State<WelcomeStep>
                       Text(
                         'LIVE · WORLD LEADERBOARD',
                         style: tt.labelSmall!.copyWith(
-                          color: SrColors.lime,
+                          color: context.srLimeText,
                           letterSpacing: 1.8,
                         ),
                       ),
@@ -89,7 +90,7 @@ class _WelcomeStepState extends State<WelcomeStep>
                   Text(
                     '2,401,839 sapiens ranked today',
                     style: tt.bodySmall!.copyWith(
-                      color: SrColors.textMuted,
+                      color: context.srTextMuted,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -131,7 +132,7 @@ class _WelcomeStepState extends State<WelcomeStep>
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [SrColors.bg.withAlpha(0), SrColors.bg],
+                            colors: [context.srBg.withAlpha(0), context.srBg],
                           ),
                         ),
                       ),
@@ -142,7 +143,7 @@ class _WelcomeStepState extends State<WelcomeStep>
             ),
 
             Container(
-              color: SrColors.bg,
+              color: context.srBg,
               padding: const EdgeInsets.fromLTRB(22, 8, 22, 36),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,13 +153,13 @@ class _WelcomeStepState extends State<WelcomeStep>
                       style: tt.displayMedium!.copyWith(
                         fontSize: 34,
                         height: 1.05,
-                        color: SrColors.text,
+                        color: context.srText,
                       ),
                       children: [
                         const TextSpan(text: 'Where would you\n'),
                         TextSpan(
                           text: 'land today?',
-                          style: TextStyle(color: SrColors.lime),
+                          style: TextStyle(color: context.srLimeText),
                         ),
                       ],
                     ),
@@ -167,7 +168,7 @@ class _WelcomeStepState extends State<WelcomeStep>
                   Text(
                     'We read your Health data and slot you in.\nTakes 30 seconds.',
                     style: tt.bodySmall!.copyWith(
-                      color: SrColors.textMuted,
+                      color: context.srTextMuted,
                       height: 1.4,
                     ),
                   ),
@@ -288,8 +289,8 @@ class _LeaderRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: SrColors.tintXs,
-        border: Border.all(color: SrColors.line),
+        color: context.srTintXs,
+        border: Border.all(color: context.srLine),
       ),
       child: _RowContent(row: row, tt: tt),
     );
@@ -311,11 +312,11 @@ class _YouRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: SrColors.lime.withAlpha(26),
-            border: Border.all(color: SrColors.lime),
+            color: context.srLime.withAlpha(26),
+            border: Border.all(color: context.srLime),
             boxShadow: [
               BoxShadow(
-                color: SrColors.lime.withAlpha(
+                color: context.srLime.withAlpha(
                   (20 + (pulseCtrl.value * 40).round()),
                 ),
                 blurRadius: 12 + pulseCtrl.value * 6,
@@ -340,19 +341,17 @@ class _RowContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Rank
         SizedBox(
           width: 28,
           child: Text(
             '#${row.rank}',
             style: tt.labelMedium!.copyWith(
-              color: row.isMe ? SrColors.lime : SrColors.textMuted,
+              color: row.isMe ? context.srLimeText : context.srTextMuted,
               fontWeight: FontWeight.w700,
             ),
           ),
         ),
         const SizedBox(width: 10),
-        // Avatar
         Container(
           width: 36,
           height: 36,
@@ -360,7 +359,7 @@ class _RowContent extends StatelessWidget {
             shape: BoxShape.circle,
             color: row.color,
             border: row.isMe
-                ? Border.all(color: SrColors.lime, width: 2)
+                ? Border.all(color: context.srLime, width: 2)
                 : null,
           ),
           child: Center(
@@ -375,7 +374,6 @@ class _RowContent extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        // Name + flag
         Expanded(
           child: Text(
             row.flag.isEmpty ? row.name : '${row.name} ${row.flag}',
@@ -383,18 +381,17 @@ class _RowContent extends StatelessWidget {
             style: tt.bodyMedium!.copyWith(
               fontWeight: row.isMe ? FontWeight.w700 : FontWeight.w600,
               fontStyle: row.isMe ? FontStyle.italic : FontStyle.normal,
-              color: SrColors.text,
+              color: context.srText,
             ),
           ),
         ),
         const SizedBox(width: 8),
-        // Score
         Text(
           row.score,
           style: tt.titleSmall!.copyWith(
             fontWeight: FontWeight.w700,
             fontStyle: row.isMe ? FontStyle.italic : FontStyle.normal,
-            color: row.isMe ? SrColors.lime : SrColors.text,
+            color: row.isMe ? context.srLimeText : context.srText,
             fontSize: 20,
             letterSpacing: -0.5,
           ),

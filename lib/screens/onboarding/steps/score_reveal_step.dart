@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -60,6 +61,9 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
 
   @override
   Widget build(BuildContext context) {
+    final limeColor = context.srLime;
+    final trackColor = context.srTrack;
+
     return StepShell(
       progress: widget.progress,
       total: widget.total,
@@ -80,7 +84,7 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
-            ).textTheme.headlineLarge!.copyWith(color: SrColors.text),
+            ).textTheme.headlineLarge!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 40),
           AnimatedBuilder(
@@ -88,6 +92,8 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
             builder: (_, _) => _BigRing(
               score: _target * _scoreAnim.value,
               target: _target.toDouble(),
+              limeColor: limeColor,
+              trackColor: trackColor,
             ),
           ),
           const SizedBox(height: 36),
@@ -108,10 +114,17 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
 }
 
 class _BigRing extends StatelessWidget {
-  const _BigRing({required this.score, required this.target});
+  const _BigRing({
+    required this.score,
+    required this.target,
+    required this.limeColor,
+    required this.trackColor,
+  });
 
   final double score;
   final double target;
+  final Color limeColor;
+  final Color trackColor;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +138,11 @@ class _BigRing extends StatelessWidget {
         children: [
           CustomPaint(
             size: const Size(260, 260),
-            painter: _RingPainter(fraction: fraction),
+            painter: _RingPainter(
+              fraction: fraction,
+              limeColor: limeColor,
+              trackColor: trackColor,
+            ),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -135,7 +152,7 @@ class _BigRing extends StatelessWidget {
                 style: tt.labelMedium!.copyWith(
                   fontWeight: FontWeight.normal,
                   letterSpacing: 2.2,
-                  color: SrColors.textMuted,
+                  color: context.srTextMuted,
                 ),
               ),
               const SizedBox(height: 4),
@@ -145,14 +162,14 @@ class _BigRing extends StatelessWidget {
                   fontSize: 96,
                   height: 1,
                   letterSpacing: 96 * -0.05,
-                  color: SrColors.text,
+                  color: context.srText,
                 ),
               ),
               Text(
                 '/ 100',
                 style: tt.labelMedium!.copyWith(
                   fontWeight: FontWeight.normal,
-                  color: SrColors.textDim,
+                  color: context.srTextDim,
                   letterSpacing: 1.1,
                 ),
               ),
@@ -165,9 +182,15 @@ class _BigRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.fraction});
+  const _RingPainter({
+    required this.fraction,
+    required this.limeColor,
+    required this.trackColor,
+  });
 
   final double fraction;
+  final Color limeColor;
+  final Color trackColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -182,7 +205,7 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeW
-        ..color = SrColors.tintSm,
+        ..color = trackColor,
     );
 
     if (fraction <= 0) return;
@@ -201,7 +224,7 @@ class _RingPainter extends CustomPainter {
         ..shader = SweepGradient(
           startAngle: -pi / 2,
           endAngle: -pi / 2 + sweepAngle,
-          colors: [SrColors.lime.withAlpha(80), SrColors.magenta.withAlpha(80)],
+          colors: [limeColor.withAlpha(80), SrColors.magenta.withAlpha(80)],
         ).createShader(rect)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
     );
@@ -218,13 +241,16 @@ class _RingPainter extends CustomPainter {
         ..shader = SweepGradient(
           startAngle: -pi / 2,
           endAngle: -pi / 2 + sweepAngle,
-          colors: const [SrColors.lime, SrColors.magenta],
+          colors: [limeColor, SrColors.magenta],
         ).createShader(rect),
     );
   }
 
   @override
-  bool shouldRepaint(_RingPainter old) => old.fraction != fraction;
+  bool shouldRepaint(_RingPainter old) =>
+      old.fraction != fraction ||
+      old.limeColor != limeColor ||
+      old.trackColor != trackColor;
 }
 
 class _DoneText extends StatelessWidget {
@@ -235,7 +261,10 @@ class _DoneText extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     return Column(
       children: [
-        Text('Not bad.', style: tt.titleLarge!.copyWith(color: SrColors.lime)),
+        Text(
+          'Not bad.',
+          style: tt.titleLarge!.copyWith(color: context.srLimeText),
+        ),
         const SizedBox(height: 6),
         Text(
           "You're above average. But the world is bigger than average.",
@@ -243,7 +272,7 @@ class _DoneText extends StatelessWidget {
           style: tt.labelMedium!.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.normal,
-            color: SrColors.textMuted,
+            color: context.srTextMuted,
             letterSpacing: 0.6,
             height: 1.5,
           ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
@@ -64,7 +65,7 @@ class _SyncStepState extends State<SyncStep>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(22, 32, 22, 36),
@@ -126,22 +127,18 @@ class _PulseRing extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: done
-                      ? SrColors.lime.withAlpha(30)
+                      ? context.srLime.withAlpha(30)
                       : SrColors.cyan.withAlpha((12 + (t * 20).round())),
                   border: Border.all(
                     color: done
-                        ? SrColors.lime.withAlpha(180)
+                        ? context.srLime.withAlpha(180)
                         : SrColors.cyan.withAlpha((80 + (t * 120).round())),
                     width: 1.5,
                   ),
                 ),
               ),
               done
-                  ? const Icon(
-                      Icons.check_rounded,
-                      color: SrColors.lime,
-                      size: 28,
-                    )
+                  ? Icon(Icons.check_rounded, color: context.srLime, size: 28)
                   : SizedBox(
                       width: 26,
                       height: 26,
@@ -182,7 +179,7 @@ class _LoadingHeadline extends StatelessWidget {
           style: tt.headlineLarge!.copyWith(
             fontSize: 36,
             height: 1.05,
-            color: SrColors.text,
+            color: context.srText,
           ),
         ),
       ],
@@ -202,7 +199,7 @@ class _DoneHeadline extends StatelessWidget {
         Text(
           'ALL SYSTEMS GO',
           style: tt.labelSmall!.copyWith(
-            color: SrColors.lime,
+            color: context.srLimeText,
             letterSpacing: 1.4,
           ),
         ),
@@ -212,13 +209,13 @@ class _DoneHeadline extends StatelessWidget {
             style: tt.headlineLarge!.copyWith(
               fontSize: 36,
               height: 1.05,
-              color: SrColors.text,
+              color: context.srText,
             ),
-            children: const [
-              TextSpan(text: 'Data locked\nin. '),
+            children: [
+              const TextSpan(text: 'Data locked\nin. '),
               TextSpan(
                 text: "Let's rank.",
-                style: TextStyle(color: SrColors.lime),
+                style: TextStyle(color: context.srLimeText),
               ),
             ],
           ),
@@ -283,7 +280,7 @@ class _MetricRow extends StatelessWidget {
                       item.label,
                       style: tt.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: SrColors.textMuted,
+                        color: context.srTextMuted,
                       ),
                     ),
                   ),
@@ -291,13 +288,13 @@ class _MetricRow extends StatelessWidget {
                     item.value,
                     style: tt.labelMedium!.copyWith(
                       fontSize: 13,
-                      color: SrColors.text,
+                      color: context.srText,
                     ),
                   ),
                 ],
               ),
             ),
-            if (!isLast) const Divider(height: 1, color: SrColors.tintSm),
+            if (!isLast) Divider(height: 1, color: context.srTintSm),
           ],
         ),
       ),

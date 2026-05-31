@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 /// Animated shimmer placeholder. Stretch-fills its parent when [width] is
 /// omitted; use inside a constrained parent (Row, Column stretch, etc.).
@@ -40,25 +40,22 @@ class _SrSkeletonState extends State<SrSkeleton>
 
   @override
   Widget build(BuildContext context) {
+    final base = context.srBgElev;
+    final highlight = context.srBgElev2;
     return AnimatedBuilder(
       animation: _ctrl,
-      builder:
-          (context, _) => Container(
-            width: widget.width,
-            height: widget.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              gradient: LinearGradient(
-                begin: Alignment(-1.5 + _ctrl.value * 3.5, 0),
-                end: Alignment(-0.5 + _ctrl.value * 3.5, 0),
-                colors: const [
-                  SrColors.bgElev,
-                  SrColors.bgElev2,
-                  SrColors.bgElev,
-                ],
-              ),
-            ),
+      builder: (context, _) => Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          gradient: LinearGradient(
+            begin: Alignment(-1.5 + _ctrl.value * 3.5, 0),
+            end: Alignment(-0.5 + _ctrl.value * 3.5, 0),
+            colors: [base, highlight, base],
           ),
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -54,7 +54,7 @@ class _AgeStepState extends State<AgeStep> {
             'How old are you?',
             style: Theme.of(
               context,
-            ).textTheme.displayMedium!.copyWith(color: SrColors.text),
+            ).textTheme.displayMedium!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 10),
           const OnboardingLede(
@@ -87,7 +87,7 @@ class _AgeSlider extends StatelessWidget {
             Text(
               'AGE',
               style: tt.labelSmall!.copyWith(
-                color: SrColors.textDim,
+                color: context.srTextDim,
                 letterSpacing: 1.2,
               ),
             ),
@@ -98,7 +98,7 @@ class _AgeSlider extends StatelessWidget {
                 fontStyle: FontStyle.normal,
                 height: 1,
                 letterSpacing: 48 * -0.04,
-                color: SrColors.lime,
+                color: context.srLimeText,
               ),
             ),
           ],
@@ -106,10 +106,10 @@ class _AgeSlider extends StatelessWidget {
         const SizedBox(height: 12),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            activeTrackColor: SrColors.lime,
-            inactiveTrackColor: SrColors.lineStrong,
-            thumbColor: SrColors.lime,
-            overlayColor: SrColors.lime.withAlpha(30),
+            activeTrackColor: context.srLime,
+            inactiveTrackColor: context.srLineStrong,
+            thumbColor: context.srLime,
+            overlayColor: context.srLime.withAlpha(30),
             trackHeight: 4,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
@@ -130,7 +130,7 @@ class _AgeSlider extends StatelessWidget {
                 '16',
                 style: tt.labelSmall!.copyWith(
                   fontWeight: FontWeight.normal,
-                  color: SrColors.textDim,
+                  color: context.srTextDim,
                   letterSpacing: 1.5,
                 ),
               ),
@@ -138,7 +138,7 @@ class _AgeSlider extends StatelessWidget {
                 '80',
                 style: tt.labelSmall!.copyWith(
                   fontWeight: FontWeight.normal,
-                  color: SrColors.textDim,
+                  color: context.srTextDim,
                   letterSpacing: 1.5,
                 ),
               ),

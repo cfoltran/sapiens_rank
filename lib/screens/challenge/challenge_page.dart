@@ -4,36 +4,36 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
-import 'package:sapiens_rank/screens/fight/cubit/fight_cubit.dart';
-import 'package:sapiens_rank/screens/fight/cubit/fight_state.dart';
-import 'package:sapiens_rank/screens/fight/sheets/composer_sheet.dart';
+import 'package:sapiens_rank/screens/challenge/cubit/challenge_cubit.dart';
+import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
+import 'package:sapiens_rank/screens/challenge/sheets/composer_sheet.dart';
 
-enum _FightTab { live, pending, history }
+enum _ChallengeTab { live, pending, history }
 
-class FightPage extends StatelessWidget {
-  const FightPage({super.key});
+class ChallengePage extends StatelessWidget {
+  const ChallengePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => FightCubit()..load(),
-      child: const _FightView(),
+      create: (_) => ChallengeCubit()..load(),
+      child: const _ChallengeView(),
     );
   }
 }
 
-class _FightView extends StatefulWidget {
-  const _FightView();
+class _ChallengeView extends StatefulWidget {
+  const _ChallengeView();
 
   @override
-  State<_FightView> createState() => _FightViewState();
+  State<_ChallengeView> createState() => _ChallengeViewState();
 }
 
-class _FightViewState extends State<_FightView> {
-  _FightTab _tab = _FightTab.live;
+class _ChallengeViewState extends State<_ChallengeView> {
+  _ChallengeTab _tab = _ChallengeTab.live;
 
   void _openComposer() {
-    final cubit = context.read<FightCubit>();
+    final cubit = context.read<ChallengeCubit>();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -57,9 +57,9 @@ class _FightViewState extends State<_FightView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FightCubit, DataState<FightData>>(
+    return BlocBuilder<ChallengeCubit, DataState<ChallengeData>>(
       builder: (context, state) {
-        final cubit = context.read<FightCubit>();
+        final cubit = context.read<ChallengeCubit>();
         final data = state.data;
         final liveCount = data?.live.length ?? 0;
 
@@ -106,7 +106,7 @@ class _FightViewState extends State<_FightView> {
                   _ => ListView(
                     padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
                     children: [
-                      if (_tab == _FightTab.live) ...[
+                      if (_tab == _ChallengeTab.live) ...[
                         ...?data?.live.map(
                           (f) => Padding(
                             padding: const EdgeInsets.only(bottom: 14),
@@ -118,7 +118,7 @@ class _FightViewState extends State<_FightView> {
                         if (data?.live.isEmpty ?? true)
                           const _EmptyState(label: 'No live challenges'),
                       ],
-                      if (_tab == _FightTab.pending) ...[
+                      if (_tab == _ChallengeTab.pending) ...[
                         ...?data?.pending.map(
                           (f) => Padding(
                             padding: const EdgeInsets.only(bottom: 14),
@@ -134,7 +134,7 @@ class _FightViewState extends State<_FightView> {
                         if (data?.pending.isEmpty ?? true)
                           const _EmptyState(label: 'No pending invites'),
                       ],
-                      if (_tab == _FightTab.history) ...[
+                      if (_tab == _ChallengeTab.history) ...[
                         ...?data?.history.map(
                           (f) => Padding(
                             padding: const EdgeInsets.only(bottom: 8),
@@ -142,7 +142,7 @@ class _FightViewState extends State<_FightView> {
                           ),
                         ),
                         if (data?.history.isEmpty ?? true)
-                          const _EmptyState(label: 'No fights yet'),
+                          const _EmptyState(label: 'No challenges yet'),
                       ],
                     ],
                   ),
@@ -180,7 +180,7 @@ class _Header extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                'Fight',
+                'Challenge',
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 30,
                   fontWeight: FontWeight.w600,
@@ -231,16 +231,16 @@ class _TabSwitcher extends StatelessWidget {
     required this.pendingCount,
     required this.onSelect,
   });
-  final _FightTab tab;
+  final _ChallengeTab tab;
   final int pendingCount;
-  final ValueChanged<_FightTab> onSelect;
+  final ValueChanged<_ChallengeTab> onSelect;
 
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      (_FightTab.live, 'Live'),
-      (_FightTab.pending, 'Pending · $pendingCount'),
-      (_FightTab.history, 'History'),
+      (_ChallengeTab.live, 'Live'),
+      (_ChallengeTab.pending, 'Pending · $pendingCount'),
+      (_ChallengeTab.history, 'History'),
     ];
     return Container(
       padding: const EdgeInsets.all(4),
@@ -283,7 +283,7 @@ class _TabSwitcher extends StatelessWidget {
 
 class _DuelCard extends StatelessWidget {
   const _DuelCard({required this.fight});
-  final LiveFight fight;
+  final LiveChallenge fight;
 
   @override
   Widget build(BuildContext context) {
@@ -485,7 +485,7 @@ class _DuelCard extends StatelessWidget {
 
 class _RoyaleCard extends StatelessWidget {
   const _RoyaleCard({required this.fight});
-  final LiveFight fight;
+  final LiveChallenge fight;
 
   @override
   Widget build(BuildContext context) {
@@ -629,7 +629,7 @@ class _PendingCard extends StatelessWidget {
     required this.onDecline,
     required this.onCancel,
   });
-  final PendingFight fight;
+  final PendingChallenge fight;
   final VoidCallback onAccept;
   final VoidCallback onDecline;
   final VoidCallback onCancel;
@@ -754,7 +754,7 @@ class _PendingCard extends StatelessWidget {
 
 class _HistoryRow extends StatelessWidget {
   const _HistoryRow({required this.fight});
-  final HistoryFight fight;
+  final HistoryChallenge fight;
 
   @override
   Widget build(BuildContext context) {
@@ -968,7 +968,7 @@ class _StakeBanner extends StatelessWidget {
 
 class _Avatar extends StatelessWidget {
   const _Avatar({required this.player, required this.size, required this.ring});
-  final FightParticipant player;
+  final ChallengePlayer player;
   final double size;
   final bool ring;
 

@@ -6,8 +6,8 @@ import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_selectable_card.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
 
-class FirstFightStep extends StatefulWidget {
-  const FirstFightStep({
+class FirstChallengeStep extends StatefulWidget {
+  const FirstChallengeStep({
     super.key,
     required this.progress,
     required this.total,
@@ -21,10 +21,10 @@ class FirstFightStep extends StatefulWidget {
   final VoidCallback onBack;
 
   @override
-  State<FirstFightStep> createState() => _FirstFightStepState();
+  State<FirstChallengeStep> createState() => _FirstChallengeStepState();
 }
 
-class _FirstFightStepState extends State<FirstFightStep> {
+class _FirstChallengeStepState extends State<FirstChallengeStep> {
   String _reward = 'coffee';
 
   @override
@@ -49,7 +49,7 @@ class _FirstFightStepState extends State<FirstFightStep> {
           const OnboardingEyebrow("Don't just rank.", color: SrColors.magenta),
           const SizedBox(height: 6),
           Text(
-            'Fight.',
+            'Challenge.',
             style: Theme.of(context).textTheme.displayLarge!.copyWith(
               height: 1.0,
               color: context.srText,
@@ -132,7 +132,7 @@ class _FaceOffCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Expanded(child: _Fighter(isMe: true)),
+                  Expanded(child: _Challenger(isMe: true)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
@@ -142,7 +142,7 @@ class _FaceOffCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Expanded(child: _Fighter(isMe: false)),
+                  Expanded(child: _Challenger(isMe: false)),
                 ],
               ),
               const SizedBox(height: 16),
@@ -173,8 +173,8 @@ class _FaceOffCard extends StatelessWidget {
   }
 }
 
-class _Fighter extends StatelessWidget {
-  const _Fighter({required this.isMe});
+class _Challenger extends StatelessWidget {
+  const _Challenger({required this.isMe});
   final bool isMe;
 
   @override

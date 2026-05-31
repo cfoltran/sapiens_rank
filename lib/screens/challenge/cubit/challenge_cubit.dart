@@ -6,10 +6,10 @@ import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'fight_state.dart';
+import 'challenge_state.dart';
 
-class FightCubit extends Cubit<DataState<FightData>> {
-  FightCubit() : super(const DataState.loading());
+class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
+  ChallengeCubit() : super(const DataState.loading());
 
   final _service = ChallengeService.instance;
   String get _myId => Supabase.instance.client.auth.currentUser!.id;
@@ -26,9 +26,9 @@ class FightCubit extends Cubit<DataState<FightData>> {
         }),
       );
 
-      final live = <LiveFight>[];
-      final pending = <PendingFight>[];
-      final history = <HistoryFight>[];
+      final live = <LiveChallenge>[];
+      final pending = <PendingChallenge>[];
+      final history = <HistoryChallenge>[];
 
       for (final c in challenges) {
         if (c.status == ChallengeStatus.cancelled) continue;
@@ -42,7 +42,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
             );
             if (c.endsAt == null) break;
             live.add(
-              LiveFight(
+              LiveChallenge(
                 id: c.id,
                 stakeIcon: c.stakeIcon,
                 stakeLabel: c.stakeLabel,
@@ -60,7 +60,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
               orElse: () => c.challengeParticipants.first,
             );
             pending.add(
-              PendingFight(
+              PendingChallenge(
                 id: c.id,
                 stakeIcon: c.stakeIcon,
                 stakeLabel: c.stakeLabel,
@@ -93,7 +93,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
             );
             final bool? won = c.winnerId == null ? null : c.winnerId == _myId;
             history.add(
-              HistoryFight(
+              HistoryChallenge(
                 id: c.id,
                 stakeLabel: '${c.stakeIcon} ${c.stakeLabel}'.trim(),
                 opponent: opponent,
@@ -108,7 +108,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
 
       emit(
         DataState.success(
-          FightData(live: live, pending: pending, history: history),
+          ChallengeData(live: live, pending: pending, history: history),
         ),
       );
     } catch (e, st) {
@@ -141,7 +141,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
     load();
   }
 
-  List<FightParticipant> _mapParticipants(
+  List<ChallengePlayer> _mapParticipants(
     List<ChallengeParticipant> participants,
     List<ChallengeStanding> standings,
   ) {
@@ -158,7 +158,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
     }).toList()..sort((a, b) => a.rank.compareTo(b.rank));
   }
 
-  FightParticipant _toParticipant(
+  ChallengePlayer _toParticipant(
     ChallengeParticipant p, {
     required double score,
     required int rank,
@@ -166,7 +166,7 @@ class FightCubit extends Cubit<DataState<FightData>> {
   }) {
     final name = p.profiles.name;
     final country = p.profiles.country;
-    return FightParticipant(
+    return ChallengePlayer(
       userId: p.userId,
       displayName: name,
       initials: _initials(name),

@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
-import 'package:sapiens_rank/screens/fight/cubit/fight_state.dart';
+import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
 
 

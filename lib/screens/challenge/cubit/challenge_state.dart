@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class FightParticipant extends Equatable {
-  const FightParticipant({
+class ChallengePlayer extends Equatable {
+  const ChallengePlayer({
     required this.userId,
     required this.displayName,
     required this.initials,
@@ -28,8 +28,8 @@ class FightParticipant extends Equatable {
   List<Object?> get props => [userId, score, rank, isMe];
 }
 
-class LiveFight extends Equatable {
-  const LiveFight({
+class LiveChallenge extends Equatable {
+  const LiveChallenge({
     required this.id,
     required this.stakeIcon,
     required this.stakeLabel,
@@ -41,10 +41,10 @@ class LiveFight extends Equatable {
   final String stakeIcon;
   final String stakeLabel;
   final DateTime endsAt;
-  final List<FightParticipant> participants;
+  final List<ChallengePlayer> participants;
 
-  FightParticipant get me => participants.firstWhere((p) => p.isMe);
-  List<FightParticipant> get opponents =>
+  ChallengePlayer get me => participants.firstWhere((p) => p.isMe);
+  List<ChallengePlayer> get opponents =>
       participants.where((p) => !p.isMe).toList();
   bool get is1v1 => participants.length == 2;
 
@@ -64,8 +64,8 @@ class LiveFight extends Equatable {
   List<Object?> get props => [id, participants];
 }
 
-class PendingFight extends Equatable {
-  const PendingFight({
+class PendingChallenge extends Equatable {
+  const PendingChallenge({
     required this.id,
     required this.stakeIcon,
     required this.stakeLabel,
@@ -76,15 +76,15 @@ class PendingFight extends Equatable {
   final String id;
   final String stakeIcon;
   final String stakeLabel;
-  final FightParticipant opponent;
+  final ChallengePlayer opponent;
   final bool iAmCreator;
 
   @override
   List<Object?> get props => [id];
 }
 
-class HistoryFight extends Equatable {
-  const HistoryFight({
+class HistoryChallenge extends Equatable {
+  const HistoryChallenge({
     required this.id,
     required this.stakeLabel,
     required this.opponent,
@@ -96,7 +96,7 @@ class HistoryFight extends Equatable {
 
   final String id;
   final String stakeLabel;
-  final FightParticipant opponent;
+  final ChallengePlayer opponent;
   final double myScore;
   final double opponentScore;
   final bool? won; // null = draw
@@ -114,16 +114,16 @@ class HistoryFight extends Equatable {
   List<Object?> get props => [id];
 }
 
-class FightData extends Equatable {
-  const FightData({
+class ChallengeData extends Equatable {
+  const ChallengeData({
     required this.live,
     required this.pending,
     required this.history,
   });
 
-  final List<LiveFight> live;
-  final List<PendingFight> pending;
-  final List<HistoryFight> history;
+  final List<LiveChallenge> live;
+  final List<PendingChallenge> pending;
+  final List<HistoryChallenge> history;
 
   @override
   List<Object?> get props => [live, pending, history];

@@ -74,7 +74,7 @@ class SrCountryStepState extends State<CountryStep> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow('Where do you fight?'),
+          const OnboardingEyebrow('Where do you challenge?'),
           const SizedBox(height: 14),
           Text(
             'Plant your flag.',

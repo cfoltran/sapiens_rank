@@ -57,7 +57,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
           _Headline(),
           const SizedBox(height: 10),
           const OnboardingLede(
-            'Daily score updates. Fight invites. When a friend passes you, you\'ll know.',
+            'Daily score updates. Challenge invites. When a friend passes you, you\'ll know.',
           ),
           const SizedBox(height: 28),
           _NotifPreview(
@@ -115,7 +115,7 @@ class _Headline extends StatelessWidget {
         children: [
           const TextSpan(text: 'Stay in the '),
           TextSpan(
-            text: 'fight.',
+            text: 'challenge.',
             style: TextStyle(
               fontStyle: FontStyle.italic,
               color: context.srLimeText,

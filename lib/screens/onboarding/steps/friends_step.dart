@@ -108,7 +108,7 @@ class _FriendsStepState extends State<FriendsStep> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow("Don't fight alone"),
+          const OnboardingEyebrow("Don't challenge alone"),
           const SizedBox(height: 14),
           _Headline(),
           const SizedBox(height: 8),

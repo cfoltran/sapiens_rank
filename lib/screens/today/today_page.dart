@@ -112,8 +112,6 @@ class _LoadedBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _DateHeader(streak: data.streak),
-              const SizedBox(height: 16),
               Center(child: ScoreRing(score: data.score.toDouble())),
               const SizedBox(height: 10),
               _DeltaRow(
@@ -135,42 +133,6 @@ class _LoadedBody extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DateHeader extends StatelessWidget {
-  const _DateHeader({required this.streak});
-
-  final int streak;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: SrColors.lime.withAlpha(26),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: SrColors.lime.withAlpha(68)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('🔥', style: TextStyle(fontSize: 11)),
-            const SizedBox(width: 5),
-            Text(
-              '$streak d streak',
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: SrColors.lime,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -216,7 +178,12 @@ class _DeltaRow extends StatelessWidget {
         const SizedBox(width: 14),
         Container(width: 1, height: 12, color: context.srLineStrong),
         const SizedBox(width: 14),
-        SparklineChart(data: history, width: 84, height: 20),
+        SparklineChart(
+          data: history,
+          width: 84,
+          height: 20,
+          color: context.srLimeText,
+        ),
       ],
     );
   }
@@ -313,7 +280,7 @@ class _RankTeaserCard extends StatelessWidget {
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   color: data.rankDelta! >= 0
-                                      ? SrColors.lime
+                                      ? context.srLimeText
                                       : SrColors.rose,
                                 ),
                               ),
@@ -371,10 +338,11 @@ class _MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pct = metric.progress;
+    final limeColor = context.srLimeText;
     final barColor = pct >= 0.9
-        ? SrColors.lime
+        ? limeColor
         : pct >= 0.6
-        ? SrColors.lime.withAlpha(204)
+        ? limeColor.withAlpha(204)
         : SrColors.amber;
     final statusLabel = metric.isMaxed
         ? 'maxed'
@@ -408,7 +376,7 @@ class _MetricCard extends StatelessWidget {
                     ),
                     child: Icon(
                       _icon(metric.iconName),
-                      color: SrColors.lime,
+                      color: context.srLimeText,
                       size: 18,
                     ),
                   ),
@@ -509,7 +477,7 @@ class _MetricCard extends StatelessWidget {
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: SrColors.lime,
+                      color: context.srLimeText,
                     ),
                   ),
                 ],

@@ -181,14 +181,17 @@ class ScoreService {
     int limit = 12,
   }) async {
     try {
-      var query = _db.from('leaderboard').select(
-        'user_id, score, rank_world, rank_country, country, rank_delta, profiles(name)',
-      );
+      var query = _db
+          .from('leaderboard')
+          .select(
+            'user_id, score, rank_world, rank_country, country, rank_delta, profiles(name)',
+          );
+
       if (country != null) {
-        return (await (query
+        return (await query
                 .eq('country', country)
                 .order('rank_country')
-                .limit(limit)))
+                .limit(limit))
             .map<LeaderboardEntry>((r) => LeaderboardEntry.fromJson(r))
             .toList();
       }

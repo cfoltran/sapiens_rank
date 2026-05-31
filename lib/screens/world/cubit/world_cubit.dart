@@ -63,7 +63,7 @@ class WorldCubit extends Cubit<DataState<WorldData>> {
     List<LeaderboardEntry> entries, {
     required bool worldwide,
   }) {
-    return entries.map((e) {
+    final players = entries.map((e) {
       final rank =
           (worldwide ? e.rankWorld : e.rankCountry) ?? entries.indexOf(e) + 1;
       final name = e.displayName ?? 'Sapien';
@@ -78,6 +78,8 @@ class WorldCubit extends Cubit<DataState<WorldData>> {
         rankDelta: e.rankDelta,
       );
     }).toList();
+    players.sort((a, b) => a.rank.compareTo(b.rank));
+    return players;
   }
 
   static Color _avatarColor(String userId) {

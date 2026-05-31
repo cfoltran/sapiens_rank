@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/today_skeleton.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_cubit.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
@@ -56,7 +57,7 @@ class _ErrorBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -65,7 +66,7 @@ class _ErrorBody extends StatelessWidget {
               'Could not load health data',
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium!.copyWith(color: SrColors.textMuted),
+              ).textTheme.bodyMedium!.copyWith(color: context.srTextMuted),
             ),
             const SizedBox(height: 16),
             GestureDetector(
@@ -103,7 +104,7 @@ class _LoadedBody extends StatelessWidget {
     final bottomPad = MediaQuery.of(context).padding.bottom + 96.0;
 
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -206,14 +207,14 @@ class _DeltaRow extends StatelessWidget {
               'VS YESTERDAY',
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
-                color: SrColors.textMuted,
+                color: context.srTextMuted,
                 letterSpacing: 11 * 0.05,
               ),
             ),
           ],
         ),
         const SizedBox(width: 14),
-        Container(width: 1, height: 12, color: SrColors.lineStrong),
+        Container(width: 1, height: 12, color: context.srLineStrong),
         const SizedBox(width: 14),
         SparklineChart(data: history, width: 84, height: 20),
       ],
@@ -239,14 +240,13 @@ class _RankTeaserCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: SrColors.bgElev,
+          color: context.srBgElev,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: SrColors.lineStrong),
+          border: Border.all(color: context.srLineStrong),
         ),
         clipBehavior: Clip.hardEdge,
         child: Stack(
           children: [
-            // Amber radial glow
             Positioned(
               top: -30,
               right: -30,
@@ -276,7 +276,7 @@ class _RankTeaserCard extends StatelessWidget {
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.textDim,
+                            color: context.srTextDim,
                             letterSpacing: 10 * 0.18,
                           ),
                         ),
@@ -289,7 +289,7 @@ class _RankTeaserCard extends StatelessWidget {
                               '#',
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 14,
-                                color: SrColors.textMuted,
+                                color: context.srTextMuted,
                               ),
                             ),
                             const SizedBox(width: 2),
@@ -298,7 +298,7 @@ class _RankTeaserCard extends StatelessWidget {
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 36,
                                 fontWeight: FontWeight.w700,
-                                color: SrColors.text,
+                                color: context.srText,
                                 letterSpacing: 36 * -0.04,
                                 height: 1.0,
                               ),
@@ -326,7 +326,7 @@ class _RankTeaserCard extends StatelessWidget {
                               : '${data.countryFlag} ranking soon...',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
-                            color: SrColors.textMuted,
+                            color: context.srTextMuted,
                             letterSpacing: 11 * 0.02,
                           ),
                         ),
@@ -335,7 +335,7 @@ class _RankTeaserCard extends StatelessWidget {
                   ),
                   Icon(
                     Icons.chevron_right,
-                    color: SrColors.textMuted,
+                    color: context.srTextMuted,
                     size: 18,
                   ),
                 ],
@@ -385,9 +385,9 @@ class _MetricCard extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: SrColors.bgElev,
+        color: context.srBgElev,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: SrColors.line),
+        border: Border.all(color: context.srLine),
       ),
       clipBehavior: Clip.hardEdge,
       child: Column(
@@ -399,12 +399,11 @@ class _MetricCard extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
-                  // Icon box
                   Container(
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: SrColors.tintSm,
+                      color: context.srTintSm,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -428,7 +427,7 @@ class _MetricCard extends StatelessWidget {
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: SrColors.text,
+                                color: context.srText,
                               ),
                             ),
                             Row(
@@ -440,14 +439,14 @@ class _MetricCard extends StatelessWidget {
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
-                                    color: SrColors.text,
+                                    color: context.srText,
                                   ),
                                 ),
                                 Text(
                                   '/${metric.target}',
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 10,
-                                    color: SrColors.textDim,
+                                    color: context.srTextDim,
                                   ),
                                 ),
                               ],
@@ -455,7 +454,6 @@ class _MetricCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        // Progress bar
                         LayoutBuilder(
                           builder: (_, constraints) => Stack(
                             children: [
@@ -463,7 +461,7 @@ class _MetricCard extends StatelessWidget {
                                 height: 4,
                                 width: constraints.maxWidth,
                                 decoration: BoxDecoration(
-                                  color: SrColors.tintSm,
+                                  color: context.srTintSm,
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
@@ -488,7 +486,6 @@ class _MetricCard extends StatelessWidget {
               ),
             ),
           ),
-          // Expandable raw detail
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 200),
             crossFadeState: isOpen
@@ -504,7 +501,7 @@ class _MetricCard extends StatelessWidget {
                     metric.rawLabel,
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 11,
-                      color: SrColors.textMuted,
+                      color: context.srTextMuted,
                     ),
                   ),
                   Text(

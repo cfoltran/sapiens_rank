@@ -7,6 +7,26 @@ abstract final class SrColors {
 
   static const bgLight = Color(0xFFF5F0E3);
   static const surfaceLight = Color(0xFFFBF7EC);
+  static const surfaceLightElev = Color(0xFFFFFFFF);
+
+  static const textLight = Color(0xFF15130F);
+  static const textLightMuted = Color(0x9915130F);
+  static const textLightDim = Color(0x6115130F);
+
+  static const lineLight = Color(0x18000000);
+  static const lineStrongLight = Color(0x30000000);
+
+  static const tintXxsDark = Color(0x05000000);
+  static const tintXsDark = Color(0x08000000);
+  static const tintSmDark = Color(0x0D000000);
+  static const tintMdDark = Color(0x14000000);
+  static const tintLgDark = Color(0x1F000000);
+
+  static const navBgLight = Color(0xD9F5F0E3);
+  static const shadowLight = Color(0x1A000000);
+
+  static const bgElev2FadeLight = Color(0xD9FBF7EC);
+  static const bgElev2OpaqueLight = Color(0xFAFBF7EC);
 
   static const tintXxs = Color(0x05FFFFFF);
   static const tintXs = Color(0x08FFFFFF);

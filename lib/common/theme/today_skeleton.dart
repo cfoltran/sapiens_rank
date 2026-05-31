@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/skeleton.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class TodayLoadingSkeleton extends StatelessWidget {
   const TodayLoadingSkeleton({super.key});
@@ -9,7 +9,7 @@ class TodayLoadingSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom + 96.0;
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(

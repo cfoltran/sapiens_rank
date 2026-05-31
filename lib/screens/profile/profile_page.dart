@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_cubit.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
@@ -35,9 +36,9 @@ class _LoadingBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SrColors.bg,
-      body: const Center(
-        child: CircularProgressIndicator(color: SrColors.lime, strokeWidth: 2),
+      backgroundColor: context.srBg,
+      body: Center(
+        child: CircularProgressIndicator(color: context.srLime, strokeWidth: 2),
       ),
     );
   }
@@ -50,7 +51,7 @@ class _ErrorBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -59,7 +60,7 @@ class _ErrorBody extends StatelessWidget {
               'Could not load profile',
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
-                color: SrColors.textMuted,
+                color: context.srTextMuted,
               ),
             ),
             const SizedBox(height: 16),
@@ -70,7 +71,7 @@ class _ErrorBody extends StatelessWidget {
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: SrColors.lime,
+                  color: context.srLimeText,
                 ),
               ),
             ),
@@ -89,32 +90,25 @@ class _LoadedBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom + 96.0;
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
         child: ListView(
           padding: EdgeInsets.fromLTRB(18, 4, 18, bottomPad),
           children: [
-            // Header label
             Text(
               'PROFILE',
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
-                color: SrColors.textDim,
+                color: context.srTextDim,
                 letterSpacing: 11 * 0.15,
               ),
             ),
             const SizedBox(height: 16),
-
-            // Identity card
             _IdentityCard(data: data),
             const SizedBox(height: 18),
-
-            // 30-day trend
             _TrendCard(data: data),
             const SizedBox(height: 18),
-
-            // Sign out
             _SignOutRow(),
           ],
         ),
@@ -132,12 +126,12 @@ class _IdentityCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: SrColors.bgElev,
+        color: context.srBgElev,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: SrColors.lime.withAlpha(68)),
+        border: Border.all(color: context.srLime.withAlpha(68)),
         boxShadow: [
           BoxShadow(
-            color: SrColors.lime.withAlpha(18),
+            color: context.srLime.withAlpha(18),
             blurRadius: 24,
             spreadRadius: 0,
           ),
@@ -146,7 +140,6 @@ class _IdentityCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top row: avatar + info + share
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -161,7 +154,7 @@ class _IdentityCard extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
-                        color: SrColors.text,
+                        color: context.srText,
                         letterSpacing: 22 * -0.02,
                       ),
                     ),
@@ -170,7 +163,7 @@ class _IdentityCard extends StatelessWidget {
                       '${data.handle} · ${data.joinedLabel}',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 12,
-                        color: SrColors.textMuted,
+                        color: context.srTextMuted,
                       ),
                     ),
                   ],
@@ -180,25 +173,17 @@ class _IdentityCard extends StatelessWidget {
               _ShareButton(),
             ],
           ),
-
-          // Divider
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 18),
-            child: Container(height: 1, color: SrColors.line),
+            child: Container(height: 1, color: context.srLine),
           ),
-
-          // Stats row
           Row(
             children: [
               _StatCell(label: 'LIFETIME AVG', value: '${data.lifetimeAvg}'),
               _StatDivider(),
               _StatCell(label: 'W / L', value: '--'),
               _StatDivider(),
-              _StatCell(
-                label: 'STREAK',
-                value: '${data.streak}d',
-                accent: true,
-              ),
+              _StatCell(label: 'STREAK', value: '${data.streak}d', accent: true),
             ],
           ),
         ],
@@ -216,16 +201,15 @@ class _ProfileAvatar extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Lime ring
         Container(
           width: 68,
           height: 68,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: SrColors.lime, width: 2),
+            border: Border.all(color: context.srLime, width: 2),
             boxShadow: [
               BoxShadow(
-                color: SrColors.lime.withAlpha(50),
+                color: context.srLime.withAlpha(50),
                 blurRadius: 12,
                 spreadRadius: 0,
               ),
@@ -253,15 +237,14 @@ class _ProfileAvatar extends StatelessWidget {
             ),
           ),
         ),
-        // Flag badge
         Positioned(
           right: -2,
           bottom: -2,
           child: Container(
             width: 24,
             height: 24,
-            decoration: const BoxDecoration(
-              color: SrColors.bgElev,
+            decoration: BoxDecoration(
+              color: context.srBgElev,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -281,11 +264,11 @@ class _ShareButton extends StatelessWidget {
       width: 38,
       height: 38,
       decoration: BoxDecoration(
-        color: SrColors.tintSm,
+        color: context.srTintSm,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: SrColors.lineStrong),
+        border: Border.all(color: context.srLineStrong),
       ),
-      child: const Icon(Icons.ios_share, color: SrColors.text, size: 17),
+      child: Icon(Icons.ios_share, color: context.srText, size: 17),
     );
   }
 }
@@ -310,7 +293,7 @@ class _StatCell extends StatelessWidget {
             label,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 9,
-              color: SrColors.textDim,
+              color: context.srTextDim,
               letterSpacing: 9 * 0.15,
             ),
           ),
@@ -320,7 +303,7 @@ class _StatCell extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 22,
               fontWeight: FontWeight.w600,
-              color: accent ? SrColors.lime : SrColors.text,
+              color: accent ? context.srLimeText : context.srText,
               letterSpacing: 22 * -0.03,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
@@ -337,7 +320,7 @@ class _StatDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 36,
-      color: SrColors.line,
+      color: context.srLine,
       margin: const EdgeInsets.only(right: 16),
     );
   }
@@ -353,9 +336,9 @@ class _TrendCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: SrColors.bgElev,
+        color: context.srBgElev,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: SrColors.lineStrong),
+        border: Border.all(color: context.srLineStrong),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,7 +354,7 @@ class _TrendCard extends StatelessWidget {
                       '30-DAY TREND',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 10,
-                        color: SrColors.textDim,
+                        color: context.srTextDim,
                         letterSpacing: 10 * 0.15,
                       ),
                     ),
@@ -381,7 +364,7 @@ class _TrendCard extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: SrColors.text,
+                        color: context.srText,
                         letterSpacing: 18 * -0.02,
                       ),
                     ),
@@ -397,8 +380,8 @@ class _TrendCard extends StatelessWidget {
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
                       color: data.trendDelta >= 0
-                          ? SrColors.lime
-                          : SrColors.rose,
+                          ? context.srLimeText
+                          : context.srRose,
                       letterSpacing: 24 * -0.03,
                       height: 1.0,
                     ),
@@ -407,7 +390,7 @@ class _TrendCard extends StatelessWidget {
                     'POINTS',
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 10,
-                      color: SrColors.textDim,
+                      color: context.srTextDim,
                       letterSpacing: 10 * 0.1,
                     ),
                   ),
@@ -445,6 +428,8 @@ class _BigChart extends StatelessWidget {
                 entries: entries,
                 windowStart: windowStart,
                 windowDays: windowDays,
+                limeColor: context.srLime,
+                gridColor: context.srTintXs,
               ),
             ),
           ),
@@ -457,7 +442,7 @@ class _BigChart extends StatelessWidget {
               l,
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 9,
-                color: SrColors.textDim,
+                color: context.srTextDim,
                 letterSpacing: 9 * 0.1,
               ),
             );
@@ -473,10 +458,14 @@ class _BigChartPainter extends CustomPainter {
     required this.entries,
     required this.windowStart,
     required this.windowDays,
+    required this.limeColor,
+    required this.gridColor,
   });
   final List<(DateTime, int)> entries;
   final DateTime windowStart;
   final int windowDays;
+  final Color limeColor;
+  final Color gridColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -489,7 +478,6 @@ class _BigChartPainter extends CustomPainter {
     final max = (rawMax + 5).clamp(10.0, 100.0);
     final span = max - min == 0 ? 1.0 : max - min;
 
-    // Position each point based on its actual date within the window
     final windowEnd = windowStart.add(Duration(days: windowDays - 1));
     final totalMs = windowEnd.difference(windowStart).inMilliseconds.toDouble();
 
@@ -502,9 +490,8 @@ class _BigChartPainter extends CustomPainter {
       return Offset(x, y);
     }).toList();
 
-    // Grid lines
     final gridPaint = Paint()
-      ..color = SrColors.tintXs
+      ..color = gridColor
       ..strokeWidth = 1;
     for (final p in [0.25, 0.5, 0.75]) {
       canvas.drawLine(
@@ -514,7 +501,6 @@ class _BigChartPainter extends CustomPainter {
       );
     }
 
-    // Fill
     final fillPath = Path()..moveTo(pts.first.dx, pts.first.dy);
     for (final pt in pts.skip(1)) {
       fillPath.lineTo(pt.dx, pt.dy);
@@ -529,11 +515,10 @@ class _BigChartPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [SrColors.lime.withAlpha(77), SrColors.lime.withAlpha(0)],
+          colors: [limeColor.withAlpha(77), limeColor.withAlpha(0)],
         ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)),
     );
 
-    // Line
     final linePath = Path()..moveTo(pts.first.dx, pts.first.dy);
     for (final pt in pts.skip(1)) {
       linePath.lineTo(pt.dx, pt.dy);
@@ -541,21 +526,21 @@ class _BigChartPainter extends CustomPainter {
     canvas.drawPath(
       linePath,
       Paint()
-        ..color = SrColors.lime
+        ..color = limeColor
         ..strokeWidth = 2
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round,
     );
 
-    // End dot + pulse ring
     final last = pts.last;
-    canvas.drawCircle(last, 8, Paint()..color = SrColors.lime.withAlpha(51));
-    canvas.drawCircle(last, 4, Paint()..color = SrColors.lime);
+    canvas.drawCircle(last, 8, Paint()..color = limeColor.withAlpha(51));
+    canvas.drawCircle(last, 4, Paint()..color = limeColor);
   }
 
   @override
-  bool shouldRepaint(_BigChartPainter old) => old.entries != entries;
+  bool shouldRepaint(_BigChartPainter old) =>
+      old.entries != entries || old.limeColor != limeColor;
 }
 
 class _SignOutRow extends StatelessWidget {
@@ -567,19 +552,19 @@ class _SignOutRow extends StatelessWidget {
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            backgroundColor: SrColors.bgElev,
-            title: Text('Sign out?', style: TextStyle(color: SrColors.text)),
+            backgroundColor: context.srBgElev,
+            title: Text('Sign out?', style: TextStyle(color: context.srText)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
                 child: Text(
                   'Cancel',
-                  style: TextStyle(color: SrColors.textMuted),
+                  style: TextStyle(color: context.srTextMuted),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
-                child: Text('Sign out', style: TextStyle(color: SrColors.rose)),
+                child: Text('Sign out', style: TextStyle(color: context.srRose)),
               ),
             ],
           ),
@@ -589,20 +574,20 @@ class _SignOutRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: SrColors.tintXs,
+          color: context.srTintXs,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: SrColors.line),
+          border: Border.all(color: context.srLine),
         ),
         child: Row(
           children: [
-            const Icon(Icons.logout, size: 18, color: SrColors.rose),
+            Icon(Icons.logout, size: 18, color: context.srRose),
             const SizedBox(width: 12),
             Text(
               'Sign out',
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: SrColors.rose,
+                color: context.srRose,
               ),
             ),
           ],

@@ -330,7 +330,9 @@ class _DuelCard extends StatelessWidget {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 36,
                             fontWeight: FontWeight.w700,
-                            color: meWinning ? SrColors.lime : context.srText,
+                            color: meWinning
+                                ? context.srLimeText
+                                : context.srText,
                             letterSpacing: -0.04 * 36,
                             height: 1,
                           ),
@@ -366,7 +368,9 @@ class _DuelCard extends StatelessWidget {
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: meWinning ? SrColors.lime : SrColors.rose,
+                            color: meWinning
+                                ? context.srLimeText
+                                : SrColors.rose,
                           ),
                         ),
                       ),
@@ -925,17 +929,7 @@ class _StakeBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: context.srTintSm,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(icon, style: const TextStyle(fontSize: 16)),
-            ),
-          ),
+          Center(child: Text(icon, style: const TextStyle(fontSize: 16))),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -961,7 +955,11 @@ class _StakeBanner extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.emoji_events_outlined, size: 18, color: accent),
+          Icon(
+            Icons.emoji_events_outlined,
+            size: 18,
+            color: context.srLimeText,
+          ),
         ],
       ),
     );

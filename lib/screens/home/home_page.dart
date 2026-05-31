@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/fight/fight_page.dart';
 import 'package:sapiens_rank/screens/profile/profile_page.dart';
@@ -136,7 +135,7 @@ class _SrTabBar extends StatelessWidget {
                                     _tabs[i].icon,
                                     size: 20,
                                     color: i == selected
-                                        ? SrColors.lime
+                                        ? context.srLimeText
                                         : context.srTextMuted,
                                   ),
                                   const SizedBox(height: 3),
@@ -146,7 +145,7 @@ class _SrTabBar extends StatelessWidget {
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
                                       color: i == selected
-                                          ? SrColors.lime
+                                          ? context.srLimeText
                                           : context.srTextMuted,
                                       letterSpacing: 0.2,
                                     ),

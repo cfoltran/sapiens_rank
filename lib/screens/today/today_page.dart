@@ -182,7 +182,7 @@ class _DeltaRow extends StatelessWidget {
           data: history,
           width: 84,
           height: 20,
-          color: context.srLimeText,
+          color: context.srLime,
         ),
       ],
     );
@@ -338,7 +338,7 @@ class _MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pct = metric.progress;
-    final limeColor = context.srLimeText;
+    final limeColor = context.srLime;
     final barColor = pct >= 0.9
         ? limeColor
         : pct >= 0.6
@@ -367,18 +367,10 @@ class _MetricCard extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: context.srTintSm,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      _icon(metric.iconName),
-                      color: context.srLimeText,
-                      size: 18,
-                    ),
+                  Icon(
+                    _icon(metric.iconName),
+                    color: context.srLimeText,
+                    size: 18,
                   ),
                   const SizedBox(width: 14),
                   Expanded(

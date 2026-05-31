@@ -157,69 +157,26 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'LEADERBOARD · LIVE',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 11,
-                  color: context.srTextDim,
-                  letterSpacing: 11 * 0.15,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'World',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w700,
-                  color: context.srText,
-                  height: 1.0,
-                ),
-              ),
-            ],
+        Text(
+          'LEADERBOARD · LIVE',
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 11,
+            color: context.srTextDim,
+            letterSpacing: 11 * 0.15,
           ),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '2.4M sapiens',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: context.srText,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: SrColors.lime,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'ranked today',
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 10,
-                    color: SrColors.lime,
-                    letterSpacing: 10 * 0.05,
-                  ),
-                ),
-              ],
-            ),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          'World',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+            color: context.srText,
+            height: 1.0,
+          ),
         ),
       ],
     );
@@ -327,7 +284,7 @@ class _Podium extends StatelessWidget {
           child: _PodiumSlot(
             player: p1,
             blockHeight: 130,
-            color: SrColors.lime,
+            color: context.srLimeText,
             avatarSize: 60,
             crown: true,
           ),

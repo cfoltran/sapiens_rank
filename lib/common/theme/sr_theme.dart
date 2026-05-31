@@ -9,13 +9,11 @@ extension SrTheme on BuildContext {
   Color get srBgElev2 => isDark ? SrColors.bgElev2 : SrColors.surfaceLightElev;
 
   Color get srText => isDark ? SrColors.text : SrColors.textLight;
-  Color get srTextMuted =>
-      isDark ? SrColors.textMuted : SrColors.textLightMuted;
+  Color get srTextMuted => isDark ? SrColors.textMuted : SrColors.textLightMuted;
   Color get srTextDim => isDark ? SrColors.textDim : SrColors.textLightDim;
 
   Color get srLine => isDark ? SrColors.line : SrColors.lineLight;
-  Color get srLineStrong =>
-      isDark ? SrColors.lineStrong : SrColors.lineStrongLight;
+  Color get srLineStrong => isDark ? SrColors.lineStrong : SrColors.lineStrongLight;
 
   Color get srTintXxs => isDark ? SrColors.tintXxs : SrColors.tintXxsDark;
   Color get srTintXs => isDark ? SrColors.tintXs : SrColors.tintXsDark;
@@ -25,13 +23,23 @@ extension SrTheme on BuildContext {
 
   Color get srNavBg => isDark ? SrColors.navBg : SrColors.navBgLight;
   Color get srShadow => isDark ? SrColors.shadow : SrColors.shadowLight;
-  Color get srBgElev2Fade =>
-      isDark ? SrColors.bgElev2Fade : SrColors.bgElev2FadeLight;
-  Color get srBgElev2Opaque =>
-      isDark ? SrColors.bgElev2Opaque : SrColors.bgElev2OpaqueLight;
+  Color get srBgElev2Fade => isDark ? SrColors.bgElev2Fade : SrColors.bgElev2FadeLight;
+  Color get srBgElev2Opaque => isDark ? SrColors.bgElev2Opaque : SrColors.bgElev2OpaqueLight;
 
-  /// Lime for text/icons on a surface background — bright in dark, deep in light.
-  Color get srLimeText => isDark ? SrColors.lime : SrColors.limeDeep;
+  /// Lime for fills, rings, progress bars — electric on dark, fluo on light.
+  Color get srLime => isDark ? SrColors.lime : SrColors.limeLight;
+
+  /// Lime for text/icons — bright on dark, readable deep green on light.
+  Color get srLimeText => isDark ? SrColors.lime : SrColors.limeLightText;
+
+  /// Amber accent (rank / warmth).
+  Color get srAmber => isDark ? SrColors.amber : SrColors.amberLight;
+
+  /// Rose accent (negative / loss).
+  Color get srRose => isDark ? SrColors.rose : SrColors.roseLight;
+
+  /// Blue accent (info / global).
+  Color get srBlue => isDark ? SrColors.blue : SrColors.blueLight;
 
   /// Track color for rings/progress bars.
   Color get srTrack => isDark ? SrColors.tintSm : SrColors.tintSmDark;

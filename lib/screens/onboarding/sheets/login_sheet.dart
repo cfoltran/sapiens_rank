@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
 import 'package:sapiens_rank/screens/onboarding/sheets/email_auth_sheet.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
@@ -31,27 +31,6 @@ class LoginSheet extends StatelessWidget {
     EmailAuthSheet.show(context, onAuth: onAuth);
   }
 
-  Widget _OrDivider() {
-    return Builder(
-      builder: (context) => Row(
-        children: [
-          const Expanded(child: Divider(color: SrColors.line)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              'or',
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                color: SrColors.textDim,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          const Expanded(child: Divider(color: SrColors.line)),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -73,7 +52,7 @@ class LoginSheet extends StatelessWidget {
               child: Text(
                 'Continue with email',
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: SrColors.textMuted,
+                  color: context.srTextMuted,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -87,6 +66,30 @@ class LoginSheet extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _OrDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) => Row(
+        children: [
+          Expanded(child: Divider(color: context.srLine)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              'or',
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                color: context.srTextDim,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+          Expanded(child: Divider(color: context.srLine)),
+        ],
+      ),
     );
   }
 }

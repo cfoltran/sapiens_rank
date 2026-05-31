@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class StepShell extends StatelessWidget {
   const StepShell({
@@ -18,7 +18,7 @@ class StepShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,9 +86,9 @@ class _Dot extends StatelessWidget {
       height: 3,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
-        color: isLit ? SrColors.lime : SrColors.tintXs,
+        color: isLit ? context.srLime : context.srTintXs,
         boxShadow: isActive
-            ? [BoxShadow(color: SrColors.lime.withAlpha(136), blurRadius: 8)]
+            ? [BoxShadow(color: context.srLime.withAlpha(136), blurRadius: 8)]
             : null,
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -30,16 +31,16 @@ class PermissionStep extends StatelessWidget {
           ArenaSecondaryButton(label: 'Back', onTap: onBack),
         ],
       ),
-      body: const Column(
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OnboardingEyebrow('One permission. Worth it.'),
-          SizedBox(height: 14),
+          const OnboardingEyebrow('One permission. Worth it.'),
+          const SizedBox(height: 14),
           _Headline(),
-          SizedBox(height: 28),
-          _HealthKitCards(),
-          SizedBox(height: 22),
-          _PrivacyNote(),
+          const SizedBox(height: 28),
+          const _HealthKitCards(),
+          const SizedBox(height: 22),
+          const _PrivacyNote(),
         ],
       ),
     );
@@ -47,15 +48,13 @@ class PermissionStep extends StatelessWidget {
 }
 
 class _Headline extends StatelessWidget {
-  const _Headline();
-
   @override
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
         style: Theme.of(
           context,
-        ).textTheme.displayMedium!.copyWith(color: SrColors.text),
+        ).textTheme.displayMedium!.copyWith(color: context.srText),
         children: const [
           TextSpan(text: 'Your Watch knows\neverything. '),
           TextSpan(
@@ -102,9 +101,9 @@ class _HealthKitCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: SrColors.tintXs,
+        color: context.srTintXs,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: SrColors.line),
+        border: Border.all(color: context.srLine),
       ),
       child: Row(
         children: [
@@ -112,7 +111,7 @@ class _HealthKitCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: SrColors.tintSm,
+              color: context.srTintSm,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -128,7 +127,7 @@ class _HealthKitCard extends StatelessWidget {
                   item.label,
                   style: tt.bodyMedium!.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: SrColors.text,
+                    color: context.srText,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -136,14 +135,14 @@ class _HealthKitCard extends StatelessWidget {
                   item.desc,
                   style: tt.labelMedium!.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.check, size: 16, color: SrColors.lime),
+          Icon(Icons.check, size: 16, color: context.srLime),
         ],
       ),
     );
@@ -172,7 +171,7 @@ class _PrivacyNote extends StatelessWidget {
               text: TextSpan(
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                   fontWeight: FontWeight.normal,
-                  color: SrColors.text,
+                  color: context.srText,
                   height: 1.5,
                 ),
                 children: const [

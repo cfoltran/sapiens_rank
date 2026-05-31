@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -54,27 +54,27 @@ class _NotificationsStepState extends State<NotificationsStep> {
         children: [
           const OnboardingEyebrow('Last thing.'),
           const SizedBox(height: 14),
-          const _Headline(),
+          _Headline(),
           const SizedBox(height: 10),
           const OnboardingLede(
             'Daily score updates. Fight invites. When a friend passes you, you\'ll know.',
           ),
           const SizedBox(height: 28),
-          const _NotifPreview(
+          _NotifPreview(
             icon: '⚔️',
             title: 'Émile challenged you',
             body: '1v1 · Sapiens Score · 24h · Coffee on the line',
             time: '2m',
           ),
           const SizedBox(height: 8),
-          const _NotifPreview(
+          _NotifPreview(
             icon: '📈',
             title: 'You climbed 184 spots',
             body: 'World rank is now #2,847 — top 0.4%',
             time: '9m',
           ),
           const SizedBox(height: 8),
-          const _NotifPreview(
+          _NotifPreview(
             icon: '😴',
             title: 'Sleep score: 92',
             body: 'Best night of the week. Recovery looking elite.',
@@ -91,7 +91,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
                   'Welcome to the ranks, Sapien. ✓',
                   style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     fontStyle: FontStyle.italic,
-                    color: SrColors.lime,
+                    color: context.srLimeText,
                   ),
                 ),
               ),
@@ -104,21 +104,22 @@ class _NotificationsStepState extends State<NotificationsStep> {
 }
 
 class _Headline extends StatelessWidget {
-  const _Headline();
-
   @override
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
           fontStyle: FontStyle.normal,
-          color: SrColors.text,
+          color: context.srText,
         ),
-        children: const [
-          TextSpan(text: 'Stay in the '),
+        children: [
+          const TextSpan(text: 'Stay in the '),
           TextSpan(
             text: 'fight.',
-            style: TextStyle(fontStyle: FontStyle.italic, color: SrColors.lime),
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              color: context.srLimeText,
+            ),
           ),
         ],
       ),
@@ -150,8 +151,8 @@ class _NotifPreview extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: muted ? SrColors.tintXxs : SrColors.tintXs,
-          border: Border.all(color: SrColors.line),
+          color: muted ? context.srTintXxs : context.srTintXs,
+          border: Border.all(color: context.srLine),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,7 +161,7 @@ class _NotifPreview extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: SrColors.lime,
+                color: context.srLime,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
@@ -182,7 +183,7 @@ class _NotifPreview extends StatelessWidget {
                           style: tt.bodyMedium!.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: SrColors.text,
+                            color: context.srText,
                           ),
                         ),
                       ),
@@ -191,7 +192,7 @@ class _NotifPreview extends StatelessWidget {
                         time,
                         style: tt.labelSmall!.copyWith(
                           fontWeight: FontWeight.normal,
-                          color: SrColors.textDim,
+                          color: context.srTextDim,
                         ),
                       ),
                     ],
@@ -199,7 +200,7 @@ class _NotifPreview extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     body,
-                    style: tt.bodySmall!.copyWith(color: SrColors.textMuted),
+                    style: tt.bodySmall!.copyWith(color: context.srTextMuted),
                   ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_selectable_card.dart';
@@ -51,13 +52,13 @@ class _FirstFightStepState extends State<FirstFightStep> {
             'Fight.',
             style: Theme.of(context).textTheme.displayLarge!.copyWith(
               height: 1.0,
-              color: SrColors.text,
+              color: context.srText,
             ),
           ),
           const SizedBox(height: 10),
           const _Lede(),
           const SizedBox(height: 28),
-          const _FaceOffCard(),
+          _FaceOffCard(),
           const SizedBox(height: 22),
           _StakeSection(
             selected: _reward,
@@ -78,14 +79,14 @@ class _Lede extends StatelessWidget {
       text: TextSpan(
         style: Theme.of(
           context,
-        ).textTheme.bodyLarge!.copyWith(color: SrColors.textMuted),
-        children: const [
-          TextSpan(text: 'Émile is sitting '),
+        ).textTheme.bodyLarge!.copyWith(color: context.srTextMuted),
+        children: [
+          const TextSpan(text: 'Émile is sitting '),
           TextSpan(
             text: '3 points behind you',
-            style: TextStyle(color: SrColors.lime),
+            style: TextStyle(color: context.srLimeText),
           ),
-          TextSpan(text: '. Make him sweat.'),
+          const TextSpan(text: '. Make him sweat.'),
         ],
       ),
     );
@@ -93,8 +94,6 @@ class _Lede extends StatelessWidget {
 }
 
 class _FaceOffCard extends StatelessWidget {
-  const _FaceOffCard();
-
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
@@ -102,13 +101,15 @@ class _FaceOffCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [SrColors.bgElev2, SrColors.bgElev],
+          colors: [context.srBgElev2, context.srBgElev],
         ),
         border: Border.all(color: SrColors.magentaBorder),
-        boxShadow: const [BoxShadow(color: SrColors.magentaFaint, blurRadius: 40)],
+        boxShadow: const [
+          BoxShadow(color: SrColors.magentaFaint, blurRadius: 40),
+        ],
       ),
       child: Stack(
         children: [
@@ -159,7 +160,7 @@ class _FaceOffCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: tt.labelMedium!.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: SrColors.textMuted,
+                    color: context.srTextMuted,
                     letterSpacing: 0.6,
                   ),
                 ),
@@ -186,11 +187,11 @@ class _Fighter extends StatelessWidget {
           height: 56,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isMe ? SrColors.lime : SrColors.yellow,
+            color: isMe ? context.srLime : SrColors.yellow,
             boxShadow: isMe
                 ? [
                     BoxShadow(
-                      color: SrColors.lime.withAlpha(80),
+                      color: context.srLime.withAlpha(80),
                       blurRadius: 16,
                     ),
                   ]
@@ -209,7 +210,7 @@ class _Fighter extends StatelessWidget {
           style: tt.bodyMedium!.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: SrColors.text,
+            color: context.srText,
           ),
         ),
         const SizedBox(height: 4),
@@ -217,7 +218,7 @@ class _Fighter extends StatelessWidget {
           isMe ? '87' : '84',
           style: tt.headlineLarge!.copyWith(
             height: 1,
-            color: isMe ? SrColors.lime : SrColors.text.withAlpha(150),
+            color: isMe ? context.srLimeText : context.srText.withAlpha(150),
           ),
         ),
       ],
@@ -242,7 +243,7 @@ class _StakeSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const OnboardingEyebrow('Stake', color: SrColors.textDim),
+        OnboardingEyebrow('Stake', color: context.srTextDim),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -290,7 +291,7 @@ class _StakeChip extends StatelessWidget {
             style: tt.bodyMedium!.copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: SrColors.text,
+              color: context.srText,
             ),
           ),
           const SizedBox(height: 4),
@@ -300,7 +301,7 @@ class _StakeChip extends StatelessWidget {
             style: tt.labelSmall!.copyWith(
               fontSize: 9,
               fontWeight: FontWeight.normal,
-              color: SrColors.textDim,
+              color: context.srTextDim,
               letterSpacing: 0.5,
             ),
           ),

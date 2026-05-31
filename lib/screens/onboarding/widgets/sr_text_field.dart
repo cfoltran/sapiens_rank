@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class SrTextField extends StatelessWidget {
   const SrTextField({
@@ -27,10 +27,10 @@ class SrTextField extends StatelessWidget {
   final bool autofocus;
   final double borderRadius;
 
-  /// Border color for enabled state. Defaults to [SrColors.lineStrong].
+  /// Border color for enabled state. Defaults to [context.srLineStrong].
   final Color? borderColor;
 
-  /// Border color when focused. Defaults to [SrColors.lime].
+  /// Border color when focused. Defaults to [context.srLime].
   final Color? focusedBorderColor;
 
   final EdgeInsetsGeometry? contentPadding;
@@ -40,10 +40,10 @@ class SrTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final resolvedStyle = (style ?? tt.bodyLarge!).copyWith(
-      color: SrColors.text,
+      color: context.srText,
     );
-    final enabled = borderColor ?? SrColors.lineStrong;
-    final focused = focusedBorderColor ?? SrColors.lime;
+    final enabled = borderColor ?? context.srLineStrong;
+    final focused = focusedBorderColor ?? context.srLime;
     final radius = BorderRadius.circular(borderRadius);
 
     return TextField(
@@ -55,13 +55,13 @@ class SrTextField extends StatelessWidget {
       style: resolvedStyle,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: resolvedStyle.copyWith(color: SrColors.textDim),
+        hintStyle: resolvedStyle.copyWith(color: context.srTextDim),
         prefixIcon: prefixIcon,
         prefixIconConstraints: prefixIcon != null
             ? const BoxConstraints(minWidth: 0)
             : null,
         filled: true,
-        fillColor: SrColors.tintXs,
+        fillColor: context.srTintXs,
         contentPadding:
             contentPadding ??
             const EdgeInsets.symmetric(horizontal: 20, vertical: 18),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class OnboardingEyebrow extends StatelessWidget {
   const OnboardingEyebrow(this.text, {super.key, this.color});
@@ -13,7 +13,7 @@ class OnboardingEyebrow extends StatelessWidget {
       text.toUpperCase(),
       style: Theme.of(
         context,
-      ).textTheme.labelMedium!.copyWith(color: color ?? SrColors.lime),
+      ).textTheme.labelMedium!.copyWith(color: color ?? context.srLimeText),
     );
   }
 }
@@ -29,7 +29,7 @@ class OnboardingLede extends StatelessWidget {
       text,
       style: Theme.of(
         context,
-      ).textTheme.bodyLarge!.copyWith(color: SrColors.textMuted, height: 1.4),
+      ).textTheme.bodyLarge!.copyWith(color: context.srTextMuted, height: 1.4),
     );
   }
 }

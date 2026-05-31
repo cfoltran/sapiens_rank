@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 class ArenaButton extends StatefulWidget {
   const ArenaButton({
@@ -23,7 +24,7 @@ class _ArenaButtonState extends State<ArenaButton> {
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onTap != null;
-    final color = widget.color ?? SrColors.lime;
+    final color = widget.color ?? context.srLime;
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -94,7 +95,7 @@ class ArenaSecondaryButton extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               fontWeight: FontWeight.w500,
-              color: SrColors.textMuted,
+              color: context.srTextMuted,
             ),
           ),
         ),

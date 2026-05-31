@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_selectable_card.dart';
@@ -144,14 +145,17 @@ class _Headline extends StatelessWidget {
       text: TextSpan(
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
           fontStyle: FontStyle.normal,
-          color: SrColors.text,
+          color: context.srText,
         ),
-        children: const [
+        children: [
           TextSpan(
             text: '8 of your contacts',
-            style: TextStyle(color: SrColors.lime, fontStyle: FontStyle.italic),
+            style: TextStyle(
+              color: context.srLimeText,
+              fontStyle: FontStyle.italic,
+            ),
           ),
-          TextSpan(text: ' already rank.'),
+          const TextSpan(text: ' already rank.'),
         ],
       ),
     );
@@ -177,7 +181,7 @@ class _FollowAllChip extends StatelessWidget {
           '+ Follow all 6',
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
             fontWeight: FontWeight.w600,
-            color: SrColors.lime,
+            color: context.srLimeText,
           ),
         ),
       ),
@@ -229,7 +233,7 @@ class _FriendRow extends StatelessWidget {
                   friend.name,
                   style: tt.bodyMedium!.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: SrColors.text,
+                    color: context.srText,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -237,7 +241,7 @@ class _FriendRow extends StatelessWidget {
                   'Score ${friend.score} · ${friend.mutual} mutuals',
                   style: tt.labelMedium!.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: SrColors.textDim,
+                    color: context.srTextDim,
                   ),
                 ),
               ],
@@ -311,16 +315,16 @@ class _FollowButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          color: isFollowed ? SrColors.lime : Colors.transparent,
+          color: isFollowed ? context.srLime : Colors.transparent,
           border: Border.all(
-            color: isFollowed ? SrColors.lime : SrColors.lineStrong,
+            color: isFollowed ? context.srLime : context.srLineStrong,
           ),
         ),
         child: Text(
           isFollowed ? '✓ Following' : 'Follow',
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
             fontWeight: FontWeight.w600,
-            color: isFollowed ? SrColors.textInk : SrColors.text,
+            color: isFollowed ? SrColors.textInk : context.srText,
           ),
         ),
       ),

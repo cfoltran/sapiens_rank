@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/sheets/email_auth_sheet.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
@@ -17,7 +18,7 @@ class AuthStep extends StatelessWidget {
     final name = firstName.isNotEmpty ? firstName.split(' ').first : 'Sapien';
 
     return Scaffold(
-      backgroundColor: SrColors.bg,
+      backgroundColor: context.srBg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(22, 32, 22, 36),
@@ -28,12 +29,12 @@ class AuthStep extends StatelessWidget {
               const SizedBox(height: 14),
               RichText(
                 text: TextSpan(
-                  style: tt.displayMedium!.copyWith(color: SrColors.text),
+                  style: tt.displayMedium!.copyWith(color: context.srText),
                   children: [
                     TextSpan(text: '$name, '),
-                    const TextSpan(
+                    TextSpan(
                       text: 'save your rank.',
-                      style: TextStyle(color: SrColors.lime),
+                      style: TextStyle(color: context.srLimeText),
                     ),
                   ],
                 ),
@@ -61,7 +62,7 @@ class AuthStep extends StatelessWidget {
                   child: Text(
                     'Continue with email',
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: SrColors.textMuted,
+                      color: context.srTextMuted,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -82,18 +83,18 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: SrColors.line)),
+        Expanded(child: Divider(color: context.srLine)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             'or',
             style: Theme.of(context).textTheme.labelMedium!.copyWith(
-              color: SrColors.textDim,
+              color: context.srTextDim,
               fontWeight: FontWeight.normal,
             ),
           ),
         ),
-        const Expanded(child: Divider(color: SrColors.line)),
+        Expanded(child: Divider(color: context.srLine)),
       ],
     );
   }

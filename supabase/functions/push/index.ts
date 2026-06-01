@@ -74,8 +74,7 @@ const sendNotification = async (
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(
-      `Failed to send notification. Status: ${response.status}, Error: ${
-        JSON.stringify(errorData)
+      `Failed to send notification. Status: ${response.status}, Error: ${JSON.stringify(errorData)
       }`,
     );
   }

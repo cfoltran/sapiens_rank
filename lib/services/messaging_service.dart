@@ -1,130 +1,148 @@
-// import 'dart:io';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-// import 'package:go_router/go_router.dart';
-// import 'package:logging/logging.dart';
-// import 'package:supabase_flutter/supabase_flutter.dart';
-// import 'package:voxontop/screens/home/affirmation_deep_link_page.dart';
+import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-// class FirebaseMessagingService {
-//   FirebaseMessagingService._privateConstructor();
-//   static final FirebaseMessagingService _instance =
-//       FirebaseMessagingService._privateConstructor();
+class MessagingService {
+  MessagingService._();
+  static final MessagingService instance = MessagingService._();
 
-//   static FirebaseMessagingService get instance => _instance;
+  final _messaging = FirebaseMessaging.instance;
+  final _log = Logger('MessagingService');
 
-//   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-//   FirebaseMessaging get firebaseMessaging => _firebaseMessaging;
-//   final logger = Logger('FirebaseMessagingService');
+  Future<bool> requestPermission() async {
+    try {
+      final settings = await _messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      final granted =
+          settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional;
+      if (granted) await _saveToken();
+      return granted;
+    } catch (e) {
+      _log.warning('requestPermission failed: $e');
+      return false;
+    }
+  }
 
-//   Future<String?> getDeviceToken() async {
-//     NotificationSettings settings = await _firebaseMessaging
-//         .requestPermission();
+  /// Call on app launch — saves the token if granted, requests if not yet determined.
+  Future<void> saveOrRequestToken() async {
+    final settings = await _messaging.getNotificationSettings();
+    switch (settings.authorizationStatus) {
+      case AuthorizationStatus.notDetermined:
+        await requestPermission();
+      case AuthorizationStatus.authorized:
+      case AuthorizationStatus.provisional:
+        await _saveToken();
+      default:
+        break;
+    }
+  }
 
-//     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//       if (Platform.isIOS) {
-//         final apnsToken = await _firebaseMessaging.getAPNSToken().timeout(
-//           const Duration(seconds: 10),
-//           onTimeout: () => null,
-//         );
+  void listenForTokenRefresh() {
+    _messaging.onTokenRefresh.listen((token) async {
+      _log.info('FCM token refreshed');
+      await _upsertToken(token);
+    });
+  }
 
-//         logger.info('APNS token: $apnsToken');
-//       }
+  void initialize(
+    BuildContext context, {
+    required void Function(String challengeId) onChallengeInvite,
+  }) {
+    _log.info('Initializing MessagingService');
 
-//       final token = await _firebaseMessaging.getToken();
+    _messaging.getInitialMessage().then((message) {
+      final link = message?.data['link'] as String?;
+      if (link != null && context.mounted) {
+        _log.info('Terminated state launch with link: $link');
+        _handleLink(context, link, onChallengeInvite: onChallengeInvite);
+      }
+    });
 
-//       if (token != null) {
-//         logger.info('FCM token: $token');
-//         storeTokenInSupabase(token);
-//       }
+    FirebaseMessaging.onMessage.listen((message) {
+      if (!context.mounted) return;
+      final link = message.data['link'] as String?;
+      final body =
+          message.notification?.body ?? message.notification?.title ?? '';
+      _log.info('Foreground message: ${message.messageId}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: SrColors.textInk,
+          content: Text(body, style: const TextStyle(color: Colors.white)),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 6),
+          action: link == null
+              ? null
+              : SnackBarAction(
+                  label: 'View',
+                  textColor: SrColors.lime,
+                  onPressed: () {
+                    if (context.mounted) {
+                      _handleLink(
+                        context,
+                        link,
+                        onChallengeInvite: onChallengeInvite,
+                      );
+                    }
+                  },
+                ),
+        ),
+      );
+    });
 
-//       return token;
-//     } else {
-//       logger.info('User declined or has not accepted permission');
-//       return null;
-//     }
-//   }
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      final link = message.data['link'] as String?;
+      _log.info('Background open: ${message.messageId}');
+      if (link != null && context.mounted) {
+        _handleLink(context, link, onChallengeInvite: onChallengeInvite);
+      }
+    });
+  }
 
-//   void initialize(BuildContext context) {
-//     logger.info('Initializing Firebase Messaging');
+  void _handleLink(
+    BuildContext context,
+    String link, {
+    required void Function(String) onChallengeInvite,
+  }) {
+    final uri = Uri.parse(link);
+    if (uri.scheme == 'challenge' && uri.host.isNotEmpty) {
+      onChallengeInvite(uri.host);
+    }
+  }
 
-//     // App opened from terminated state
-//     _firebaseMessaging.getInitialMessage().then((message) {
-//       final link = message?.data['link'] as String?;
-//       if (link != null && context.mounted) {
-//         logger.info('Terminated state launch with link: $link');
-//         _handleLink(context, link);
-//       }
-//     });
+  Future<void> _saveToken() async {
+    try {
+      if (Platform.isIOS) {
+        await _messaging.getAPNSToken().timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => null,
+        );
+      }
+      final token = await _messaging.getToken();
+      if (token == null) return;
+      _log.info('FCM token obtained');
+      await _upsertToken(token);
+    } catch (e) {
+      _log.warning('Failed to save FCM token: $e');
+    }
+  }
 
-//     // Foreground message — show a snackbar instead of navigating immediately
-//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//       final link = message.data['link'] as String?;
-//       logger.info('Foreground message: ${message.messageId}');
-//       if (link == null || !context.mounted) return;
-
-//       final title = message.notification?.title;
-//       final body = message.notification?.body;
-//       final label = body ?? title;
-
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(
-//           content: Text(label ?? ''),
-//           behavior: SnackBarBehavior.floating,
-//           duration: const Duration(seconds: 5),
-//           action: SnackBarAction(
-//             label: 'Voir',
-//             onPressed: () => _handleLink(context, link),
-//           ),
-//         ),
-//       );
-//     });
-
-//     // App opened from background (notification tapped)
-//     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-//       final link = message.data['link'] as String?;
-//       logger.info('Background open: ${message.messageId}');
-//       if (link != null && context.mounted) _handleLink(context, link);
-//     });
-//   }
-
-//   void _handleLink(BuildContext context, String link) {
-//     final uri = Uri.parse(link);
-//     final segments = uri.pathSegments;
-
-//     if (segments.length >= 2 && segments[0] == 'affirmation') {
-//       final id = int.tryParse(segments[1]);
-//       if (id != null) {
-//         final openComments = segments.length >= 4 && segments[2] == 'comment';
-//         showCupertinoSheet<void>(
-//           context: context,
-//           builder: (_) => AffirmationDeepLinkPage(
-//             affirmationId: id,
-//             openComments: openComments,
-//           ),
-//         );
-//         return;
-//       }
-//     }
-
-//     context.push(link);
-//   }
-
-//   Future<void> storeTokenInSupabase(String token) async {
-//     final user = Supabase.instance.client.auth.currentUser;
-
-//     if (user == null) {
-//       logger.severe('User is not authenticated');
-//       return;
-//     }
-//     try {
-//       await Supabase.instance.client
-//           .from('profiles')
-//           .update({'fcm_token': token})
-//           .eq('id', user.id);
-//     } catch (e) {
-//       logger.severe('Failed to store FCM token: $e');
-//     }
-//   }
-// }
+  Future<void> _upsertToken(String token) async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      await Supabase.instance.client.from('device_tokens').upsert({
+        'user_id': uid,
+        'fcm_token': token,
+      });
+    } catch (e) {
+      _log.warning('Failed to upsert FCM token: $e');
+    }
+  }
+}

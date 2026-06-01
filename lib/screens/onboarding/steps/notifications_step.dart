@@ -3,7 +3,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
-import 'package:sapiens_rank/services/notification_service.dart';
+import 'package:sapiens_rank/services/messaging_service.dart';
 
 class NotificationsStep extends StatefulWidget {
   const NotificationsStep({super.key, required this.onNext});
@@ -21,7 +21,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
   Future<void> _requestPermission() async {
     if (_loading) return;
     setState(() => _loading = true);
-    final granted = await NotificationService.instance.requestPermission();
+    final granted = await MessagingService.instance.requestPermission();
     if (!mounted) return;
     setState(() {
       _loading = false;

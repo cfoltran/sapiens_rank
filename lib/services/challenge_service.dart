@@ -62,6 +62,29 @@ class ChallengeService {
     });
   }
 
+  Future<ChallengeRow?> fetchChallengeById(String challengeId) async {
+    try {
+      final row = await _db
+          .from('challenge_participants')
+          .select('''
+            challenges!inner(
+              id, metric, duration_days, starts_at, ends_at,
+              stake_icon, stake_label, status, winner_id, created_by, created_at,
+              challenge_participants(
+                user_id, is_creator, status,
+                profiles!inner(name, country)
+              )
+            )
+          ''')
+          .eq('challenge_id', challengeId)
+          .eq('user_id', _myId)
+          .single();
+      return ChallengeRow.fromJson(row['challenges'] as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> respondToChallenge(
     String challengeId, {
     required bool accept,

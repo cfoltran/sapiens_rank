@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/challenge_page.dart';
+import 'package:sapiens_rank/screens/challenge/sheets/invite_sheet.dart';
 import 'package:sapiens_rank/screens/profile/profile_page.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
 import 'package:sapiens_rank/screens/world/world_page.dart';
+import 'package:sapiens_rank/services/messaging_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialTab = 0});
@@ -18,11 +20,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late int _tab;
+  Key _challengeKey = UniqueKey();
 
   @override
   void initState() {
     super.initState();
     _tab = widget.initialTab;
+    MessagingService.instance.listenForTokenRefresh();
+    MessagingService.instance.saveOrRequestToken();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      MessagingService.instance.initialize(
+        context,
+        onChallengeInvite: _handleChallengeInvite,
+      );
+    });
+  }
+
+  Future<void> _handleChallengeInvite(String challengeId) async {
+    _switchTab(2);
+    final responded = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => InviteSheet(challengeId: challengeId),
+    );
+    if (responded == true && mounted) {
+      setState(() => _challengeKey = UniqueKey());
+    }
   }
 
   void _switchTab(int index) => setState(() => _tab = index);
@@ -37,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           TodayPage(onNavigateToWorld: () => _switchTab(1)),
           const WorldPage(),
-          const ChallengePage(),
+          ChallengePage(key: _challengeKey),
           const ProfilePage(),
         ],
       ),

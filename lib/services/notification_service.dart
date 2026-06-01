@@ -30,23 +30,40 @@ class NotificationService {
     }
   }
 
+  void listenForTokenRefresh() {
+    _messaging.onTokenRefresh.listen((token) async {
+      _log.info('FCM token refreshed');
+      await _upsertToken(token);
+    });
+  }
+
   Future<void> _saveToken() async {
     try {
       if (Platform.isIOS) {
-        await _messaging
-            .getAPNSToken()
-            .timeout(const Duration(seconds: 10), onTimeout: () => null);
+        await _messaging.getAPNSToken().timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => null,
+        );
       }
       final token = await _messaging.getToken();
       if (token == null) return;
       _log.info('FCM token obtained');
-      final uid = Supabase.instance.client.auth.currentUser?.id;
-      if (uid == null) return;
-      await Supabase.instance.client
-          .from('device_tokens')
-          .upsert({'user_id': uid, 'fcm_token': token});
+      await _upsertToken(token);
     } catch (e) {
       _log.warning('Failed to save FCM token: $e');
+    }
+  }
+
+  Future<void> _upsertToken(String token) async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      await Supabase.instance.client.from('device_tokens').upsert({
+        'user_id': uid,
+        'fcm_token': token,
+      });
+    } catch (e) {
+      _log.warning('Failed to upsert FCM token: $e');
     }
   }
 }

@@ -1,63 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
 import 'package:sapiens_rank/models/challenge_models.dart';
-import 'package:sapiens_rank/services/challenge_service.dart';
+import 'package:sapiens_rank/screens/challenge/cubit/invite_cubit.dart';
 
-class InviteSheet extends StatefulWidget {
+class InviteSheet extends StatelessWidget {
   const InviteSheet({super.key, required this.challengeId});
 
   final String challengeId;
 
   @override
-  State<InviteSheet> createState() => _InviteSheetState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => InviteCubit(challengeId)..load(),
+      child: BlocListener<InviteCubit, DataState<ChallengeRow>>(
+        listener: (context, state) {
+          if (state.status == DataStatus.initial) {
+            Navigator.of(context).pop(true);
+          }
+        },
+        child: const _InviteSheetView(),
+      ),
+    );
+  }
 }
 
-class _InviteSheetState extends State<InviteSheet> {
-  ChallengeRow? _challenge;
-  bool _loading = true;
-  bool _responding = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    final challenge = await ChallengeService.instance.fetchChallengeById(
-      widget.challengeId,
-    );
-    if (!mounted) return;
-    setState(() {
-      _challenge = challenge;
-      _loading = false;
-    });
-  }
-
-  Future<void> _respond(bool accept) async {
-    setState(() => _responding = true);
-    await ChallengeService.instance.respondToChallenge(
-      widget.challengeId,
-      accept: accept,
-    );
-    if (!mounted) return;
-    Navigator.of(context).pop(true);
-  }
+class _InviteSheetView extends StatelessWidget {
+  const _InviteSheetView();
 
   @override
   Widget build(BuildContext context) {
     return SrBottomSheet(
       title: 'Challenge Invite',
-      child: _loading
-          ? const SizedBox(
-              height: 80,
-              child: Center(child: CircularProgressIndicator()),
-            )
-          : _challenge == null
-          ? SizedBox(
+      child: BlocBuilder<InviteCubit, DataState<ChallengeRow>>(
+        builder: (context, state) {
+          if (state.status == DataStatus.error) {
+            return SizedBox(
               height: 80,
               child: Center(
                 child: Text(
@@ -68,32 +50,34 @@ class _InviteSheetState extends State<InviteSheet> {
                   ),
                 ),
               ),
-            )
-          : _InviteContent(
-              challenge: _challenge!,
-              responding: _responding,
-              onAccept: () => _respond(true),
-              onDecline: () => _respond(false),
-            ),
+            );
+          }
+          final challenge = state.data;
+          if (challenge == null) {
+            return const SizedBox(
+              height: 80,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+          return _InviteContent(
+            challenge: challenge,
+            responding: state.status == DataStatus.loading,
+          );
+        },
+      ),
     );
   }
 }
 
 class _InviteContent extends StatelessWidget {
-  const _InviteContent({
-    required this.challenge,
-    required this.responding,
-    required this.onAccept,
-    required this.onDecline,
-  });
+  const _InviteContent({required this.challenge, required this.responding});
 
   final ChallengeRow challenge;
   final bool responding;
-  final VoidCallback onAccept;
-  final VoidCallback onDecline;
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<InviteCubit>();
     final creator = challenge.challengeParticipants.firstWhere(
       (p) => p.isCreator,
       orElse: () => challenge.challengeParticipants.first,
@@ -203,7 +187,7 @@ class _InviteContent extends StatelessWidget {
           children: [
             Expanded(
               child: GestureDetector(
-                onTap: responding ? null : onDecline,
+                onTap: responding ? null : () => cubit.respond(accept: false),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
@@ -227,7 +211,7 @@ class _InviteContent extends StatelessWidget {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: responding ? null : onAccept,
+                onTap: responding ? null : () => cubit.respond(accept: true),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(

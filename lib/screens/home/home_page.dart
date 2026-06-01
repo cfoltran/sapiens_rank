@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/challenge_page.dart';
 import 'package:sapiens_rank/screens/challenge/sheets/invite_sheet.dart';
+import 'package:sapiens_rank/screens/challenge/sheets/result_sheet.dart';
 import 'package:sapiens_rank/screens/profile/profile_page.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
 import 'package:sapiens_rank/screens/world/world_page.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
       MessagingService.instance.initialize(
         context,
         onChallengeInvite: _handleChallengeInvite,
+        onChallengeResult: _handleChallengeResult,
       );
     });
   }
@@ -48,6 +50,16 @@ class _HomePageState extends State<HomePage> {
     if (responded == true && mounted) {
       setState(() => _challengeKey = UniqueKey());
     }
+  }
+
+  void _handleChallengeResult(String challengeId) {
+    _switchTab(2);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ResultSheet(challengeId: challengeId),
+    );
   }
 
   void _switchTab(int index) => setState(() => _tab = index);

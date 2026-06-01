@@ -54,6 +54,7 @@ class MessagingService {
   void initialize(
     BuildContext context, {
     required void Function(String challengeId) onChallengeInvite,
+    required void Function(String challengeId) onChallengeResult,
   }) {
     _log.info('Initializing MessagingService');
 
@@ -61,7 +62,12 @@ class MessagingService {
       final link = message?.data['link'] as String?;
       if (link != null && context.mounted) {
         _log.info('Terminated state launch with link: $link');
-        _handleLink(context, link, onChallengeInvite: onChallengeInvite);
+        _handleLink(
+          context,
+          link,
+          onChallengeInvite: onChallengeInvite,
+          onChallengeResult: onChallengeResult,
+        );
       }
     });
 
@@ -88,6 +94,7 @@ class MessagingService {
                         context,
                         link,
                         onChallengeInvite: onChallengeInvite,
+                        onChallengeResult: onChallengeResult,
                       );
                     }
                   },
@@ -100,7 +107,12 @@ class MessagingService {
       final link = message.data['link'] as String?;
       _log.info('Background open: ${message.messageId}');
       if (link != null && context.mounted) {
-        _handleLink(context, link, onChallengeInvite: onChallengeInvite);
+        _handleLink(
+          context,
+          link,
+          onChallengeInvite: onChallengeInvite,
+          onChallengeResult: onChallengeResult,
+        );
       }
     });
   }
@@ -109,9 +121,13 @@ class MessagingService {
     BuildContext context,
     String link, {
     required void Function(String) onChallengeInvite,
+    required void Function(String) onChallengeResult,
   }) {
     final uri = Uri.parse(link);
-    if (uri.scheme == 'challenge' && uri.host.isNotEmpty) {
+    if (uri.scheme != 'challenge') return;
+    if (uri.host == 'result' && uri.pathSegments.isNotEmpty) {
+      onChallengeResult(uri.pathSegments.first);
+    } else if (uri.host.isNotEmpty) {
       onChallengeInvite(uri.host);
     }
   }

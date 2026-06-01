@@ -10,6 +10,8 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
   Future<void> load() async {
     emit(const DataState.loading());
     try {
+      await HealthService.instance.requestPermissions();
+
       // Sync first so today's score is in DB before we read the streak.
       // getStreak() reads DB; if today hasn't been upserted yet it returns 0.
       await ScoreService.instance.sync();

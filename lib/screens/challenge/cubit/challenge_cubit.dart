@@ -5,6 +5,7 @@ import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
+import 'package:sapiens_rank/services/score_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'challenge_state.dart';
 
@@ -17,11 +18,14 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
   Future<void> load() async {
     emit(const DataState.loading());
     try {
+      await ScoreService.instance.sync();
       final challenges = await _service.fetchMyChallenges();
 
       final standingsMap = <String, List<ChallengeStanding>>{};
       await Future.wait(
-        challenges.where((c) => c.status == ChallengeStatus.live).map((c) async {
+        challenges.where((c) => c.status == ChallengeStatus.live).map((
+          c,
+        ) async {
           standingsMap[c.id] = await _service.getStandings(c.id);
         }),
       );

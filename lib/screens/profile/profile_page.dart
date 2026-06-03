@@ -8,7 +8,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_cubit.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
-import 'package:sapiens_rank/services/health_targets.dart';
+import 'package:sapiens_rank/services/score_service.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

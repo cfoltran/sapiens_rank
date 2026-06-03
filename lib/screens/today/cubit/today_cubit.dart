@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/services/health_service.dart';
-import 'package:sapiens_rank/services/health_targets.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
 
@@ -24,7 +23,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
         ScoreService.instance.getMyRank(), // leaderboard entry
         ScoreService.instance
             .getStreak(), // consecutive days (DB is up-to-date)
-        ScoreService.instance.getScoreHistory(), // last 14 days from DB
+        ScoreService.instance.getPersonalScoreHistory(), // last 14 days from DB
         ProfileService.instance.getPersonalTargets(), // adaptive targets
       ]);
 
@@ -35,14 +34,13 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
       final targets = results[4] as HealthTargets;
 
       final bd = ScoreBreakdown.compute(snap, targets: targets);
-      final bdRanking = ScoreBreakdown.computeRanking(snap);
 
-      // Score history from DB — append today's ranking score if not already included
-      final history = dbHistory.isNotEmpty && dbHistory.last == bdRanking.score
+      // Score history from DB — append today's personal score if not already included
+      final history = dbHistory.isNotEmpty && dbHistory.last == bd.score
           ? dbHistory
-          : [...dbHistory, bdRanking.score];
+          : [...dbHistory, bd.score];
       final scoreDelta = history.length >= 2
-          ? bdRanking.score - history[history.length - 2]
+          ? bd.score - history[history.length - 2]
           : 0;
 
       final sleepH = snap.sleepHours.floor();

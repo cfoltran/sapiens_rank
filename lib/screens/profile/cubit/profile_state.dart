@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:sapiens_rank/services/health_targets.dart';
 import 'package:sapiens_rank/services/score_service.dart';
 
 class ProfileData extends Equatable {

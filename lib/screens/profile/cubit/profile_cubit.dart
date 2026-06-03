@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
-import 'package:sapiens_rank/services/health_targets.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -29,12 +28,11 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
           .single();
       final allScoresRaw = await _db
           .from('scores')
-          .select('score')
+          .select('score, personal_score')
           .eq('user_id', uid);
       final streak = await ScoreService.instance.getStreak();
-      final history30d = await ScoreService.instance.getScoreHistoryDated(
-        days: 30,
-      );
+      final history30d = await ScoreService.instance
+          .getPersonalScoreHistoryDated(days: 30);
 
       final name = (profile['name'] as String?) ?? 'Sapien';
       final country = (profile['country'] as String?) ?? 'FR';
@@ -52,7 +50,11 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
       final lifetimeAvg = allScoresRaw.isEmpty
           ? 0
           : (allScoresRaw
-                        .map((r) => r['score'] as int)
+                        .map(
+                          (r) =>
+                              (r['personal_score'] as int?) ??
+                              (r['score'] as int),
+                        )
                         .reduce((a, b) => a + b) /
                     allScoresRaw.length)
                 .round();

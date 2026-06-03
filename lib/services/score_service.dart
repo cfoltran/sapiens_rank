@@ -1,7 +1,30 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sapiens_rank/services/health_service.dart';
-import 'package:sapiens_rank/services/health_targets.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
+
+class HealthTargets {
+  const HealthTargets({
+    required this.sleepHours,
+    required this.steps,
+    required this.kcal,
+    required this.standHours,
+    required this.hrv,
+  });
+
+  final double sleepHours;
+  final int steps;
+  final double kcal;
+  final int standHours;
+  final double hrv;
+
+  static const defaults = HealthTargets(
+    sleepHours: 7.0,
+    steps: 7000,
+    kcal: 380.0,
+    standHours: 12,
+    hrv: 60.0,
+  );
+}
 
 class ScoreBreakdown {
   const ScoreBreakdown({
@@ -137,7 +160,11 @@ class ScoreService {
     } catch (_) {}
   }
 
-  Future<void> _syncDay(String uid, DateTime date, HealthTargets targets) async {
+  Future<void> _syncDay(
+    String uid,
+    DateTime date,
+    HealthTargets targets,
+  ) async {
     try {
       final snap = await HealthService.instance.fetchDaySnapshot(date);
       final ranking = ScoreBreakdown.computeRanking(snap);
@@ -216,6 +243,57 @@ class ScoreService {
       return rows
           .map<(DateTime, int)>(
             (r) => (DateTime.parse(r['date'] as String), r['score'] as int),
+          )
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<int>> getPersonalScoreHistory({int days = 14}) async {
+    final uid = _userId;
+    if (uid == null) return [];
+    try {
+      final rows = await _db
+          .from('scores')
+          .select('score, personal_score')
+          .eq('user_id', uid)
+          .gte(
+            'date',
+            _isoDate(DateTime.now().subtract(Duration(days: days - 1))),
+          )
+          .order('date')
+          .limit(days);
+      return rows
+          .map<int>((r) => (r['personal_score'] as int?) ?? (r['score'] as int))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<(DateTime, int)>> getPersonalScoreHistoryDated({
+    int days = 30,
+  }) async {
+    final uid = _userId;
+    if (uid == null) return [];
+    try {
+      final rows = await _db
+          .from('scores')
+          .select('date, score, personal_score')
+          .eq('user_id', uid)
+          .gte(
+            'date',
+            _isoDate(DateTime.now().subtract(Duration(days: days - 1))),
+          )
+          .order('date')
+          .limit(days);
+      return rows
+          .map<(DateTime, int)>(
+            (r) => (
+              DateTime.parse(r['date'] as String),
+              (r['personal_score'] as int?) ?? (r['score'] as int),
+            ),
           )
           .toList();
     } catch (_) {

@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:sapiens_rank/services/health_targets.dart';
+import 'package:sapiens_rank/services/score_service.dart';
 
 class ProfileService {
   ProfileService._();

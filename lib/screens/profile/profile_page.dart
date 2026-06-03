@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
@@ -7,6 +8,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_cubit.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
+import 'package:sapiens_rank/services/health_targets.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -108,6 +110,8 @@ class _LoadedBody extends StatelessWidget {
             _IdentityCard(data: data),
             const SizedBox(height: 18),
             _TrendCard(data: data),
+            const SizedBox(height: 18),
+            _TargetsCard(data: data),
             const SizedBox(height: 18),
             _ThemeSelector(),
             const SizedBox(height: 18),
@@ -547,6 +551,202 @@ class _BigChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(_BigChartPainter old) =>
       old.entries != entries || old.limeColor != limeColor;
+}
+
+class _TargetsCard extends StatelessWidget {
+  const _TargetsCard({required this.data});
+  final ProfileData data;
+
+  static const _metrics = [
+    (key: 'steps', label: 'Steps', unit: '', icon: Icons.directions_walk),
+    (
+      key: 'kcal',
+      label: 'Active kcal',
+      unit: 'kcal',
+      icon: Icons.local_fire_department,
+    ),
+    (key: 'sleep', label: 'Sleep', unit: 'h', icon: Icons.bedtime),
+    (
+      key: 'stand',
+      label: 'Stand hours',
+      unit: 'h',
+      icon: Icons.accessibility_new,
+    ),
+  ];
+
+  String _fmt(String key, HealthTargets t) => switch (key) {
+    'steps' => _fmtSteps(t.steps),
+    'kcal' => '${t.kcal.round()}',
+    'sleep' => t.sleepHours.toStringAsFixed(1),
+    'stand' => '${t.standHours}',
+    _ => '',
+  };
+
+  static String _fmtSteps(int v) => v >= 1000
+      ? '${v ~/ 1000},${(v % 1000).toString().padLeft(3, '0')}'
+      : '$v';
+
+  void _editTarget(BuildContext context, String key) {
+    final cubit = context.read<ProfileCubit>();
+    final targets = data.targets;
+    final current = switch (key) {
+      'steps' => targets.steps.toString(),
+      'kcal' => targets.kcal.round().toString(),
+      'sleep' => targets.sleepHours.toStringAsFixed(1),
+      'stand' => targets.standHours.toString(),
+      _ => '',
+    };
+    final label = _metrics.firstWhere((m) => m.key == key).label;
+    final unit = _metrics.firstWhere((m) => m.key == key).unit;
+    final ctrl = TextEditingController(text: current);
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: context.srBgElev,
+        title: Text(
+          label,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: context.srText,
+          ),
+        ),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+          ],
+          style: GoogleFonts.spaceGrotesk(fontSize: 18, color: context.srText),
+          decoration: InputDecoration(
+            suffixText: unit,
+            suffixStyle: GoogleFonts.jetBrainsMono(color: context.srTextDim),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: context.srLine),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: context.srLime),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: TextStyle(color: context.srTextMuted)),
+          ),
+          TextButton(
+            onPressed: () {
+              final v = double.tryParse(ctrl.text);
+              if (v == null) return;
+              final updated = switch (key) {
+                'steps' => HealthTargets(
+                  steps: v.round().clamp(1000, 30000),
+                  kcal: targets.kcal,
+                  sleepHours: targets.sleepHours,
+                  standHours: targets.standHours,
+                  hrv: targets.hrv,
+                ),
+                'kcal' => HealthTargets(
+                  steps: targets.steps,
+                  kcal: v.clamp(100, 2000),
+                  sleepHours: targets.sleepHours,
+                  standHours: targets.standHours,
+                  hrv: targets.hrv,
+                ),
+                'sleep' => HealthTargets(
+                  steps: targets.steps,
+                  kcal: targets.kcal,
+                  sleepHours: v.clamp(4, 12),
+                  standHours: targets.standHours,
+                  hrv: targets.hrv,
+                ),
+                'stand' => HealthTargets(
+                  steps: targets.steps,
+                  kcal: targets.kcal,
+                  sleepHours: targets.sleepHours,
+                  standHours: v.round().clamp(1, 24),
+                  hrv: targets.hrv,
+                ),
+                _ => targets,
+              };
+              cubit.updateTargets(updated);
+              Navigator.pop(ctx);
+            },
+            child: Text('Save', style: TextStyle(color: context.srLimeText)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: context.srBgElev,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: context.srLineStrong),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'MY TARGETS',
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 10,
+              color: context.srTextDim,
+              letterSpacing: 10 * 0.15,
+            ),
+          ),
+          const SizedBox(height: 14),
+          for (var i = 0; i < _metrics.length; i++) ...[
+            if (i > 0) Divider(height: 1, color: context.srTintSm),
+            GestureDetector(
+              onTap: () => _editTarget(context, _metrics[i].key),
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(_metrics[i].icon, size: 16, color: context.srLimeText),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _metrics[i].label,
+                        style: tt.bodyMedium!.copyWith(
+                          color: context.srTextMuted,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${_fmt(_metrics[i].key, data.targets)} ${_metrics[i].unit}'
+                          .trim(),
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: context.srText,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.edit_outlined,
+                      size: 14,
+                      color: context.srTextDim,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class _ThemeSelector extends StatelessWidget {

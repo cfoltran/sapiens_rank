@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/services/health_service.dart';
+import 'package:sapiens_rank/services/health_targets.dart';
+import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
 
 class TodayCubit extends Cubit<DataState<TodayData>> {
@@ -20,24 +22,27 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
       final results = await Future.wait([
         HealthService.instance.fetchDaySnapshot(), // today's live snapshot
         ScoreService.instance.getMyRank(), // leaderboard entry
-        ScoreService.instance.getStreak(), // consecutive days (DB is up-to-date)
+        ScoreService.instance
+            .getStreak(), // consecutive days (DB is up-to-date)
         ScoreService.instance.getScoreHistory(), // last 14 days from DB
+        ProfileService.instance.getPersonalTargets(), // adaptive targets
       ]);
 
       final snap = results[0] as HealthSnapshot;
       final rank = results[1] as LeaderboardEntry?;
       final streak = results[2] as int;
       final dbHistory = results[3] as List<int>;
+      final targets = results[4] as HealthTargets;
 
-      final bd = ScoreBreakdown.compute(snap);
+      final bd = ScoreBreakdown.compute(snap, targets: targets);
+      final bdRanking = ScoreBreakdown.computeRanking(snap);
 
-      // Score history from DB — append today if not already included
-      final history = dbHistory.isNotEmpty &&
-              dbHistory.last == bd.score
+      // Score history from DB — append today's ranking score if not already included
+      final history = dbHistory.isNotEmpty && dbHistory.last == bdRanking.score
           ? dbHistory
-          : [...dbHistory, bd.score];
+          : [...dbHistory, bdRanking.score];
       final scoreDelta = history.length >= 2
-          ? bd.score - history[history.length - 2]
+          ? bdRanking.score - history[history.length - 2]
           : 0;
 
       final sleepH = snap.sleepHours.floor();
@@ -55,7 +60,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           contrib: bd.sleepPts,
           target: 25,
           rawLabel: sleepH > 0
-              ? '${sleepH}h ${sleepMin}m last night'
+              ? '${sleepH}h ${sleepMin}m / ${targets.sleepHours.toStringAsFixed(1)}h target'
               : '-- no sleep data',
         ),
         TodayMetric(
@@ -64,7 +69,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           iconName: 'steps',
           contrib: bd.stepsPts,
           target: 25,
-          rawLabel: '${fmtSteps(snap.steps)} / 10,000',
+          rawLabel: '${fmtSteps(snap.steps)} / ${fmtSteps(targets.steps)}',
         ),
         TodayMetric(
           key: 'kcal',
@@ -72,7 +77,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           iconName: 'kcal',
           contrib: bd.kcalPts,
           target: 20,
-          rawLabel: '${snap.kcal.round()} / 750 kcal',
+          rawLabel: '${snap.kcal.round()} / ${targets.kcal.round()} kcal',
         ),
         TodayMetric(
           key: 'stand',
@@ -80,7 +85,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           iconName: 'stand',
           contrib: bd.standPts,
           target: 15,
-          rawLabel: '${snap.standHours} / 12 hours',
+          rawLabel: '${snap.standHours} / ${targets.standHours} hours',
         ),
         TodayMetric(
           key: 'hrv',
@@ -112,7 +117,6 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           ),
         ),
       );
-
     } catch (e, st) {
       emit(DataState.error('fetch_failed', error: e, stackTrace: st));
     }

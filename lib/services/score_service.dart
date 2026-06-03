@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sapiens_rank/services/health_service.dart';
+import 'package:sapiens_rank/services/health_targets.dart';
+import 'package:sapiens_rank/services/profile_service.dart';
 
 class ScoreBreakdown {
   const ScoreBreakdown({
@@ -18,23 +20,26 @@ class ScoreBreakdown {
   final int standPts;
   final int hrvPts;
 
-  /// Canonical scoring algorithm (total max = 100 pts).
-  ///
-  /// When HRV data is unavailable (no Apple Watch), its 15 pts are
-  /// redistributed proportionally so the user can still reach 100/100:
+  /// Personal score using adaptive targets.
+  /// When HRV data is unavailable, its 15 pts are redistributed:
   ///   sleep 25→29 · steps 25→29 · kcal 20→24 · stand 15→18 · hrv 0
-  static ScoreBreakdown compute(HealthSnapshot snap) {
+  static ScoreBreakdown compute(
+    HealthSnapshot snap, {
+    HealthTargets targets = HealthTargets.defaults,
+  }) {
     final hasHrv = snap.hrv != null;
     final sleepMax = hasHrv ? 25.0 : 29.0;
     final stepsMax = hasHrv ? 25.0 : 29.0;
     final kcalMax = hasHrv ? 20.0 : 24.0;
     final standMax = hasHrv ? 15.0 : 18.0;
 
-    final sleep = (snap.sleepHours / 8.0).clamp(0.0, 1.0) * sleepMax;
-    final steps = (snap.steps / 10000.0).clamp(0.0, 1.0) * stepsMax;
-    final kcal = (snap.kcal / 750.0).clamp(0.0, 1.0) * kcalMax;
-    final stand = (snap.standHours / 12.0).clamp(0.0, 1.0) * standMax;
-    final hrv = hasHrv ? (snap.hrv! / 60.0).clamp(0.0, 1.0) * 15 : 0.0;
+    final sleep =
+        (snap.sleepHours / targets.sleepHours).clamp(0.0, 1.0) * sleepMax;
+    final steps = (snap.steps / targets.steps).clamp(0.0, 1.0) * stepsMax;
+    final kcal = (snap.kcal / targets.kcal).clamp(0.0, 1.0) * kcalMax;
+    final stand =
+        (snap.standHours / targets.standHours).clamp(0.0, 1.0) * standMax;
+    final hrv = hasHrv ? (snap.hrv! / targets.hrv).clamp(0.0, 1.0) * 15 : 0.0;
 
     return ScoreBreakdown(
       score: (sleep + steps + kcal + stand + hrv).round(),
@@ -45,6 +50,9 @@ class ScoreBreakdown {
       hrvPts: hrv.round(),
     );
   }
+
+  /// Fixed-target score used for the leaderboard and challenges.
+  static ScoreBreakdown computeRanking(HealthSnapshot snap) => compute(snap);
 }
 
 class LeaderboardEntry {
@@ -107,7 +115,6 @@ class ScoreService {
 
       final today = _dateOnly(DateTime.now());
 
-      // Days to process: from day after latest_sync up to today (cap 7)
       final startDay = latestSync != null
           ? latestSync.add(const Duration(days: 1))
           : today.subtract(const Duration(days: 6));
@@ -115,9 +122,11 @@ class ScoreService {
           ? today.subtract(const Duration(days: 6))
           : startDay;
 
+      final targets = await ProfileService.instance.getPersonalTargets();
+
       var day = actualStart;
       while (!day.isAfter(today)) {
-        await _syncDay(uid, day);
+        await _syncDay(uid, day, targets);
         day = day.add(const Duration(days: 1));
       }
 
@@ -128,15 +137,30 @@ class ScoreService {
     } catch (_) {}
   }
 
-  Future<void> _syncDay(String uid, DateTime date) async {
+  Future<void> _syncDay(String uid, DateTime date, HealthTargets targets) async {
     try {
       final snap = await HealthService.instance.fetchDaySnapshot(date);
-      final breakdown = ScoreBreakdown.compute(snap);
-      await _db.from('scores').upsert({
-        'user_id': uid,
-        'date': _isoDate(date),
-        'score': breakdown.score,
-      });
+      final ranking = ScoreBreakdown.computeRanking(snap);
+      final personal = ScoreBreakdown.compute(snap, targets: targets);
+
+      await Future.wait([
+        _db.from('scores').upsert({
+          'user_id': uid,
+          'date': _isoDate(date),
+          'score': ranking.score,
+          'personal_score': personal.score,
+        }),
+        _db.from('daily_metrics').upsert({
+          'user_id': uid,
+          'date': _isoDate(date),
+          if (snap.sleepHours > 0) 'sleep_hours': snap.sleepHours,
+          if (snap.steps > 0) 'steps': snap.steps,
+          if (snap.kcal > 0) 'kcal': snap.kcal,
+          if (snap.standHours > 0) 'stand_hours': snap.standHours,
+          if (snap.hrv != null) 'hrv': snap.hrv,
+          if (snap.restingHr != null) 'resting_hr': snap.restingHr,
+        }),
+      ]);
     } catch (_) {}
   }
 
@@ -155,7 +179,6 @@ class ScoreService {
     }
   }
 
-  /// Last [days] daily scores ordered ascending (for sparkline).
   Future<List<int>> getScoreHistory({int days = 14}) async {
     final uid = _userId;
     if (uid == null) return [];
@@ -176,9 +199,6 @@ class ScoreService {
     }
   }
 
-  /// Returns scored days as (date, score) pairs, ordered ascending.
-  /// Only days with actual data are returned — callers should position
-  /// them relative to the window start/end for accurate charting.
   Future<List<(DateTime, int)>> getScoreHistoryDated({int days = 30}) async {
     final uid = _userId;
     if (uid == null) return [];
@@ -230,7 +250,6 @@ class ScoreService {
     }
   }
 
-  /// Number of consecutive days with a score ending today.
   Future<int> getStreak() async {
     final uid = _userId;
     if (uid == null) return 0;

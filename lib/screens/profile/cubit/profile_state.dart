@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:sapiens_rank/services/health_targets.dart';
+import 'package:sapiens_rank/services/score_service.dart';
 
 class ProfileData extends Equatable {
   const ProfileData({
@@ -10,6 +12,7 @@ class ProfileData extends Equatable {
     required this.scoreHistory30d,
     required this.trendDelta,
     required this.trendLabel,
+    required this.targets,
   });
 
   final String name;
@@ -17,14 +20,10 @@ class ProfileData extends Equatable {
   final DateTime joinedAt;
   final int lifetimeAvg;
   final int streak;
-  /// Each entry is (date, score). Only days with data — positioned by date in chart.
   final List<(DateTime, int)> scoreHistory30d;
-
-  /// Difference between avg of last 15 days vs first 15 days
   final double trendDelta;
-
-  /// "Climbing" | "Declining" | "Stable"
   final String trendLabel;
+  final HealthTargets targets;
 
   String get handle =>
       '@${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '_')}';
@@ -64,6 +63,18 @@ class ProfileData extends Equatable {
     return 'joined ${months[d.month - 1]} ${d.year}';
   }
 
+  ProfileData copyWith({HealthTargets? targets}) => ProfileData(
+    name: name,
+    country: country,
+    joinedAt: joinedAt,
+    lifetimeAvg: lifetimeAvg,
+    streak: streak,
+    scoreHistory30d: scoreHistory30d,
+    trendDelta: trendDelta,
+    trendLabel: trendLabel,
+    targets: targets ?? this.targets,
+  );
+
   @override
-  List<Object?> get props => [name, lifetimeAvg, streak];
+  List<Object?> get props => [name, lifetimeAvg, streak, targets];
 }

@@ -1,115 +1,13 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sapiens_rank/models/health_targets.dart';
+import 'package:sapiens_rank/models/leaderboard_entry.dart';
+import 'package:sapiens_rank/models/score_breakdown.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 
-class HealthTargets {
-  const HealthTargets({
-    required this.sleepHours,
-    required this.steps,
-    required this.kcal,
-    required this.standHours,
-    required this.hrv,
-  });
-
-  final double sleepHours;
-  final int steps;
-  final double kcal;
-  final int standHours;
-  final double hrv;
-
-  static const defaults = HealthTargets(
-    sleepHours: 7.0,
-    steps: 7000,
-    kcal: 380.0,
-    standHours: 12,
-    hrv: 60.0,
-  );
-}
-
-class ScoreBreakdown {
-  const ScoreBreakdown({
-    required this.score,
-    required this.sleepPts,
-    required this.stepsPts,
-    required this.kcalPts,
-    required this.standPts,
-    required this.hrvPts,
-  });
-
-  final int score;
-  final int sleepPts;
-  final int stepsPts;
-  final int kcalPts;
-  final int standPts;
-  final int hrvPts;
-
-  /// Personal score using adaptive targets.
-  /// When HRV data is unavailable, its 15 pts are redistributed:
-  ///   sleep 25→29 · steps 25→29 · kcal 20→24 · stand 15→18 · hrv 0
-  static ScoreBreakdown compute(
-    HealthSnapshot snap, {
-    HealthTargets targets = HealthTargets.defaults,
-  }) {
-    final hasHrv = snap.hrv != null;
-    final sleepMax = hasHrv ? 25.0 : 29.0;
-    final stepsMax = hasHrv ? 25.0 : 29.0;
-    final kcalMax = hasHrv ? 20.0 : 24.0;
-    final standMax = hasHrv ? 15.0 : 18.0;
-
-    final sleep =
-        (snap.sleepHours / targets.sleepHours).clamp(0.0, 1.0) * sleepMax;
-    final steps = (snap.steps / targets.steps).clamp(0.0, 1.0) * stepsMax;
-    final kcal = (snap.kcal / targets.kcal).clamp(0.0, 1.0) * kcalMax;
-    final stand =
-        (snap.standHours / targets.standHours).clamp(0.0, 1.0) * standMax;
-    final hrv = hasHrv ? (snap.hrv! / targets.hrv).clamp(0.0, 1.0) * 15 : 0.0;
-
-    return ScoreBreakdown(
-      score: (sleep + steps + kcal + stand + hrv).round(),
-      sleepPts: sleep.round(),
-      stepsPts: steps.round(),
-      kcalPts: kcal.round(),
-      standPts: stand.round(),
-      hrvPts: hrv.round(),
-    );
-  }
-
-  /// Fixed-target score used for the leaderboard and challenges.
-  static ScoreBreakdown computeRanking(HealthSnapshot snap) => compute(snap);
-}
-
-class LeaderboardEntry {
-  const LeaderboardEntry({
-    required this.userId,
-    required this.score,
-    this.rankWorld,
-    this.rankCountry,
-    this.rankDelta,
-    this.country,
-    this.displayName,
-  });
-
-  final String userId;
-  final double score;
-  final int? rankWorld;
-  final int? rankCountry;
-  final int? rankDelta;
-  final String? country;
-  final String? displayName;
-
-  factory LeaderboardEntry.fromJson(Map<String, dynamic> j) {
-    final profiles = j['profiles'] as Map<String, dynamic>?;
-    return LeaderboardEntry(
-      userId: j['user_id'] as String,
-      score: (j['score'] as num).toDouble(),
-      rankWorld: j['rank_world'] as int?,
-      rankCountry: j['rank_country'] as int?,
-      rankDelta: j['rank_delta'] as int?,
-      country: j['country'] as String?,
-      displayName: profiles?['name'] as String?,
-    );
-  }
-}
+export 'package:sapiens_rank/models/health_targets.dart';
+export 'package:sapiens_rank/models/leaderboard_entry.dart';
+export 'package:sapiens_rank/models/score_breakdown.dart';
 
 class ScoreService {
   ScoreService._();
@@ -119,8 +17,6 @@ class ScoreService {
 
   String? get _userId => _db.auth.currentUser?.id;
 
-  /// Backfills any missing days between [latest_sync] and today (max 7),
-  /// then updates [latest_sync] on the profile.
   Future<void> sync() async {
     final uid = _userId;
     if (uid == null) return;
@@ -320,7 +216,7 @@ class ScoreService {
             .map<LeaderboardEntry>((r) => LeaderboardEntry.fromJson(r))
             .toList();
       }
-      return (await (query.order('rank_world').limit(limit)))
+      return (await query.order('rank_world').limit(limit))
           .map<LeaderboardEntry>((r) => LeaderboardEntry.fromJson(r))
           .toList();
     } catch (_) {

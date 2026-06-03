@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:sapiens_rank/services/score_service.dart';
+import 'package:sapiens_rank/models/health_targets.dart';
 
 class ProfileService {
   ProfileService._();
@@ -38,15 +38,7 @@ class ProfileService {
           )
           .eq('id', uid)
           .single();
-      final d = HealthTargets.defaults;
-      return HealthTargets(
-        steps: (row['target_steps'] as int?) ?? d.steps,
-        kcal: (row['target_kcal'] as num?)?.toDouble() ?? d.kcal,
-        sleepHours:
-            (row['target_sleep_hours'] as num?)?.toDouble() ?? d.sleepHours,
-        standHours: (row['target_stand_hours'] as int?) ?? d.standHours,
-        hrv: d.hrv,
-      );
+      return HealthTargets.fromJson(row);
     } catch (_) {
       return HealthTargets.defaults;
     }
@@ -55,14 +47,6 @@ class ProfileService {
   Future<void> updateTargets(HealthTargets targets) async {
     final uid = _userId;
     if (uid == null) return;
-    await _db
-        .from('profiles')
-        .update({
-          'target_steps': targets.steps,
-          'target_kcal': targets.kcal,
-          'target_sleep_hours': targets.sleepHours,
-          'target_stand_hours': targets.standHours,
-        })
-        .eq('id', uid);
+    await _db.from('profiles').update(targets.toJson()).eq('id', uid);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:sapiens_rank/services/score_service.dart';
+import 'package:sapiens_rank/models/health_targets.dart';
 
 class ProfileData extends Equatable {
   const ProfileData({

@@ -127,6 +127,7 @@ class _SearchInput extends StatelessWidget {
 
 class SrCountryList extends StatelessWidget {
   const SrCountryList({
+    super.key,
     required this.countries,
     required this.selected,
     required this.onSelect,
@@ -153,6 +154,7 @@ class SrCountryList extends StatelessWidget {
 
 class SrCountryRow extends StatelessWidget {
   const SrCountryRow({
+    super.key,
     required this.country,
     required this.isSelected,
     required this.onTap,
@@ -214,4 +216,3 @@ class SrCountryRow extends StatelessWidget {
     );
   }
 }
-

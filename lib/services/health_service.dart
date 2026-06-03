@@ -142,14 +142,48 @@ class HealthService {
       return sumType(HealthDataType.SLEEP_ASLEEP) / 60.0;
     }
 
-    int standHours() => samples
-        .where(
-          (p) =>
-              p.type == HealthDataType.APPLE_STAND_HOUR &&
-              p.dateFrom.toLocal().isAfter(dayStart) &&
-              p.dateFrom.toLocal().isBefore(dayEnd),
-        )
-        .length;
+    int standHours() {
+      // Find when the user woke up so we can exclude stand hours during sleep.
+      // Apple Watch records APPLE_STAND_HOUR = 1 even during sleep movement,
+      // but the Stand ring only counts awake hours.
+      final nightStart = dayStart.subtract(const Duration(hours: 12));
+      final nightEnd = dayStart.add(const Duration(hours: 12));
+      const sleepTypes = {
+        HealthDataType.SLEEP_LIGHT,
+        HealthDataType.SLEEP_DEEP,
+        HealthDataType.SLEEP_REM,
+        HealthDataType.SLEEP_ASLEEP,
+      };
+      final sleepEnds = samples
+          .where(
+            (p) =>
+                sleepTypes.contains(p.type) &&
+                p.dateFrom.isAfter(nightStart) &&
+                p.dateTo.isBefore(nightEnd),
+          )
+          .map((p) => p.dateTo.toLocal());
+      // Include the wake-up hour (floor to hour) so the ring matches.
+      final wakeHour = sleepEnds.isEmpty
+          ? 0
+          : sleepEnds.reduce((a, b) => a.isAfter(b) ? a : b).hour;
+
+      bool isStood(HealthDataPoint p) =>
+          p.type == HealthDataType.APPLE_STAND_HOUR &&
+          p.dateFrom.toLocal().isAfter(dayStart) &&
+          p.dateFrom.toLocal().isBefore(dayEnd) &&
+          p.value is NumericHealthValue &&
+          (p.value as NumericHealthValue).numericValue.toInt() == 1 &&
+          p.dateFrom.toLocal().hour >= wakeHour;
+
+      final all = samples.where(isStood).toList();
+      final watchOnly = all
+          .where((p) => p.sourceName.toLowerCase().contains('watch'))
+          .toList();
+      return (watchOnly.isNotEmpty ? watchOnly : all)
+          .map((p) => p.dateFrom.toLocal().hour)
+          .toSet()
+          .length;
+    }
 
     return HealthSnapshot(
       sleepHours: sleepHours(),

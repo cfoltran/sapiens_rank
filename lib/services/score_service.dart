@@ -102,50 +102,6 @@ class ScoreService {
     }
   }
 
-  Future<List<int>> getScoreHistory({int days = 14}) async {
-    final uid = _userId;
-    if (uid == null) return [];
-    try {
-      final rows = await _db
-          .from('scores')
-          .select('score')
-          .eq('user_id', uid)
-          .gte(
-            'date',
-            _isoDate(DateTime.now().subtract(Duration(days: days - 1))),
-          )
-          .order('date')
-          .limit(days);
-      return rows.map<int>((r) => r['score'] as int).toList();
-    } catch (_) {
-      return [];
-    }
-  }
-
-  Future<List<(DateTime, int)>> getScoreHistoryDated({int days = 30}) async {
-    final uid = _userId;
-    if (uid == null) return [];
-    try {
-      final rows = await _db
-          .from('scores')
-          .select('date, score')
-          .eq('user_id', uid)
-          .gte(
-            'date',
-            _isoDate(DateTime.now().subtract(Duration(days: days - 1))),
-          )
-          .order('date')
-          .limit(days);
-      return rows
-          .map<(DateTime, int)>(
-            (r) => (DateTime.parse(r['date'] as String), r['score'] as int),
-          )
-          .toList();
-    } catch (_) {
-      return [];
-    }
-  }
-
   Future<List<int>> getPersonalScoreHistory({int days = 14}) async {
     final uid = _userId;
     if (uid == null) return [];

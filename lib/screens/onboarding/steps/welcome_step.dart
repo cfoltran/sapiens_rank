@@ -156,9 +156,9 @@ class _WelcomeStepState extends State<WelcomeStep>
                         color: context.srText,
                       ),
                       children: [
-                        const TextSpan(text: 'Where would you\n'),
+                        const TextSpan(text: 'Improve together.\n'),
                         TextSpan(
-                          text: 'land today?',
+                          text: 'Become the best Homo Sapiens.',
                           style: TextStyle(color: context.srLimeText),
                         ),
                       ],

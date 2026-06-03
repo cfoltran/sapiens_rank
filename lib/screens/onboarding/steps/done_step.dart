@@ -65,8 +65,6 @@ class _DoneStepState extends State<DoneStep>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _LogoMark(),
-                      const SizedBox(height: 32),
                       const OnboardingEyebrow(
                         "You're in.",
                         color: SrColors.magenta,
@@ -86,7 +84,7 @@ class _DoneStepState extends State<DoneStep>
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        '2.4M Sapiens. One leaderboard.\nToday is your chance to climb.',
+                        'One leaderboard.\nToday is your chance to climb.',
                         textAlign: TextAlign.center,
                         style: tt.bodyLarge!.copyWith(
                           color: context.srTextMuted,
@@ -106,38 +104,6 @@ class _DoneStepState extends State<DoneStep>
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LogoMark extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 84,
-      height: 84,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        color: context.srLime,
-        boxShadow: [
-          BoxShadow(
-            color: context.srLime.withAlpha(80),
-            blurRadius: 32,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          'SR',
-          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-            fontWeight: FontWeight.w800,
-            fontStyle: FontStyle.normal,
-            letterSpacing: -1,
-            color: SrColors.textInk,
-          ),
-        ),
       ),
     );
   }

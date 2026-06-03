@@ -7,9 +7,15 @@ import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 class AuthStep extends StatelessWidget {
-  const AuthStep({super.key, required this.firstName, required this.onAuth});
+  const AuthStep({
+    super.key,
+    required this.firstName,
+    required this.isLoading,
+    required this.onAuth,
+  });
 
   final String firstName;
+  final bool isLoading;
   final VoidCallback onAuth;
 
   @override
@@ -33,7 +39,7 @@ class AuthStep extends StatelessWidget {
                   children: [
                     TextSpan(text: '$name, '),
                     TextSpan(
-                      text: 'save your rank.',
+                      text: 'discover your ranking.',
                       style: TextStyle(color: context.srLimeText),
                     ),
                   ],
@@ -41,33 +47,38 @@ class AuthStep extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const OnboardingLede(
-                "Your score and rank are ready. Create an account to keep them.",
+                "Create an account to discover your global ranking and keep your score.",
               ),
               const Spacer(),
-              if (Platform.isIOS) ...[
-                SupaSocialsAuth(
-                  socialProviders: const [OAuthProvider.apple],
-                  enableNativeAppleAuth: true,
-                  redirectUrl: 'com.pommef.sapiensrank/',
-                  onSuccess: (_) => onAuth(),
-                  showSuccessSnackBar: false,
-                ),
-                const SizedBox(height: 12),
-              ],
-              const _Divider(),
-              const SizedBox(height: 4),
-              Center(
-                child: TextButton(
-                  onPressed: () => EmailAuthSheet.show(context, onAuth: onAuth),
-                  child: Text(
-                    'Continue with email',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: context.srTextMuted,
-                      fontWeight: FontWeight.w500,
+              if (isLoading)
+                const Center(child: CircularProgressIndicator())
+              else ...[
+                if (Platform.isIOS) ...[
+                  SupaSocialsAuth(
+                    socialProviders: const [OAuthProvider.apple],
+                    enableNativeAppleAuth: true,
+                    redirectUrl: 'com.pommef.sapiensrank/',
+                    onSuccess: (_) => onAuth(),
+                    showSuccessSnackBar: false,
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                const _Divider(),
+                const SizedBox(height: 4),
+                Center(
+                  child: TextButton(
+                    onPressed: () =>
+                        EmailAuthSheet.show(context, onAuth: onAuth),
+                    child: Text(
+                      'Continue with email',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: context.srTextMuted,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

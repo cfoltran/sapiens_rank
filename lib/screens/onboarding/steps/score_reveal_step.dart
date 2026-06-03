@@ -12,12 +12,14 @@ class ScoreRevealStep extends StatefulWidget {
     required this.firstName,
     required this.progress,
     required this.total,
+    required this.score,
     required this.onNext,
   });
 
   final String firstName;
   final int progress;
   final int total;
+  final int score;
   final VoidCallback onNext;
 
   @override
@@ -26,8 +28,6 @@ class ScoreRevealStep extends StatefulWidget {
 
 class _ScoreRevealStepState extends State<ScoreRevealStep>
     with SingleTickerProviderStateMixin {
-  static const _target = 87;
-
   late final AnimationController _ctrl;
   late final Animation<double> _scoreAnim;
   bool _done = false;
@@ -90,8 +90,8 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
           AnimatedBuilder(
             animation: _scoreAnim,
             builder: (_, _) => _BigRing(
-              score: _target * _scoreAnim.value,
-              target: _target.toDouble(),
+              score: widget.score * _scoreAnim.value,
+              target: widget.score.toDouble(),
               limeColor: limeColor,
               trackColor: trackColor,
             ),

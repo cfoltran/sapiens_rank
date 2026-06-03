@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/data/countries.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/models/leaderboard_entry.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -14,6 +15,8 @@ class RankRevealStep extends StatefulWidget {
     required this.countryCode,
     required this.progress,
     required this.total,
+    required this.rank,
+    required this.rankTotal,
     required this.onNext,
   });
 
@@ -21,6 +24,8 @@ class RankRevealStep extends StatefulWidget {
   final String countryCode;
   final int progress;
   final int total;
+  final LeaderboardEntry? rank;
+  final int rankTotal;
   final VoidCallback onNext;
 
   @override
@@ -32,13 +37,15 @@ enum _Phase { intro, counting, landed }
 class _RankRevealStepState extends State<RankRevealStep>
     with TickerProviderStateMixin {
   static const _from = 24000;
-  static const _to = 3;
 
   late final AnimationController _dotsCtrl;
   late final AnimationController _countCtrl;
   late final Animation<double> _countAnim;
 
   _Phase _phase = _Phase.intro;
+
+  int get _to => widget.rank?.rankWorld ?? 1;
+  int get _rankCountry => widget.rank?.rankCountry ?? 1;
 
   @override
   void initState() {
@@ -82,6 +89,11 @@ class _RankRevealStepState extends State<RankRevealStep>
   int get _currentNumber {
     final v = _from - (_from - _to) * _countAnim.value;
     return v.round();
+  }
+
+  double get _percentile {
+    if (widget.rankTotal <= 0) return 0;
+    return ((1 - _to / widget.rankTotal) * 100).clamp(0.0, 100.0);
   }
 
   String get _firstName {
@@ -157,9 +169,15 @@ class _RankRevealStepState extends State<RankRevealStep>
                         ),
                         if (landed) ...[
                           const SizedBox(height: 28),
-                          const _StatsCard(),
+                          _StatsCard(
+                            percentile: _percentile,
+                            totalUsers: widget.rankTotal,
+                          ),
                           const SizedBox(height: 18),
-                          _CountryCard(countryCode: widget.countryCode),
+                          _CountryCard(
+                            countryCode: widget.countryCode,
+                            rankCountry: _rankCountry,
+                          ),
                         ],
                       ],
                     ),
@@ -257,11 +275,25 @@ class _RankNumber extends StatelessWidget {
 }
 
 class _StatsCard extends StatelessWidget {
-  const _StatsCard();
+  const _StatsCard({required this.percentile, required this.totalUsers});
+
+  final double percentile;
+  final int totalUsers;
+
+  static String _formatCount(int n) {
+    final s = n.toString();
+    final buf = StringBuffer();
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+      buf.write(s[i]);
+    }
+    return buf.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final pct = percentile.toStringAsFixed(2);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
@@ -283,19 +315,19 @@ class _StatsCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: context.srText,
                     ),
-                    children: const [
-                      TextSpan(text: 'Higher than '),
+                    children: [
+                      const TextSpan(text: 'Higher than '),
                       TextSpan(
-                        text: '99.88%',
-                        style: TextStyle(color: SrColors.magenta),
+                        text: '$pct%',
+                        style: const TextStyle(color: SrColors.magenta),
                       ),
-                      TextSpan(text: ' of Sapiens'),
+                      const TextSpan(text: ' of Sapiens'),
                     ],
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Out of 2,401,839 ranked today',
+                  'Out of ${_formatCount(totalUsers)} ranked today',
                   style: tt.labelSmall!.copyWith(
                     fontWeight: FontWeight.normal,
                     color: context.srTextMuted,
@@ -311,8 +343,9 @@ class _StatsCard extends StatelessWidget {
 }
 
 class _CountryCard extends StatelessWidget {
-  const _CountryCard({required this.countryCode});
+  const _CountryCard({required this.countryCode, required this.rankCountry});
   final String countryCode;
+  final int rankCountry;
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +379,7 @@ class _CountryCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '#412',
+                '#$rankCountry',
                 style: tt.titleSmall!.copyWith(color: context.srText),
               ),
             ],

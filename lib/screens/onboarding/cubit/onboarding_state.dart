@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:sapiens_rank/models/health_targets.dart';
+import 'package:sapiens_rank/models/leaderboard_entry.dart';
 
 enum OnboardingStep {
   welcome,
@@ -7,39 +9,59 @@ enum OnboardingStep {
   name,
   demographics,
   country,
+  targets,
   scoreReveal,
-  rankReveal,
   auth,
+  rankReveal,
   notifications,
   done,
 }
 
 class OnboardingData extends Equatable {
-  const OnboardingData({this.name = '', this.age = 28, this.country = 'FR'});
+  const OnboardingData({
+    this.name = '',
+    this.age = 28,
+    this.country = 'FR',
+    this.targets = HealthTargets.defaults,
+  });
 
   final String name;
   final int age;
   final String country;
+  final HealthTargets targets;
 
-  OnboardingData copyWith({String? name, int? age, String? country}) =>
-      OnboardingData(
-        name: name ?? this.name,
-        age: age ?? this.age,
-        country: country ?? this.country,
-      );
+  OnboardingData copyWith({
+    String? name,
+    int? age,
+    String? country,
+    HealthTargets? targets,
+  }) => OnboardingData(
+    name: name ?? this.name,
+    age: age ?? this.age,
+    country: country ?? this.country,
+    targets: targets ?? this.targets,
+  );
 
   @override
-  List<Object?> get props => [name, age, country];
+  List<Object?> get props => [name, age, country, targets];
 }
 
 class OnboardingState extends Equatable {
   const OnboardingState({
     this.step = OnboardingStep.welcome,
     this.data = const OnboardingData(),
+    this.personalScore,
+    this.rank,
+    this.rankTotal = 0,
+    this.isLoading = false,
   });
 
   final OnboardingStep step;
   final OnboardingData data;
+  final int? personalScore;
+  final LeaderboardEntry? rank;
+  final int rankTotal;
+  final bool isLoading;
 
   static int get _progressTotal => OnboardingStep.values
       .where(
@@ -63,9 +85,29 @@ class OnboardingState extends Equatable {
       step != OnboardingStep.auth &&
       step != OnboardingStep.notifications;
 
-  OnboardingState copyWith({OnboardingStep? step, OnboardingData? data}) =>
-      OnboardingState(step: step ?? this.step, data: data ?? this.data);
+  OnboardingState copyWith({
+    OnboardingStep? step,
+    OnboardingData? data,
+    int? personalScore,
+    LeaderboardEntry? rank,
+    int? rankTotal,
+    bool? isLoading,
+  }) => OnboardingState(
+    step: step ?? this.step,
+    data: data ?? this.data,
+    personalScore: personalScore ?? this.personalScore,
+    rank: rank ?? this.rank,
+    rankTotal: rankTotal ?? this.rankTotal,
+    isLoading: isLoading ?? this.isLoading,
+  );
 
   @override
-  List<Object?> get props => [step, data];
+  List<Object?> get props => [
+    step,
+    data,
+    personalScore,
+    rank,
+    rankTotal,
+    isLoading,
+  ];
 }

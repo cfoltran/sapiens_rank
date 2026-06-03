@@ -102,6 +102,18 @@ class ScoreService {
     }
   }
 
+  Future<int> getLeaderboardCount() async {
+    try {
+      final res = await _db
+          .from('leaderboard')
+          .select('user_id')
+          .count(CountOption.exact);
+      return res.count;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   Future<List<int>> getPersonalScoreHistory({int days = 14}) async {
     final uid = _userId;
     if (uid == null) return [];

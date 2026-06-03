@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sapiens_rank/screens/onboarding/cubit/onboarding_cubit.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
 import 'package:sapiens_rank/screens/onboarding/cubit/onboarding_state.dart';
@@ -12,6 +13,7 @@ import 'package:sapiens_rank/screens/onboarding/steps/notifications_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/permission_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/rank_reveal_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/score_reveal_step.dart';
+import 'package:sapiens_rank/screens/onboarding/steps/target_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/sync_step.dart';
 import 'package:sapiens_rank/screens/onboarding/sheets/login_sheet.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/welcome_step.dart';
@@ -73,12 +75,12 @@ class _StepRouter extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (state.step) {
       OnboardingStep.welcome => WelcomeStep(
-          onNext: cubit.next,
-          onLogin: () => LoginSheet.show(
-            context,
-            onAuth: context.read<AuthService>().setOnboardingDone,
-          ),
+        onNext: cubit.next,
+        onLogin: () => LoginSheet.show(
+          context,
+          onAuth: context.read<AuthService>().setOnboardingDone,
         ),
+      ),
       OnboardingStep.permission => PermissionStep(
         progress: state.progressIndex,
         total: state.progressTotal,
@@ -116,10 +118,18 @@ class _StepRouter extends StatelessWidget {
         },
         onBack: cubit.back,
       ),
+      OnboardingStep.targets => TargetStep(
+        progress: state.progressIndex,
+        total: state.progressTotal,
+        initialTargets: state.data.targets,
+        onSubmit: cubit.submitTargets,
+        onBack: cubit.back,
+      ),
       OnboardingStep.scoreReveal => ScoreRevealStep(
         progress: state.progressIndex,
         total: state.progressTotal,
         firstName: state.data.name,
+        score: state.personalScore ?? 0,
         onNext: cubit.next,
       ),
       OnboardingStep.rankReveal => RankRevealStep(
@@ -127,16 +137,22 @@ class _StepRouter extends StatelessWidget {
         total: state.progressTotal,
         firstName: state.data.name,
         countryCode: state.data.country,
+        rank: state.rank,
+        rankTotal: state.rankTotal,
         onNext: cubit.next,
       ),
       OnboardingStep.auth => AuthStep(
         firstName: state.data.name,
+        isLoading: state.isLoading,
         onAuth: cubit.completeAuth,
       ),
       OnboardingStep.notifications => NotificationsStep(onNext: cubit.next),
       OnboardingStep.done => DoneStep(
         firstName: state.data.name,
-        onEnter: context.read<AuthService>().setOnboardingDone,
+        onEnter: () async {
+          await context.read<AuthService>().setOnboardingDone();
+          if (context.mounted) context.go('/');
+        },
       ),
     };
   }

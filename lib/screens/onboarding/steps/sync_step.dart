@@ -6,9 +6,10 @@ import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
 class SyncStep extends StatefulWidget {
-  const SyncStep({super.key, required this.onNext});
+  const SyncStep({super.key, required this.onNext, required this.onBack});
 
   final VoidCallback onNext;
+  final VoidCallback onBack;
 
   @override
   State<SyncStep> createState() => _SyncStepState();
@@ -72,6 +73,23 @@ class _SyncStepState extends State<SyncStep>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              GestureDetector(
+                onTap: widget.onBack,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: context.srTextMuted),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Back',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: context.srTextMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
               _PulseRing(controller: _pulseCtrl, done: _done),
               const SizedBox(height: 32),
               AnimatedSwitcher(

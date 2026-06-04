@@ -55,7 +55,22 @@ class HealthService {
   Future<bool> requestPermissions() async {
     await configure();
     try {
-      return await _health.requestAuthorization(_types);
+      await _health.requestAuthorization(_types);
+    } catch (_) {
+      return false;
+    }
+    // iOS never exposes read permission status (by design, for user privacy).
+    // We infer grant by attempting to read any health data over 30 days.
+    // A full "Don't Allow" returns empty; a device with any activity returns data.
+    try {
+      final end = DateTime.now();
+      final start = end.subtract(const Duration(days: 30));
+      final data = await _health.getHealthDataFromTypes(
+        startTime: start,
+        endTime: end,
+        types: _types,
+      );
+      return data.isNotEmpty;
     } catch (_) {
       return false;
     }

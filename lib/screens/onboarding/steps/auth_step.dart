@@ -12,11 +12,13 @@ class AuthStep extends StatelessWidget {
     required this.firstName,
     required this.isLoading,
     required this.onAuth,
+    required this.onBack,
   });
 
   final String firstName;
   final bool isLoading;
   final VoidCallback onAuth;
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,27 @@ class AuthStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              GestureDetector(
+                onTap: onBack,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 14,
+                      color: context.srTextMuted,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Back',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: context.srTextMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
               const OnboardingEyebrow('Almost there.', color: SrColors.magenta),
               const SizedBox(height: 14),
               RichText(

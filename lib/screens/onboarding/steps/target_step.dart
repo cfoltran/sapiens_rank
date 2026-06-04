@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/sr_slider.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
@@ -96,7 +97,7 @@ class _TargetStepState extends State<TargetStep> {
                 TextSpan(
                   text: "you'll defend",
                   style: TextStyle(
-                    color: context.srLime,
+                    color: context.srLimeText,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -282,25 +283,15 @@ class _TargetSlider extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              trackHeight: 5,
-              thumbShape: _GlowThumbShape(color: color),
-              activeTrackColor: color,
-              inactiveTrackColor: context.srTintSm,
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-              overlayColor: color.withAlpha(31),
-            ),
-            child: SizedBox(
-              height: 28,
-              child: Slider(
-                value: value.clamp(min, max),
-                min: min,
-                max: max,
-                divisions: divisions,
-                onChanged: onChanged,
-              ),
-            ),
+          SrSlider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            color: color,
+            trackHeight: 5,
+            thumbShape: _GlowThumbShape(color: color),
+            onChanged: onChanged,
           ),
         ],
       ),

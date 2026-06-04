@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sapiens_rank/models/habits_data.dart';
+import 'package:sapiens_rank/services/habits_service.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
@@ -17,7 +19,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       emit(state.copyWith(isLoading: true));
       try {
         final snap = await HealthService.instance.fetchDaySnapshot();
-        final bd = ScoreBreakdown.compute(snap, targets: state.data.targets);
+        final bd = ScoreBreakdown.compute(
+          snap,
+          targets: state.data.targets,
+          habits: state.data.habits,
+        );
         emit(
           state.copyWith(
             step: nextStep,
@@ -48,8 +54,12 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> requestHealthPermissions() async {
-    await HealthService.instance.requestPermissions();
-    emit(state.copyWith(step: OnboardingStep.sync));
+    final granted = await HealthService.instance.requestPermissions();
+    if (granted) {
+      emit(state.copyWith(step: OnboardingStep.sync, permissionDenied: false));
+    } else {
+      emit(state.copyWith(permissionDenied: true));
+    }
   }
 
   Future<void> completeAuth() async {
@@ -60,7 +70,10 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         age: state.data.age,
         country: state.data.country,
       );
-      await ProfileService.instance.updateTargets(state.data.targets);
+      await Future.wait([
+        ProfileService.instance.updateTargets(state.data.targets),
+        HabitsService.instance.saveHabits(state.data.habits),
+      ]);
       await ScoreService.instance.sync();
       final results = await Future.wait([
         ScoreService.instance.getMyRank(),
@@ -92,4 +105,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void updateTargets(HealthTargets targets) =>
       emit(state.copyWith(data: state.data.copyWith(targets: targets)));
+
+  void updateHabits(HabitsData habits) =>
+      emit(state.copyWith(data: state.data.copyWith(habits: habits)));
 }

@@ -4,6 +4,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PermissionStep extends StatelessWidget {
   const PermissionStep({
@@ -12,12 +13,14 @@ class PermissionStep extends StatelessWidget {
     required this.total,
     required this.onNext,
     required this.onBack,
+    this.denied = false,
   });
 
   final int progress;
   final int total;
   final VoidCallback onNext;
   final VoidCallback onBack;
+  final bool denied;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,12 @@ class PermissionStep extends StatelessWidget {
       total: total,
       footer: Column(
         children: [
-          ArenaButton(label: 'Allow health access →', onTap: onNext),
+          ArenaButton(
+            label: denied ? 'Open Settings →' : 'Allow health access →',
+            onTap: denied
+                ? () => launchUrl(Uri.parse('app-settings:'))
+                : onNext,
+          ),
           const SizedBox(height: 8),
           ArenaSecondaryButton(label: 'Back', onTap: onBack),
         ],
@@ -40,6 +48,7 @@ class PermissionStep extends StatelessWidget {
           const SizedBox(height: 28),
           const _HealthKitCards(),
           const SizedBox(height: 22),
+          if (denied) ...[_DeniedBanner(), const SizedBox(height: 12)],
           const _PrivacyNote(),
         ],
       ),
@@ -56,10 +65,56 @@ class _Headline extends StatelessWidget {
           context,
         ).textTheme.displayMedium!.copyWith(color: context.srText),
         children: const [
-          TextSpan(text: 'Your Watch knows\neverything. '),
+          TextSpan(text: 'Your Device knows\neverything. '),
           TextSpan(
             text: 'We just do the math.',
             style: TextStyle(color: SrColors.cyan),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeniedBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: SrColors.rose.withAlpha(20),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: SrColors.rose.withAlpha(80)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('⚠️', style: TextStyle(fontSize: 16)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  fontWeight: FontWeight.normal,
+                  color: context.srText,
+                  height: 1.5,
+                ),
+                children: const [
+                  TextSpan(
+                    text:
+                        'Health access is required to compute your score. Open ',
+                  ),
+                  TextSpan(
+                    text: 'Settings → Health → Data Access',
+                    style: TextStyle(
+                      color: SrColors.rose,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  TextSpan(text: ' and enable all SapiensRank categories.'),
+                ],
+              ),
+            ),
           ),
         ],
       ),

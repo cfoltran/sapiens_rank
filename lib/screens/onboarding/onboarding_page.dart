@@ -5,7 +5,9 @@ import 'package:sapiens_rank/screens/onboarding/cubit/onboarding_cubit.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
 import 'package:sapiens_rank/screens/onboarding/cubit/onboarding_state.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/age_step.dart';
+import 'package:sapiens_rank/screens/onboarding/steps/alcohol_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/auth_step.dart';
+import 'package:sapiens_rank/screens/onboarding/steps/bmi_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/country_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/done_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/name_step.dart';
@@ -13,6 +15,7 @@ import 'package:sapiens_rank/screens/onboarding/steps/notifications_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/permission_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/rank_reveal_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/score_reveal_step.dart';
+import 'package:sapiens_rank/screens/onboarding/steps/smoking_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/target_step.dart';
 import 'package:sapiens_rank/screens/onboarding/steps/sync_step.dart';
 import 'package:sapiens_rank/screens/onboarding/sheets/login_sheet.dart';
@@ -86,8 +89,9 @@ class _StepRouter extends StatelessWidget {
         total: state.progressTotal,
         onNext: cubit.requestHealthPermissions,
         onBack: cubit.back,
+        denied: state.permissionDenied,
       ),
-      OnboardingStep.sync => SyncStep(onNext: cubit.next),
+      OnboardingStep.sync => SyncStep(onNext: cubit.next, onBack: cubit.back),
       OnboardingStep.name => NameStep(
         progress: state.progressIndex,
         total: state.progressTotal,
@@ -118,6 +122,36 @@ class _StepRouter extends StatelessWidget {
         },
         onBack: cubit.back,
       ),
+      OnboardingStep.bmi => BmiStep(
+        progress: state.progressIndex,
+        total: state.progressTotal,
+        initialData: state.data.habits,
+        onSubmit: (habits) {
+          cubit.updateHabits(habits);
+          cubit.next();
+        },
+        onBack: cubit.back,
+      ),
+      OnboardingStep.smoking => SmokingStep(
+        progress: state.progressIndex,
+        total: state.progressTotal,
+        initialData: state.data.habits,
+        onSubmit: (habits) {
+          cubit.updateHabits(habits);
+          cubit.next();
+        },
+        onBack: cubit.back,
+      ),
+      OnboardingStep.alcohol => AlcoholStep(
+        progress: state.progressIndex,
+        total: state.progressTotal,
+        initialData: state.data.habits,
+        onSubmit: (habits) {
+          cubit.updateHabits(habits);
+          cubit.next();
+        },
+        onBack: cubit.back,
+      ),
       OnboardingStep.targets => TargetStep(
         progress: state.progressIndex,
         total: state.progressTotal,
@@ -131,6 +165,7 @@ class _StepRouter extends StatelessWidget {
         firstName: state.data.name,
         score: state.personalScore ?? 0,
         onNext: cubit.next,
+        onBack: cubit.back,
       ),
       OnboardingStep.rankReveal => RankRevealStep(
         progress: state.progressIndex,
@@ -145,6 +180,7 @@ class _StepRouter extends StatelessWidget {
         firstName: state.data.name,
         isLoading: state.isLoading,
         onAuth: cubit.completeAuth,
+        onBack: cubit.back,
       ),
       OnboardingStep.notifications => NotificationsStep(onNext: cubit.next),
       OnboardingStep.done => DoneStep(

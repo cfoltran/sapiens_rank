@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/common/theme/sr_slider.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
@@ -104,22 +105,14 @@ class _AgeSlider extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: context.srLime,
-            inactiveTrackColor: context.srLineStrong,
-            thumbColor: context.srLime,
-            overlayColor: context.srLime.withAlpha(30),
-            trackHeight: 4,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
-          ),
-          child: Slider(
-            min: 16,
-            max: 80,
-            value: age.toDouble(),
-            onChanged: (v) => onChanged(v.round()),
-          ),
+        SrSlider(
+          value: age.toDouble(),
+          min: 16,
+          max: 80,
+          divisions: 64,
+          color: context.srLime,
+          onChanged: (v) => onChanged(v.round()),
+          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),

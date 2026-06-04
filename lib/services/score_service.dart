@@ -1,7 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/models/leaderboard_entry.dart';
 import 'package:sapiens_rank/models/score_breakdown.dart';
+import 'package:sapiens_rank/services/habits_service.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 
@@ -41,11 +43,16 @@ class ScoreService {
           ? today.subtract(const Duration(days: 6))
           : startDay;
 
-      final targets = await ProfileService.instance.getPersonalTargets();
+      final results = await Future.wait([
+        ProfileService.instance.getPersonalTargets(),
+        HabitsService.instance.getHabits(),
+      ]);
+      final targets = results[0] as HealthTargets;
+      final habits = results[1] as HabitsData?;
 
       var day = actualStart;
       while (!day.isAfter(today)) {
-        await _syncDay(uid, day, targets);
+        await _syncDay(uid, day, targets, habits);
         day = day.add(const Duration(days: 1));
       }
 
@@ -60,11 +67,16 @@ class ScoreService {
     String uid,
     DateTime date,
     HealthTargets targets,
+    HabitsData? habits,
   ) async {
     try {
       final snap = await HealthService.instance.fetchDaySnapshot(date);
       final ranking = ScoreBreakdown.computeRanking(snap);
-      final personal = ScoreBreakdown.compute(snap, targets: targets);
+      final personal = ScoreBreakdown.compute(
+        snap,
+        targets: targets,
+        habits: habits,
+      );
 
       await Future.wait([
         _db.from('scores').upsert({

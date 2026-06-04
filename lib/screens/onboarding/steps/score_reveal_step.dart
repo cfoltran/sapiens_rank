@@ -14,6 +14,7 @@ class ScoreRevealStep extends StatefulWidget {
     required this.total,
     required this.score,
     required this.onNext,
+    required this.onBack,
   });
 
   final String firstName;
@@ -21,6 +22,7 @@ class ScoreRevealStep extends StatefulWidget {
   final int total;
   final int score;
   final VoidCallback onNext;
+  final VoidCallback onBack;
 
   @override
   State<ScoreRevealStep> createState() => _ScoreRevealStepState();
@@ -72,7 +74,14 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
         duration: const Duration(milliseconds: 400),
         child: IgnorePointer(
           ignoring: !_done,
-          child: ArenaButton(label: 'See my rank? →', onTap: widget.onNext),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ArenaButton(label: 'See my rank? →', onTap: widget.onNext),
+              const SizedBox(height: 4),
+              ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+            ],
+          ),
         ),
       ),
       body: Column(

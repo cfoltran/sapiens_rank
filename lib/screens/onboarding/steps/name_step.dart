@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
@@ -42,15 +41,6 @@ class _NameStepState extends State<NameStep> {
     super.dispose();
   }
 
-  String get _initials {
-    final words = _ctrl.text.trim().split(RegExp(r'\s+'));
-    return words
-        .map((w) => w.isNotEmpty ? w[0] : '')
-        .take(2)
-        .join()
-        .toUpperCase();
-  }
-
   String get _handle {
     final slug = _ctrl.text.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '');
     final trimmed = slug.length > 12 ? slug.substring(0, 12) : slug;
@@ -90,68 +80,18 @@ class _NameStepState extends State<NameStep> {
             "You can change it later. The leaderboard doesn't care, but your friends will.",
           ),
           const SizedBox(height: 40),
-          _AvatarPreview(
-            initials: _initials.isEmpty ? '?' : _initials,
-            handle: _handle,
-          ),
-          const SizedBox(height: 36),
-          _NameInput(controller: _ctrl, hasText: _ctrl.text.isNotEmpty),
-        ],
-      ),
-    );
-  }
-}
-
-class _AvatarPreview extends StatelessWidget {
-  const _AvatarPreview({required this.initials, required this.handle});
-
-  final String initials;
-  final String handle;
-
-  @override
-  Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-    return Column(
-      children: [
-        Center(
-          child: Container(
-            width: 104,
-            height: 104,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: context.srLime,
-              boxShadow: [
-                BoxShadow(
-                  color: context.srLime.withAlpha(60),
-                  blurRadius: 28,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                initials,
-                style: tt.headlineLarge!.copyWith(
-                  fontStyle: FontStyle.normal,
-                  color: SrColors.textInk,
-                  letterSpacing: -1.5,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Center(
-          child: Text(
-            handle,
-            style: tt.labelMedium!.copyWith(
+          Text(
+            _handle,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
               fontWeight: FontWeight.normal,
               color: context.srTextMuted,
               letterSpacing: 0.6,
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          _NameInput(controller: _ctrl, hasText: _ctrl.text.isNotEmpty),
+        ],
+      ),
     );
   }
 }

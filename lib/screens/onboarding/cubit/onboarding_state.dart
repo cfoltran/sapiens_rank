@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/models/leaderboard_entry.dart';
 
@@ -9,6 +10,9 @@ enum OnboardingStep {
   name,
   demographics,
   country,
+  bmi,
+  smoking,
+  alcohol,
   targets,
   scoreReveal,
   auth,
@@ -23,23 +27,27 @@ class OnboardingData extends Equatable {
     this.age = 28,
     this.country = 'FR',
     this.targets = HealthTargets.defaults,
+    this.habits = const HabitsData(),
   });
 
   final String name;
   final int age;
   final String country;
   final HealthTargets targets;
+  final HabitsData habits;
 
   OnboardingData copyWith({
     String? name,
     int? age,
     String? country,
     HealthTargets? targets,
+    HabitsData? habits,
   }) => OnboardingData(
     name: name ?? this.name,
     age: age ?? this.age,
     country: country ?? this.country,
     targets: targets ?? this.targets,
+    habits: habits ?? this.habits,
   );
 
   @override
@@ -54,6 +62,7 @@ class OnboardingState extends Equatable {
     this.rank,
     this.rankTotal = 0,
     this.isLoading = false,
+    this.permissionDenied = false,
   });
 
   final OnboardingStep step;
@@ -62,6 +71,7 @@ class OnboardingState extends Equatable {
   final LeaderboardEntry? rank;
   final int rankTotal;
   final bool isLoading;
+  final bool permissionDenied;
 
   static int get _progressTotal => OnboardingStep.values
       .where(
@@ -92,6 +102,7 @@ class OnboardingState extends Equatable {
     LeaderboardEntry? rank,
     int? rankTotal,
     bool? isLoading,
+    bool? permissionDenied,
   }) => OnboardingState(
     step: step ?? this.step,
     data: data ?? this.data,
@@ -99,6 +110,7 @@ class OnboardingState extends Equatable {
     rank: rank ?? this.rank,
     rankTotal: rankTotal ?? this.rankTotal,
     isLoading: isLoading ?? this.isLoading,
+    permissionDenied: permissionDenied ?? this.permissionDenied,
   );
 
   @override
@@ -109,5 +121,6 @@ class OnboardingState extends Equatable {
     rank,
     rankTotal,
     isLoading,
+    permissionDenied,
   ];
 }

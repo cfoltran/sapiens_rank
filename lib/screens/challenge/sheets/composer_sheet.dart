@@ -1,86 +1,13 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
-import 'package:sapiens_rank/services/challenge_service.dart';
+import 'package:sapiens_rank/screens/challenge/cubit/composer_cubit.dart';
+import 'package:sapiens_rank/screens/challenge/cubit/composer_state.dart';
 
-class Reward {
-  const Reward({
-    required this.id,
-    required this.icon,
-    required this.label,
-    required this.desc,
-    required this.isPartner,
-  });
-  final String id;
-  final String icon;
-  final String label;
-  final String desc;
-  final bool isPartner;
-}
-
-const rewards = [
-  Reward(
-    id: 'nespresso',
-    icon: '☕',
-    label: 'Nespresso',
-    desc: 'Capsule pack',
-    isPartner: true,
-  ),
-  Reward(
-    id: 'decathlon',
-    icon: '🏃',
-    label: 'Decathlon',
-    desc: '€50 voucher',
-    isPartner: true,
-  ),
-  Reward(
-    id: 'headspace',
-    icon: '🧘',
-    label: 'Headspace',
-    desc: '1 month',
-    isPartner: true,
-  ),
-  Reward(
-    id: 'whoop',
-    icon: '⌚',
-    label: 'WHOOP',
-    desc: '3 months free',
-    isPartner: true,
-  ),
-  Reward(
-    id: 'oatly',
-    icon: '🥛',
-    label: 'Oatly',
-    desc: '12-pack',
-    isPartner: true,
-  ),
-  Reward(
-    id: 'restaurant',
-    icon: '🍽️',
-    label: 'Restaurant',
-    desc: 'I invite you',
-    isPartner: false,
-  ),
-  Reward(
-    id: 'cinema',
-    icon: '🎬',
-    label: 'Cinema',
-    desc: 'On me',
-    isPartner: false,
-  ),
-  Reward(
-    id: 'cash',
-    icon: '€',
-    label: 'Custom €',
-    desc: 'Set amount',
-    isPartner: false,
-  ),
-];
-
-class ComposerSheet extends StatefulWidget {
+class ComposerSheet extends StatelessWidget {
   const ComposerSheet({super.key, required this.onCreateChallenge});
 
   final Future<void> Function({
@@ -92,239 +19,184 @@ class ComposerSheet extends StatefulWidget {
   onCreateChallenge;
 
   @override
-  State<ComposerSheet> createState() => _ComposerSheetState();
+  Widget build(BuildContext context) => BlocProvider(
+    create: (_) => ComposerCubit()..load(),
+    child: _ComposerView(onCreateChallenge: onCreateChallenge),
+  );
 }
 
-class _ComposerSheetState extends State<ComposerSheet> {
-  int _step = 1;
-  ComposerUser? _opponent;
-  String _metric = 'total';
-  String _duration = '1d';
-  Reward? _reward;
-  bool _sent = false;
-  bool _sending = false;
+class _ComposerView extends StatelessWidget {
+  const _ComposerView({required this.onCreateChallenge});
 
-  List<ComposerUser> _users = [];
-  bool _loadingUsers = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUsers();
-  }
-
-  Future<void> _loadUsers() async {
-    try {
-      final opponents = await ChallengeService.instance.getPotentialOpponents();
-      if (!mounted) return;
-      setState(() {
-        _users = opponents
-            .map(
-              (o) => ComposerUser(
-                userId: o.userId,
-                displayName: o.name,
-                initials: _initials(o.name),
-                avatarColor: _avatarColor(o.userId),
-                flag: o.country != null ? _countryFlag(o.country!) : '🌍',
-                score: o.score,
-              ),
-            )
-            .toList();
-        _loadingUsers = false;
-      });
-    } catch (_) {
-      if (mounted) setState(() => _loadingUsers = false);
-    }
-  }
-
-  bool get _canContinue {
-    if (_step == 1) return _opponent != null;
-    if (_step == 2) return _duration.isNotEmpty;
-    if (_step == 3) return _reward != null;
-    return false;
-  }
-
-  Future<void> _next() async {
-    if (_step < 3) {
-      setState(() => _step++);
-    } else {
-      setState(() => _sending = true);
-      await widget.onCreateChallenge(
-        opponentId: _opponent!.userId,
-        durationDays: int.parse(_duration.replaceAll('d', '')),
-        stakeIcon: _reward!.icon,
-        stakeLabel: _reward!.label,
-      );
-      if (mounted) {
-        setState(() {
-          _sent = true;
-          _sending = false;
-        });
-      }
-      await Future.delayed(const Duration(milliseconds: 1400));
-      if (mounted) Navigator.of(context).pop();
-    }
-  }
-
-  static String _initials(String name) {
-    final parts = name.trim().split(' ');
-    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    return name.substring(0, math.min(2, name.length)).toUpperCase();
-  }
-
-  static const _palette = SrColors.avatarPalette;
-
-  static Color _avatarColor(String userId) {
-    final hash = userId.codeUnits.fold(0, (a, b) => a + b);
-    return _palette[hash % _palette.length];
-  }
-
-  static String _countryFlag(String code) => code
-      .toUpperCase()
-      .runes
-      .map((r) => String.fromCharCode(r + 0x1F1E6 - 0x41))
-      .join();
+  final Future<void> Function({
+    required String opponentId,
+    required int durationDays,
+    required String stakeIcon,
+    required String stakeLabel,
+  })
+  onCreateChallenge;
 
   @override
   Widget build(BuildContext context) {
-    final canAct = _canContinue && !_sending;
-    return Container(
-      decoration: BoxDecoration(
-        color: context.srBgElev2,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(top: BorderSide(color: context.srLineStrong)),
-      ),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.88,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 14),
-          Container(
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: context.srLineStrong,
-              borderRadius: BorderRadius.circular(100),
-            ),
+    return BlocConsumer<ComposerCubit, ComposerState>(
+      listenWhen: (prev, curr) => !prev.sent && curr.sent,
+      listener: (context, state) async {
+        await Future.delayed(const Duration(milliseconds: 1400));
+        if (context.mounted) Navigator.of(context).pop();
+      },
+      builder: (context, state) {
+        final cubit = context.read<ComposerCubit>();
+        final canAct = state.canContinue && !state.sending;
+
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: context.srBgElev2,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border(top: BorderSide(color: context.srLineStrong)),
           ),
-          const SizedBox(height: 16),
-          if (_sent)
-            _SentConfirmation(opponentName: _opponent?.firstName ?? '')
-          else ...[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
-              child: _ComposerHeader(step: _step),
-            ),
-            Flexible(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-                shrinkWrap: true,
-                children: [
-                  if (_step == 1)
-                    _StepPickOpponent(
-                      users: _users,
-                      loading: _loadingUsers,
-                      selected: _opponent,
-                      onSelect: (u) => setState(() => _opponent = u),
-                    ),
-                  if (_step == 2)
-                    _StepSetRules(
-                      metric: _metric,
-                      duration: _duration,
-                      onMetric: (m) => setState(() => _metric = m),
-                      onDuration: (d) => setState(() => _duration = d),
-                    ),
-                  if (_step == 3)
-                    _StepPickReward(
-                      selected: _reward,
-                      onSelect: (r) => setState(() => _reward = r),
-                    ),
-                ],
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.88,
+          ),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 14),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: context.srLineStrong,
+                  borderRadius: BorderRadius.circular(100),
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                18,
-                16,
-                18,
-                MediaQuery.of(context).padding.bottom + 18,
-              ),
-              child: Row(
-                children: [
-                  if (_step > 1) ...[
-                    GestureDetector(
-                      onTap: () => setState(() => _step--),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
+              const SizedBox(height: 16),
+              if (state.sent)
+                _SentConfirmation(opponentName: state.opponent?.firstName ?? '')
+              else ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                  child: _ComposerHeader(step: state.step),
+                ),
+                Flexible(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    shrinkWrap: true,
+                    children: [
+                      if (state.step == 1)
+                        _StepPickOpponent(
+                          users: state.opponents,
+                          loading: state.loadingOpponents,
+                          selected: state.opponent,
+                          onSelect: cubit.selectOpponent,
                         ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: context.srLineStrong),
-                          borderRadius: BorderRadius.circular(100),
+                      if (state.step == 2)
+                        _StepSetRules(
+                          metric: state.metric,
+                          duration: state.duration,
+                          onMetric: cubit.setMetric,
+                          onDuration: cubit.setDuration,
                         ),
-                        child: Text(
-                          'Back',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: context.srText,
+                      if (state.step == 3)
+                        _StepPickReward(
+                          selected: state.reward,
+                          onSelect: cubit.selectReward,
+                        ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    18,
+                    16,
+                    18,
+                    MediaQuery.of(context).padding.bottom + 18,
+                  ),
+                  child: Row(
+                    children: [
+                      if (state.step > 1) ...[
+                        GestureDetector(
+                          onTap: cubit.back,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: context.srLineStrong),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Text(
+                              'Back',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: context.srText,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: canAct
+                              ? () => state.step < 3
+                                    ? cubit.next()
+                                    : cubit.send(onCreateChallenge)
+                              : null,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              color: canAct ? context.srLime : context.srTintSm,
+                              borderRadius: BorderRadius.circular(100),
+                              boxShadow: canAct
+                                  ? [
+                                      BoxShadow(
+                                        color: context.srLime.withAlpha(0x44),
+                                        blurRadius: 20,
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Center(
+                              child: state.sending
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        color: SrColors.textInk,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      state.step < 3
+                                          ? 'Continue'
+                                          : 'Send challenge ⚔️',
+                                      style: GoogleFonts.spaceGrotesk(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: canAct
+                                            ? SrColors.textInk
+                                            : context.srTextDim,
+                                      ),
+                                    ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                  ],
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: canAct ? _next : null,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          color: canAct ? context.srLime : context.srTintSm,
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: canAct
-                              ? [
-                                  BoxShadow(
-                                    color: context.srLime.withAlpha(0x44),
-                                    blurRadius: 20,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Center(
-                          child: _sending
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    color: SrColors.textInk,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  _step < 3 ? 'Continue' : 'Send challenge ⚔️',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: canAct
-                                        ? SrColors.textInk
-                                        : context.srTextDim,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -709,164 +581,193 @@ class _StepSetRules extends StatelessWidget {
   }
 }
 
-class _StepPickReward extends StatelessWidget {
+class _StepPickReward extends StatefulWidget {
   const _StepPickReward({required this.selected, required this.onSelect});
   final Reward? selected;
-  final ValueChanged<Reward> onSelect;
+  final ValueChanged<Reward?> onSelect;
+
+  @override
+  State<_StepPickReward> createState() => _StepPickRewardState();
+}
+
+class _StepPickRewardState extends State<_StepPickReward> {
+  final _cashController = TextEditingController();
+  final _customController = TextEditingController();
+  String? _openFieldId;
+
+  @override
+  void dispose() {
+    _cashController.dispose();
+    _customController.dispose();
+    super.dispose();
+  }
+
+  void _onCashChanged(String value) {
+    final trimmed = value.trim();
+    widget.onSelect(
+      trimmed.isEmpty
+          ? null
+          : Reward(
+              id: 'cash',
+              icon: '💶',
+              label: '€$trimmed',
+              desc: 'Set amount',
+            ),
+    );
+  }
+
+  void _onCustomChanged(String value) {
+    final trimmed = value.trim();
+    widget.onSelect(
+      trimmed.isEmpty
+          ? null
+          : Reward(id: 'custom', icon: '✏️', label: trimmed, desc: 'Free text'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final partners = rewards.where((r) => r.isPartner).toList();
-    final custom = rewards.where((r) => !r.isPartner).toList();
+    final selected = widget.selected;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'PARTNER REWARDS',
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 10,
-            color: context.srTextDim,
-            letterSpacing: 0.15 * 10,
-          ),
-        ),
-        const SizedBox(height: 10),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: 2.6,
-          children: partners.map((r) {
-            final active = selected?.id == r.id;
-            return GestureDetector(
-              onTap: () => onSelect(r),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: active
-                      ? context.srLime.withAlpha(0x1A)
-                      : context.srTintXs,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: active ? context.srLime : context.srLine,
-                  ),
-                ),
-                child: Row(
+      children: presetRewards.map((r) {
+        final isCash = r.id == 'cash';
+        final isCustom = r.id == 'custom';
+        final isFieldType = isCash || isCustom;
+        final fieldOpen = _openFieldId == r.id;
+        final active = isFieldType ? fieldOpen : selected?.id == r.id;
+        final showField = fieldOpen && isFieldType;
+
+        String title() {
+          if (r.id == 'restaurant') return 'If you win, I take you out';
+          if (r.id == 'cinema') return 'If you win, cinema on me';
+          if (isCash) return 'Money bet';
+          return 'Custom stake';
+        }
+
+        return GestureDetector(
+          onTap: isFieldType
+              ? () => setState(() {
+                  _openFieldId = fieldOpen ? null : r.id;
+                  widget.onSelect(null);
+                })
+              : () => widget.onSelect(r),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: active ? context.srLime.withAlpha(0x1A) : context.srTintXs,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: active ? context.srLime : context.srLine,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Text(r.icon, style: const TextStyle(fontSize: 22)),
-                    const SizedBox(width: 10),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: context.srLime.withAlpha(0x1A),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          r.icon,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: context.srLimeText,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            r.label,
+                            title(),
                             style: GoogleFonts.spaceGrotesk(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: context.srText,
                             ),
                           ),
-                          Text(
-                            r.desc,
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 9,
-                              color: context.srTextDim,
+                          if (!showField)
+                            Text(
+                              isCash
+                                  ? 'Tap to set amount'
+                                  : isCustom
+                                  ? 'Tap to write'
+                                  : r.desc,
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 10,
+                                color: context.srTextDim,
+                              ),
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 18),
-        Text(
-          '✦  OR · INVITE YOUR OPPONENT',
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 10,
-            color: context.srTextDim,
-            letterSpacing: 0.15 * 10,
-          ),
-        ),
-        const SizedBox(height: 10),
-        ...custom.map((r) {
-          final active = selected?.id == r.id;
-          return GestureDetector(
-            onTap: () => onSelect(r),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: active
-                    ? context.srLime.withAlpha(0x1A)
-                    : context.srTintXs,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: active ? context.srLime : context.srLine,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: context.srLime.withAlpha(0x1A),
-                      borderRadius: BorderRadius.circular(10),
+                if (showField) ...[
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: isCash ? _cashController : _customController,
+                    autofocus: true,
+                    onChanged: isCash ? _onCashChanged : _onCustomChanged,
+                    keyboardType: isCash
+                        ? TextInputType.number
+                        : TextInputType.text,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 14,
+                      color: context.srText,
                     ),
-                    child: Center(
-                      child: Text(
-                        r.icon,
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: context.srLimeText,
-                        ),
+                    decoration: InputDecoration(
+                      prefixText: isCash ? '€ ' : null,
+                      prefixStyle: GoogleFonts.spaceGrotesk(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: context.srLimeText,
+                      ),
+                      hintText: isCash ? '20' : 'e.g. loser buys drinks',
+                      hintStyle: GoogleFonts.jetBrainsMono(
+                        fontSize: 13,
+                        color: context.srTextDim,
+                      ),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      filled: true,
+                      fillColor: context.srTintXs,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: context.srLine),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: context.srLime),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: context.srLine),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          r.id == 'restaurant'
-                              ? 'If you win, I take you out'
-                              : r.id == 'cinema'
-                              ? 'If you win, cinema on me'
-                              : 'If you win, I send you money',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: context.srText,
-                          ),
-                        ),
-                        Text(
-                          r.desc,
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 10,
-                            color: context.srTextDim,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
-              ),
+              ],
             ),
-          );
-        }),
-      ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

@@ -79,7 +79,7 @@ class ChallengeService {
           .eq('challenge_id', challengeId)
           .eq('user_id', _myId)
           .single();
-      return ChallengeRow.fromJson(row['challenges'] as Map<String, dynamic>);
+      return ChallengeRow.fromJson(row['challenges']);
     } catch (_) {
       return null;
     }
@@ -88,24 +88,20 @@ class ChallengeService {
   Future<void> respondToChallenge(
     String challengeId, {
     required bool accept,
-  }) async {
-    await _db
-        .from('challenge_participants')
-        .update({
-          'status': accept ? 'accepted' : 'declined',
-          'responded_at': DateTime.now().toIso8601String(),
-        })
-        .eq('challenge_id', challengeId)
-        .eq('user_id', _myId);
-  }
+  }) async => await _db
+      .from('challenge_participants')
+      .update({
+        'status': accept ? 'accepted' : 'declined',
+        'responded_at': DateTime.now().toIso8601String(),
+      })
+      .eq('challenge_id', challengeId)
+      .eq('user_id', _myId);
 
-  Future<void> cancelChallenge(String challengeId) async {
-    await _db
-        .from('challenges')
-        .update({'status': 'cancelled'})
-        .eq('id', challengeId)
-        .eq('created_by', _myId);
-  }
+  Future<void> cancelChallenge(String challengeId) async => await _db
+      .from('challenges')
+      .update({'status': 'cancelled'})
+      .eq('id', challengeId)
+      .eq('created_by', _myId);
 
   Future<List<OpponentRow>> getPotentialOpponents() async {
     final rows = await _db

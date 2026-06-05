@@ -96,7 +96,7 @@ class HealthService {
           HealthDataType.SLEEP_LIGHT,
           HealthDataType.SLEEP_DEEP,
           HealthDataType.SLEEP_REM,
-          HealthDataType.APPLE_STAND_HOUR,
+          HealthDataType.APPLE_STAND_TIME,
         ],
       );
       samples = _health.removeDuplicates(raw);
@@ -158,46 +158,23 @@ class HealthService {
     }
 
     int standHours() {
-      // Find when the user woke up so we can exclude stand hours during sleep.
-      // Apple Watch records APPLE_STAND_HOUR = 1 even during sleep movement,
-      // but the Stand ring only counts awake hours.
-      final nightStart = dayStart.subtract(const Duration(hours: 12));
-      final nightEnd = dayStart.add(const Duration(hours: 12));
-      const sleepTypes = {
-        HealthDataType.SLEEP_LIGHT,
-        HealthDataType.SLEEP_DEEP,
-        HealthDataType.SLEEP_REM,
-        HealthDataType.SLEEP_ASLEEP,
-      };
-      final sleepEnds = samples
+      final standPts = samples
           .where(
             (p) =>
-                sleepTypes.contains(p.type) &&
-                p.dateFrom.isAfter(nightStart) &&
-                p.dateTo.isBefore(nightEnd),
+                p.type == HealthDataType.APPLE_STAND_TIME &&
+                p.value is NumericHealthValue &&
+                p.dateFrom.toLocal().isAfter(dayStart) &&
+                p.dateFrom.toLocal().isBefore(dayEnd),
           )
-          .map((p) => p.dateTo.toLocal());
-      // Include the wake-up hour (floor to hour) so the ring matches.
-      final wakeHour = sleepEnds.isEmpty
-          ? 0
-          : sleepEnds.reduce((a, b) => a.isAfter(b) ? a : b).hour;
+          .toList();
 
-      bool isStood(HealthDataPoint p) =>
-          p.type == HealthDataType.APPLE_STAND_HOUR &&
-          p.dateFrom.toLocal().isAfter(dayStart) &&
-          p.dateFrom.toLocal().isBefore(dayEnd) &&
-          p.value is NumericHealthValue &&
-          (p.value as NumericHealthValue).numericValue.toInt() == 1 &&
-          p.dateFrom.toLocal().hour >= wakeHour;
-
-      final all = samples.where(isStood).toList();
-      final watchOnly = all
+      final watchPts = standPts
           .where((p) => p.sourceName.toLowerCase().contains('watch'))
           .toList();
-      return (watchOnly.isNotEmpty ? watchOnly : all)
-          .map((p) => p.dateFrom.toLocal().hour)
-          .toSet()
-          .length;
+
+      final pts = watchPts.isNotEmpty ? watchPts : standPts;
+
+      return pts.map((p) => p.dateFrom.toLocal().hour).toSet().length;
     }
 
     return HealthSnapshot(

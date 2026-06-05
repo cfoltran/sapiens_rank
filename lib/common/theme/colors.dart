@@ -45,8 +45,8 @@ abstract final class SrColors {
   static const tintLgDark = Color(0x2416140F);
 
   // Nav / shadow
-  static const navBg = Color(0xC61D1A14);
-  static const navBgLight = Color(0xD1FFFFFF);
+  static const navBg = Color(0x991D1A14);
+  static const navBgLight = Color(0xAAFFFFFF);
   static const shadow = Color(0x80000000);
   static const shadowLight = Color(0x1A000000);
   static const bgElev2Fade = Color(0xD926221A);
@@ -59,9 +59,9 @@ abstract final class SrColors {
   static const limeDeep = Color(0xFFA7D80A);
 
   // Lime — light mode
-  static const limeLight = Color(0xFFC6F527);       // fills, rings, progress bars
-  static const limeLightText = Color(0xFF557A00);   // text/icons on light
-  static const limeLightDeep = Color(0xFF3F5400);   // deepest green
+  static const limeLight = Color(0xFFC6F527); // fills, rings, progress bars
+  static const limeLightText = Color(0xFF557A00); // text/icons on light
+  static const limeLightDeep = Color(0xFF3F5400); // deepest green
 
   // Lime tints (dark mode)
   static const limeSubtle = Color(0x14D9FF3D);

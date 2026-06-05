@@ -111,7 +111,7 @@ class _SrTabBar extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(28),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                 child: Container(
                   decoration: BoxDecoration(
                     color: context.srNavBg,

@@ -160,7 +160,7 @@ class _InviteContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'WINNER TAKES',
+                      'IF YOU ACCEPT AND WIN',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 9,
                         color: context.srTextDim,

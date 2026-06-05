@@ -50,7 +50,7 @@ class ScoreService {
       final targets = results[0] as HealthTargets;
       final habits = results[1] as HabitsData?;
 
-      var day = actualStart;
+      var day = actualStart.isAfter(today) ? today : actualStart;
       while (!day.isAfter(today)) {
         await _syncDay(uid, day, targets, habits);
         day = day.add(const Duration(days: 1));
@@ -84,7 +84,7 @@ class ScoreService {
           'date': _isoDate(date),
           'score': ranking.score,
           'personal_score': personal.score,
-        }),
+        }, onConflict: 'user_id,date'),
         _db.from('daily_metrics').upsert({
           'user_id': uid,
           'date': _isoDate(date),

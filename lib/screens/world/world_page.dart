@@ -103,42 +103,48 @@ class _LoadedBody extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(18, 24, 18, 16),
-                children: [
-                  if (players.length >= 3) _Podium(players: players),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'RANK',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 10,
-                            color: context.srTextDim,
-                            letterSpacing: 10 * 0.2,
+              child: RefreshIndicator(
+                onRefresh: context.read<WorldCubit>().load,
+                color: context.srLime,
+                backgroundColor: context.srBgElev,
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(18, 24, 18, 16),
+                  children: [
+                    if (players.length >= 3) _Podium(players: players),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'RANK',
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 10,
+                              color: context.srTextDim,
+                              letterSpacing: 10 * 0.2,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'SCORE',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 10,
-                            color: context.srTextDim,
-                            letterSpacing: 10 * 0.2,
+                          Text(
+                            'SCORE',
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 10,
+                              color: context.srTextDim,
+                              letterSpacing: 10 * 0.2,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  ...listPlayers.map((p) => _PlayerRow(player: p)),
-                  if (showGap) ...[
                     const SizedBox(height: 4),
-                    _GapIndicator(gapCount: myRank - players.length),
+                    ...listPlayers.map((p) => _PlayerRow(player: p)),
+                    if (showGap) ...[
+                      const SizedBox(height: 4),
+                      _GapIndicator(gapCount: myRank - players.length),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
             _YouCard(data: data),
@@ -598,8 +604,6 @@ class _YouCard extends StatelessWidget {
                       color: context.srLimeText,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  _YouAvatar(size: 36),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -644,46 +648,6 @@ class _YouCard extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _YouAvatar extends StatelessWidget {
-  const _YouAvatar({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: SrColors.lime, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: SrColors.lime.withAlpha(60),
-            blurRadius: 8,
-            spreadRadius: 0,
-          ),
-        ],
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [SrColors.blue, SrColors.blueDeep],
-        ),
-      ),
-      child: Center(
-        child: Text(
-          'ME',
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: size * 0.36,
-            fontWeight: FontWeight.w700,
-            color: SrColors.textInk,
           ),
         ),
       ),

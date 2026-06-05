@@ -103,48 +103,55 @@ class _ChallengeViewState extends State<_ChallengeView> {
                       ),
                     ),
                   ),
-                  _ => ListView(
-                    padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
-                    children: [
-                      if (_tab == _ChallengeTab.live) ...[
-                        ...?data?.live.map(
-                          (f) => Padding(
-                            padding: const EdgeInsets.only(bottom: 14),
-                            child: f.is1v1
-                                ? _DuelCard(fight: f)
-                                : _RoyaleCard(fight: f),
-                          ),
-                        ),
-                        if (data?.live.isEmpty ?? true)
-                          const _EmptyState(label: 'No live challenges'),
-                      ],
-                      if (_tab == _ChallengeTab.pending) ...[
-                        ...?data?.pending.map(
-                          (f) => Padding(
-                            padding: const EdgeInsets.only(bottom: 14),
-                            child: _PendingCard(
-                              fight: f,
-                              onAccept: () => cubit.respond(f.id, accept: true),
-                              onDecline: () =>
-                                  cubit.respond(f.id, accept: false),
-                              onCancel: () => cubit.cancel(f.id),
+                  _ => RefreshIndicator(
+                    onRefresh: cubit.load,
+                    color: context.srLime,
+                    backgroundColor: context.srBgElev,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
+                      children: [
+                        if (_tab == _ChallengeTab.live) ...[
+                          ...?data?.live.map(
+                            (f) => Padding(
+                              padding: const EdgeInsets.only(bottom: 14),
+                              child: f.is1v1
+                                  ? _DuelCard(fight: f)
+                                  : _RoyaleCard(fight: f),
                             ),
                           ),
-                        ),
-                        if (data?.pending.isEmpty ?? true)
-                          const _EmptyState(label: 'No pending invites'),
-                      ],
-                      if (_tab == _ChallengeTab.history) ...[
-                        ...?data?.history.map(
-                          (f) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: _HistoryRow(fight: f),
+                          if (data?.live.isEmpty ?? true)
+                            const _EmptyState(label: 'No live challenges'),
+                        ],
+                        if (_tab == _ChallengeTab.pending) ...[
+                          ...?data?.pending.map(
+                            (f) => Padding(
+                              padding: const EdgeInsets.only(bottom: 14),
+                              child: _PendingCard(
+                                fight: f,
+                                onAccept: () =>
+                                    cubit.respond(f.id, accept: true),
+                                onDecline: () =>
+                                    cubit.respond(f.id, accept: false),
+                                onCancel: () => cubit.cancel(f.id),
+                              ),
+                            ),
                           ),
-                        ),
-                        if (data?.history.isEmpty ?? true)
-                          const _EmptyState(label: 'No challenges yet'),
+                          if (data?.pending.isEmpty ?? true)
+                            const _EmptyState(label: 'No pending invites'),
+                        ],
+                        if (_tab == _ChallengeTab.history) ...[
+                          ...?data?.history.map(
+                            (f) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: _HistoryRow(fight: f),
+                            ),
+                          ),
+                          if (data?.history.isEmpty ?? true)
+                            const _EmptyState(label: 'No challenges yet'),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 },
               ),

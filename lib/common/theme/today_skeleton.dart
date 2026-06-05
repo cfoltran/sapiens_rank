@@ -18,15 +18,6 @@ class TodayLoadingSkeleton extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  const SrSkeleton(width: 36, height: 14, borderRadius: 4),
-                  const SizedBox(width: 8),
-                  const SrSkeleton(width: 72, height: 14, borderRadius: 4),
-                  const Spacer(),
-                  SrSkeleton(width: 64, height: 26, borderRadius: 13),
-                ],
-              ),
               const SizedBox(height: 16),
               const Center(
                 child: SrSkeleton(width: 220, height: 220, borderRadius: 110),

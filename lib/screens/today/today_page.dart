@@ -41,6 +41,7 @@ class _TodayPageState extends State<TodayPage> {
             onMetricTap: (key) => setState(
               () => _openMetricKey = _openMetricKey == key ? null : key,
             ),
+            onRefresh: () => ctx.read<TodayCubit>().load(),
             onNavigateToWorld: widget.onNavigateToWorld,
           );
         },
@@ -91,12 +92,14 @@ class _LoadedBody extends StatelessWidget {
     required this.data,
     required this.openMetricKey,
     required this.onMetricTap,
+    required this.onRefresh,
     this.onNavigateToWorld,
   });
 
   final TodayData data;
   final String? openMetricKey;
   final ValueChanged<String> onMetricTap;
+  final Future<void> Function() onRefresh;
   final VoidCallback? onNavigateToWorld;
 
   @override
@@ -107,31 +110,37 @@ class _LoadedBody extends StatelessWidget {
       backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(18, 4, 18, bottomPad),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(child: ScoreRing(score: data.score.toDouble())),
-              const SizedBox(height: 10),
-              _DeltaRow(
-                scoreDelta: data.scoreDelta,
-                history: data.scoreHistory,
-              ),
-              const SizedBox(height: 20),
-              _RankTeaserCard(data: data, onTap: onNavigateToWorld),
-              const SizedBox(height: 8),
-              ...data.metrics.map(
-                (m) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _MetricCard(
-                    metric: m,
-                    isOpen: openMetricKey == m.key,
-                    onTap: () => onMetricTap(m.key),
+        child: RefreshIndicator(
+          onRefresh: onRefresh,
+          color: context.srLime,
+          backgroundColor: context.srBgElev,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(18, 4, 18, bottomPad),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(child: ScoreRing(score: data.score.toDouble())),
+                const SizedBox(height: 10),
+                _DeltaRow(
+                  scoreDelta: data.scoreDelta,
+                  history: data.scoreHistory,
+                ),
+                const SizedBox(height: 20),
+                _RankTeaserCard(data: data, onTap: onNavigateToWorld),
+                const SizedBox(height: 8),
+                ...data.metrics.map(
+                  (m) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _MetricCard(
+                      metric: m,
+                      isOpen: openMetricKey == m.key,
+                      onTap: () => onMetricTap(m.key),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

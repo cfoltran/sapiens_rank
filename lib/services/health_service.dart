@@ -116,6 +116,7 @@ class HealthService {
         types: [
           HealthDataType.RESTING_HEART_RATE,
           HealthDataType.HEART_RATE_VARIABILITY_SDNN,
+          HealthDataType.SLEEP_IN_BED,
           HealthDataType.SLEEP_ASLEEP,
           HealthDataType.SLEEP_LIGHT,
           HealthDataType.SLEEP_DEEP,
@@ -171,14 +172,19 @@ class HealthService {
           .where((p) => p.type == t && inRange(p))
           .fold(0, (s, p) => s + p.dateTo.difference(p.dateFrom).inMinutes);
 
-      // iOS 16+: stages (LIGHT = Core, DEEP, REM)
+      // Priority 1 — Apple Watch stages (iOS 16+)
       final stages =
           sumType(HealthDataType.SLEEP_LIGHT) +
           sumType(HealthDataType.SLEEP_DEEP) +
           sumType(HealthDataType.SLEEP_REM);
       if (stages > 0) return stages / 60.0;
 
-      return sumType(HealthDataType.SLEEP_ASLEEP) / 60.0;
+      // Priority 2 — SLEEP_ASLEEP (some third-party apps, Watch without stages)
+      final asleep = sumType(HealthDataType.SLEEP_ASLEEP);
+      if (asleep > 0) return asleep / 60.0;
+
+      // Priority 3 — SLEEP_IN_BED (iPhone-only tracking, Sleep Cycle, etc.)
+      return sumType(HealthDataType.SLEEP_IN_BED) / 60.0;
     }
 
     int standHours() {

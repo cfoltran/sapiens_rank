@@ -129,4 +129,9 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
     emit(DataState.success(current.copyWith(habits: habits)));
     await ProfileService.instance.updateHabits(habits);
   }
+
+  Future<void> deleteAccount() async {
+    await ProfileService.instance.deleteAccount();
+    await _db.auth.signOut();
+  }
 }

@@ -56,4 +56,8 @@ class ProfileService {
     if (uid == null) return;
     await _db.from('profiles').update(habits.toJson()).eq('id', uid);
   }
+
+  Future<void> deleteAccount() async {
+    await _db.rpc('delete_user');
+  }
 }

@@ -117,7 +117,7 @@ class _LoadedBody extends StatelessWidget {
           backgroundColor: context.srBgElev,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(18, 4, 18, bottomPad),
+            padding: EdgeInsets.fromLTRB(18, 18, 18, bottomPad),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -12,6 +12,7 @@ import 'package:sapiens_rank/screens/profile/widgets/body_sheet.dart';
 import 'package:sapiens_rank/screens/profile/widgets/habits_sheet.dart';
 import 'package:sapiens_rank/screens/profile/widgets/targets_sheet.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -123,6 +124,12 @@ class _LoadedBody extends StatelessWidget {
             _ThemeSelector(),
             const SizedBox(height: 18),
             _SignOutRow(),
+            const SizedBox(height: 12),
+            _ContactRow(),
+            const SizedBox(height: 12),
+            _DeleteAccountRow(),
+            const SizedBox(height: 18),
+            _LegalLinks(),
           ],
         ),
       ),
@@ -1039,6 +1046,165 @@ class _ThemeOption extends StatelessWidget {
             size: 18,
             color: selected ? context.srLimeText : context.srTextDim,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ContactRow extends StatelessWidget {
+  static final _mailto = Uri.parse('mailto:contact@pommef.com');
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => launchUrl(_mailto),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: context.srTintXs,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: context.srLine),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.mail_outline, size: 18, color: context.srTextMuted),
+            const SizedBox(width: 12),
+            Text(
+              'Contact us',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: context.srTextMuted,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              'contact@pommef.com',
+              style: GoogleFonts.jetBrainsMono(
+                fontSize: 11,
+                color: context.srTextDim,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DeleteAccountRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _confirmDelete(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: context.srRose.withAlpha(12),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: context.srRose.withAlpha(60)),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.delete_forever_outlined,
+              size: 18,
+              color: context.srRose,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Delete account',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: context.srRose,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final cubit = context.read<ProfileCubit>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: context.srBgElev,
+        title: Text(
+          'Delete your account?',
+          style: TextStyle(color: context.srText),
+        ),
+        content: Text(
+          'All your data will be permanently deleted. This action cannot be undone.',
+          style: TextStyle(color: context.srTextMuted, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('Cancel', style: TextStyle(color: context.srTextMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              'Delete',
+              style: TextStyle(
+                color: context.srRose,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await cubit.deleteAccount();
+    }
+  }
+}
+
+class _LegalLinks extends StatelessWidget {
+  static final _privacy = Uri.parse('http://sapiensrank.com/privacy');
+  static final _terms = Uri.parse(
+    'http://sapiensrank.com/terms-and-conditions',
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _LegalLink(label: 'Privacy Policy', uri: _privacy),
+        Container(
+          width: 1,
+          height: 12,
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          color: context.srLine,
+        ),
+        _LegalLink(label: 'Terms & Conditions', uri: _terms),
+      ],
+    );
+  }
+}
+
+class _LegalLink extends StatelessWidget {
+  const _LegalLink({required this.label, required this.uri});
+  final String label;
+  final Uri uri;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => launchUrl(uri, mode: LaunchMode.inAppBrowserView),
+      child: Text(
+        label,
+        style: GoogleFonts.jetBrainsMono(
+          fontSize: 11,
+          color: context.srTextDim,
+          decoration: TextDecoration.underline,
+          decorationColor: context.srTextDim,
         ),
       ),
     );

@@ -10,6 +10,7 @@ class HealthTargets {
     this.sleepHours = 7.0,
     this.standHours = 12,
     this.hrv = 60.0,
+    this.dailyExerciseMinutes = 30,
   });
 
   @JsonKey(name: 'target_steps', defaultValue: 7000)
@@ -26,6 +27,9 @@ class HealthTargets {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   final double hrv;
+
+  @JsonKey(name: 'target_daily_exercise_minutes', defaultValue: 30)
+  final int dailyExerciseMinutes;
 
   static const defaults = HealthTargets();
 

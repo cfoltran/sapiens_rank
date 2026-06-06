@@ -9,6 +9,7 @@ import 'package:sapiens_rank/screens/today/cubit/today_cubit.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/screens/today/widgets/score_ring.dart';
 import 'package:sapiens_rank/screens/today/widgets/sparkline_chart.dart';
+import 'package:sapiens_rank/services/health_service.dart';
 
 class TodayPage extends StatefulWidget {
   const TodayPage({super.key, this.onNavigateToWorld});
@@ -129,6 +130,15 @@ class _LoadedBody extends StatelessWidget {
                 const SizedBox(height: 20),
                 _RankTeaserCard(data: data, onTap: onNavigateToWorld),
                 const SizedBox(height: 8),
+                if (data.workouts.isNotEmpty) ...[
+                  _WorkoutSection(
+                    workouts: data.workouts,
+                    dailyMinutes: data.dailyExerciseMinutes,
+                    weeklyMinutes: data.weeklyExerciseMinutes,
+                    weeklyTarget: data.weeklyExerciseTarget,
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 ...data.metrics.map(
                   (m) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
@@ -483,6 +493,244 @@ class _MetricCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WorkoutSection extends StatelessWidget {
+  const _WorkoutSection({
+    required this.workouts,
+    required this.dailyMinutes,
+    required this.weeklyMinutes,
+    required this.weeklyTarget,
+  });
+
+  final List<WorkoutEntry> workouts;
+  final int dailyMinutes;
+  final int weeklyMinutes;
+  final int weeklyTarget;
+
+  @override
+  Widget build(BuildContext context) {
+    final weeklyPct = (weeklyMinutes / weeklyTarget).clamp(0.0, 1.0);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: context.srBgElev,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: context.srLine),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+            child: Row(
+              children: [
+                Icon(Icons.bolt, color: context.srLimeText, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            "Today's Activity",
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: context.srText,
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '$dailyMinutes',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: context.srText,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' min today',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 10,
+                                    color: context.srTextDim,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      LayoutBuilder(
+                        builder: (_, constraints) => Stack(
+                          children: [
+                            Container(
+                              height: 4,
+                              width: constraints.maxWidth,
+                              decoration: BoxDecoration(
+                                color: context.srTintSm,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 600),
+                              curve: Curves.easeOutCubic,
+                              height: 4,
+                              width: constraints.maxWidth * weeklyPct,
+                              decoration: BoxDecoration(
+                                color: weeklyPct >= 0.9
+                                    ? context.srLime
+                                    : weeklyPct >= 0.6
+                                    ? context.srLime.withAlpha(0xCC)
+                                    : SrColors.amber,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: context.srLine),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${workouts.length} workout${workouts.length > 1 ? 's' : ''}',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 10,
+                    color: context.srTextDim,
+                    letterSpacing: 0.18 * 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ...workouts.map((w) => _WorkoutRow(workout: w)),
+          const SizedBox(height: 6),
+        ],
+      ),
+    );
+  }
+}
+
+class _WorkoutRow extends StatelessWidget {
+  const _WorkoutRow({required this.workout});
+  final WorkoutEntry workout;
+
+  @override
+  Widget build(BuildContext context) {
+    final h = workout.startTime.hour;
+    final m = workout.startTime.minute;
+    final ampm = h < 12 ? 'AM' : 'PM';
+    final hour = h % 12 == 0 ? 12 : h % 12;
+    final timeStr = '$hour:${m.toString().padLeft(2, '0')}';
+
+    final details = [
+      '${workout.durationMinutes} min',
+      if (workout.kcal > 0) '${workout.kcal} kcal',
+      if (workout.distanceKm != null)
+        '${workout.distanceKm!.toStringAsFixed(1)} km',
+    ].join('  ·  ');
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 6, 14, 6),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 44,
+            child: Column(
+              children: [
+                Text(
+                  timeStr,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: context.srText,
+                  ),
+                ),
+                Text(
+                  ampm,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 8,
+                    color: context.srTextDim,
+                    letterSpacing: 0.05 * 8,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 1.5,
+            child: LayoutBuilder(
+              builder: (_, c) => Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(height: 42, width: 1.5, color: context.srLine),
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: context.srLime,
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.srLime.withAlpha(0x77),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(workout.icon, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  workout.type,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: context.srText,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  details,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 11,
+                    color: context.srTextMuted,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

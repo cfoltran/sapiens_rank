@@ -1,5 +1,25 @@
 import 'package:health/health.dart';
 
+class WorkoutEntry {
+  const WorkoutEntry({
+    required this.type,
+    required this.icon,
+    required this.startTime,
+    required this.durationMinutes,
+    required this.kcal,
+    this.distanceKm,
+    this.avgHeartRate,
+  });
+
+  final String type;
+  final String icon;
+  final DateTime startTime;
+  final int durationMinutes;
+  final int kcal;
+  final double? distanceKm;
+  final int? avgHeartRate;
+}
+
 class HealthSnapshot {
   const HealthSnapshot({
     required this.sleepHours,
@@ -8,6 +28,8 @@ class HealthSnapshot {
     required this.standHours,
     this.hrv,
     this.restingHr,
+    this.workouts = const [],
+    this.weeklyExerciseMinutes = 0,
   });
 
   final double sleepHours;
@@ -16,6 +38,8 @@ class HealthSnapshot {
   final int standHours;
   final double? hrv;
   final double? restingHr;
+  final List<WorkoutEntry> workouts;
+  final int weeklyExerciseMinutes;
 
   static const empty = HealthSnapshot(
     sleepHours: 0,
@@ -177,6 +201,42 @@ class HealthService {
       return pts.map((p) => p.dateFrom.toLocal().hour).toSet().length;
     }
 
+    List<WorkoutEntry> todayWorkouts = [];
+    int weeklyExerciseMinutes = 0;
+    try {
+      final weekStart = dayStart.subtract(const Duration(days: 6));
+      final rawWorkouts = await _health.getHealthDataFromTypes(
+        startTime: weekStart,
+        endTime: dayEnd,
+        types: [HealthDataType.WORKOUT],
+      );
+      final workoutPts = _health.removeDuplicates(rawWorkouts);
+
+      for (final p in workoutPts) {
+        final val = p.value;
+        if (val is! WorkoutHealthValue) continue;
+        final dur = p.dateTo.difference(p.dateFrom).inMinutes;
+        if (dur <= 0) continue;
+        weeklyExerciseMinutes += dur;
+
+        if (p.dateFrom.isAfter(dayStart) && p.dateFrom.isBefore(dayEnd)) {
+          final kcalVal = val.totalEnergyBurned?.toInt() ?? 0;
+          final distM = val.totalDistance;
+          todayWorkouts.add(
+            WorkoutEntry(
+              type: _workoutLabel(val.workoutActivityType),
+              icon: _workoutIcon(val.workoutActivityType),
+              startTime: p.dateFrom.toLocal(),
+              durationMinutes: dur,
+              kcal: kcalVal,
+              distanceKm: distM != null && distM > 0 ? distM / 1000 : null,
+            ),
+          );
+        }
+      }
+      todayWorkouts.sort((a, b) => a.startTime.compareTo(b.startTime));
+    } catch (_) {}
+
     return HealthSnapshot(
       sleepHours: sleepHours(),
       steps: steps,
@@ -184,8 +244,59 @@ class HealthService {
       standHours: standHours(),
       hrv: latestOf(HealthDataType.HEART_RATE_VARIABILITY_SDNN),
       restingHr: latestOf(HealthDataType.RESTING_HEART_RATE),
+      workouts: todayWorkouts,
+      weeklyExerciseMinutes: weeklyExerciseMinutes,
     );
   }
+
+  static String _workoutLabel(HealthWorkoutActivityType type) => switch (type) {
+    HealthWorkoutActivityType.RUNNING => 'Running',
+    HealthWorkoutActivityType.WALKING => 'Walking',
+    HealthWorkoutActivityType.HIKING => 'Hiking',
+    HealthWorkoutActivityType.BIKING => 'Cycling',
+    HealthWorkoutActivityType.SWIMMING => 'Swimming',
+    HealthWorkoutActivityType.YOGA => 'Yoga',
+    HealthWorkoutActivityType.HIGH_INTENSITY_INTERVAL_TRAINING => 'HIIT',
+    HealthWorkoutActivityType.TRADITIONAL_STRENGTH_TRAINING => 'Strength',
+    HealthWorkoutActivityType.FUNCTIONAL_STRENGTH_TRAINING => 'Strength',
+    HealthWorkoutActivityType.CORE_TRAINING => 'Core',
+    HealthWorkoutActivityType.CROSS_TRAINING => 'Cross Training',
+    HealthWorkoutActivityType.ROWING => 'Rowing',
+    HealthWorkoutActivityType.ELLIPTICAL => 'Elliptical',
+    HealthWorkoutActivityType.STAIR_CLIMBING => 'Stair Climbing',
+    HealthWorkoutActivityType.TENNIS => 'Tennis',
+    HealthWorkoutActivityType.BASKETBALL => 'Basketball',
+    HealthWorkoutActivityType.SOCCER => 'Football',
+    HealthWorkoutActivityType.BOXING => 'Boxing',
+    HealthWorkoutActivityType.CLIMBING => 'Climbing',
+    HealthWorkoutActivityType.PILATES => 'Pilates',
+    HealthWorkoutActivityType.MIXED_CARDIO => 'Cardio',
+    HealthWorkoutActivityType.JUMP_ROPE => 'Jump Rope',
+    HealthWorkoutActivityType.SURFING => 'Surfing',
+    _ => 'Workout',
+  };
+
+  static String _workoutIcon(HealthWorkoutActivityType type) => switch (type) {
+    HealthWorkoutActivityType.RUNNING => '🏃',
+    HealthWorkoutActivityType.WALKING => '🚶',
+    HealthWorkoutActivityType.HIKING => '🥾',
+    HealthWorkoutActivityType.BIKING => '🚴',
+    HealthWorkoutActivityType.SWIMMING => '🏊',
+    HealthWorkoutActivityType.YOGA => '🧘',
+    HealthWorkoutActivityType.HIGH_INTENSITY_INTERVAL_TRAINING => '⚡',
+    HealthWorkoutActivityType.TRADITIONAL_STRENGTH_TRAINING => '💪',
+    HealthWorkoutActivityType.FUNCTIONAL_STRENGTH_TRAINING => '💪',
+    HealthWorkoutActivityType.CORE_TRAINING => '🎯',
+    HealthWorkoutActivityType.TENNIS => '🎾',
+    HealthWorkoutActivityType.BASKETBALL => '🏀',
+    HealthWorkoutActivityType.SOCCER => '⚽',
+    HealthWorkoutActivityType.BOXING => '🥊',
+    HealthWorkoutActivityType.CLIMBING => '🧗',
+    HealthWorkoutActivityType.PILATES => '🤸',
+    HealthWorkoutActivityType.SURFING => '🏄',
+    HealthWorkoutActivityType.ROWING => '🚣',
+    _ => '🏋️',
+  };
 
   /// Formatted metrics for the onboarding sync step.
   Future<List<({String label, String value, String icon})>>

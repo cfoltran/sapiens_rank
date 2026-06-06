@@ -6,7 +6,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 /// Animated Sapiens Score ring.
 class ScoreRing extends StatefulWidget {
-  const ScoreRing({super.key, required this.score, this.size = 272.0});
+  const ScoreRing({super.key, required this.score, this.size = 220.0});
 
   final double score;
   final double size;
@@ -91,11 +91,11 @@ class _ScoreRingState extends State<ScoreRing>
                 Text(
                   _anim.value.round().toString(),
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 88,
+                    fontSize: 70,
                     fontWeight: FontWeight.w600,
                     color: context.srText,
                     height: 1.0,
-                    letterSpacing: 88 * -0.04,
+                    letterSpacing: 70 * -0.04,
                   ),
                 ),
                 Text(

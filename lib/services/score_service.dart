@@ -94,6 +94,11 @@ class ScoreService {
           if (snap.standHours > 0) 'stand_hours': snap.standHours,
           if (snap.hrv != null) 'hrv': snap.hrv,
           if (snap.restingHr != null) 'resting_hr': snap.restingHr,
+          if (snap.workouts.isNotEmpty)
+            'exercise_minutes': snap.workouts.fold(
+              0,
+              (s, w) => s + w.durationMinutes,
+            ),
         }),
       ]);
     } catch (_) {}

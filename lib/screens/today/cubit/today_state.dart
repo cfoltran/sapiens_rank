@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sapiens_rank/services/health_service.dart';
 
 class TodayMetric extends Equatable {
   const TodayMetric({
@@ -44,6 +45,10 @@ class TodayData extends Equatable {
     required this.countryFlag,
     required this.streak,
     required this.metrics,
+    required this.workouts,
+    required this.dailyExerciseMinutes,
+    required this.weeklyExerciseMinutes,
+    required this.weeklyExerciseTarget,
   });
 
   final int score;
@@ -55,7 +60,19 @@ class TodayData extends Equatable {
   final String countryFlag;
   final int streak;
   final List<TodayMetric> metrics;
+  final List<WorkoutEntry> workouts;
+  final int dailyExerciseMinutes;
+  final int weeklyExerciseMinutes;
+  final int weeklyExerciseTarget;
 
   @override
-  List<Object?> get props => [score, rankWorld, rankCountry, streak, metrics];
+  List<Object?> get props => [
+    score,
+    rankWorld,
+    rankCountry,
+    streak,
+    metrics,
+    workouts,
+    weeklyExerciseMinutes,
+  ];
 }

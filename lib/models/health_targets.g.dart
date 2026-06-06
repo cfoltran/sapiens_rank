@@ -16,6 +16,8 @@ HealthTargets _$HealthTargetsFromJson(Map<String, dynamic> json) =>
           ? 7.0
           : HealthTargets._toDouble(json['target_sleep_hours']),
       standHours: (json['target_stand_hours'] as num?)?.toInt() ?? 12,
+      dailyExerciseMinutes:
+          (json['target_daily_exercise_minutes'] as num?)?.toInt() ?? 30,
     );
 
 Map<String, dynamic> _$HealthTargetsToJson(HealthTargets instance) =>
@@ -24,4 +26,5 @@ Map<String, dynamic> _$HealthTargetsToJson(HealthTargets instance) =>
       'target_kcal': instance.kcal,
       'target_sleep_hours': instance.sleepHours,
       'target_stand_hours': instance.standHours,
+      'target_daily_exercise_minutes': instance.dailyExerciseMinutes,
     };

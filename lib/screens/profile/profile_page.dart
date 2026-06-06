@@ -572,6 +572,12 @@ class _TargetsCard extends StatelessWidget {
       unit: 'h',
       icon: Icons.accessibility_new,
     ),
+    (
+      key: 'exercise',
+      label: 'Exercise',
+      unit: 'min/day',
+      icon: Icons.bolt,
+    ),
   ];
 
   String _fmt(String key, HealthTargets t) => switch (key) {
@@ -579,6 +585,7 @@ class _TargetsCard extends StatelessWidget {
     'kcal' => '${t.kcal.round()}',
     'sleep' => t.sleepHours.toStringAsFixed(1),
     'stand' => '${t.standHours}',
+    'exercise' => '${t.dailyExerciseMinutes}',
     _ => '',
   };
 
@@ -647,6 +654,7 @@ class _TargetsCard extends StatelessWidget {
                   sleepHours: targets.sleepHours,
                   standHours: targets.standHours,
                   hrv: targets.hrv,
+                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
                 ),
                 'kcal' => HealthTargets(
                   steps: targets.steps,
@@ -654,6 +662,7 @@ class _TargetsCard extends StatelessWidget {
                   sleepHours: targets.sleepHours,
                   standHours: targets.standHours,
                   hrv: targets.hrv,
+                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
                 ),
                 'sleep' => HealthTargets(
                   steps: targets.steps,
@@ -661,6 +670,7 @@ class _TargetsCard extends StatelessWidget {
                   sleepHours: v.clamp(4, 12),
                   standHours: targets.standHours,
                   hrv: targets.hrv,
+                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
                 ),
                 'stand' => HealthTargets(
                   steps: targets.steps,
@@ -668,6 +678,15 @@ class _TargetsCard extends StatelessWidget {
                   sleepHours: targets.sleepHours,
                   standHours: v.round().clamp(1, 24),
                   hrv: targets.hrv,
+                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
+                ),
+                'exercise' => HealthTargets(
+                  steps: targets.steps,
+                  kcal: targets.kcal,
+                  sleepHours: targets.sleepHours,
+                  standHours: targets.standHours,
+                  hrv: targets.hrv,
+                  dailyExerciseMinutes: v.round().clamp(10, 120),
                 ),
                 _ => targets,
               };

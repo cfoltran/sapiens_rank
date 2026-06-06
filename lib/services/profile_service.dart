@@ -34,7 +34,7 @@ class ProfileService {
       final row = await _db
           .from('profiles')
           .select(
-            'target_steps, target_kcal, target_sleep_hours, target_stand_hours',
+            'target_steps, target_kcal, target_sleep_hours, target_stand_hours, target_daily_exercise_minutes',
           )
           .eq('id', uid)
           .single();

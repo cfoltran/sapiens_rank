@@ -112,6 +112,13 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
             countryFlag: flag,
             streak: streak,
             metrics: metrics,
+            workouts: snap.workouts,
+            dailyExerciseMinutes: snap.workouts.fold(
+              0,
+              (s, w) => s + w.durationMinutes,
+            ),
+            weeklyExerciseMinutes: snap.weeklyExerciseMinutes,
+            weeklyExerciseTarget: targets.dailyExerciseMinutes * 7,
           ),
         ),
       );

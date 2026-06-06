@@ -32,11 +32,13 @@ class _TargetStepState extends State<TargetStep> {
   late double _kcal;
   late double _sleep;
   late double _stand;
+  late double _exercise;
 
   static const _suggestedSteps = 7000.0;
   static const _suggestedKcal = 380.0;
   static const _suggestedSleep = 7.0;
   static const _suggestedStand = 12.0;
+  static const _suggestedExercise = 30.0;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _TargetStepState extends State<TargetStep> {
     _kcal = widget.initialTargets.kcal;
     _sleep = widget.initialTargets.sleepHours;
     _stand = widget.initialTargets.standHours.toDouble();
+    _exercise = widget.initialTargets.dailyExerciseMinutes.toDouble();
   }
 
   HealthTargets get _current => HealthTargets(
@@ -52,6 +55,7 @@ class _TargetStepState extends State<TargetStep> {
     kcal: _kcal,
     sleepHours: _sleep,
     standHours: _stand.round(),
+    dailyExerciseMinutes: _exercise.round(),
   );
 
   @override
@@ -170,6 +174,20 @@ class _TargetStepState extends State<TargetStep> {
             color: SrColors.amber,
             format: (v) => '${v.round()}h',
             onChanged: (v) => setState(() => _stand = v.roundToDouble()),
+          ),
+          const SizedBox(height: 10),
+          _TargetSlider(
+            icon: '🏃',
+            label: 'Exercise',
+            unit: 'min / day',
+            value: _exercise,
+            min: 10,
+            max: 120,
+            divisions: (120 - 10) ~/ 5,
+            suggested: _suggestedExercise,
+            color: SrColors.blue,
+            format: (v) => '${v.round()}min',
+            onChanged: (v) => setState(() => _exercise = (v / 5).round() * 5.0),
           ),
         ],
       ),

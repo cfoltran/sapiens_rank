@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 
 class ProfileData extends Equatable {
@@ -12,6 +13,7 @@ class ProfileData extends Equatable {
     required this.trendDelta,
     required this.trendLabel,
     required this.targets,
+    this.habits,
   });
 
   final String name;
@@ -23,6 +25,7 @@ class ProfileData extends Equatable {
   final double trendDelta;
   final String trendLabel;
   final HealthTargets targets;
+  final HabitsData? habits;
 
   String get handle =>
       '@${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '_')}';
@@ -62,18 +65,20 @@ class ProfileData extends Equatable {
     return 'joined ${months[d.month - 1]} ${d.year}';
   }
 
-  ProfileData copyWith({HealthTargets? targets}) => ProfileData(
-    name: name,
-    country: country,
-    joinedAt: joinedAt,
-    lifetimeAvg: lifetimeAvg,
-    streak: streak,
-    scoreHistory30d: scoreHistory30d,
-    trendDelta: trendDelta,
-    trendLabel: trendLabel,
-    targets: targets ?? this.targets,
-  );
+  ProfileData copyWith({HealthTargets? targets, HabitsData? habits}) =>
+      ProfileData(
+        name: name,
+        country: country,
+        joinedAt: joinedAt,
+        lifetimeAvg: lifetimeAvg,
+        streak: streak,
+        scoreHistory30d: scoreHistory30d,
+        trendDelta: trendDelta,
+        trendLabel: trendLabel,
+        targets: targets ?? this.targets,
+        habits: habits ?? this.habits,
+      );
 
   @override
-  List<Object?> get props => [name, lifetimeAvg, streak, targets];
+  List<Object?> get props => [name, lifetimeAvg, streak, targets, habits];
 }

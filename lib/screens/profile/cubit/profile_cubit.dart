@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
@@ -22,7 +23,9 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
       final profile = await _db
           .from('profiles')
           .select(
-            'name, country, created_at, target_steps, target_kcal, target_sleep_hours, target_stand_hours',
+            'name, country, created_at, '
+            'target_steps, target_kcal, target_sleep_hours, target_stand_hours, target_daily_exercise_minutes, '
+            'height_cm, weight_kg, bmi_frequency, smokes, cigarettes_per_day, drinks, drinks_per_week',
           )
           .eq('id', uid)
           .single();
@@ -45,6 +48,24 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
             (profile['target_sleep_hours'] as num?)?.toDouble() ?? d.sleepHours,
         standHours: (profile['target_stand_hours'] as int?) ?? d.standHours,
         hrv: d.hrv,
+        dailyExerciseMinutes:
+            (profile['target_daily_exercise_minutes'] as int?) ??
+            d.dailyExerciseMinutes,
+      );
+      final bmiFreqRaw = profile['bmi_frequency'] as String?;
+      final habits = HabitsData(
+        heightCm: profile['height_cm'] as int?,
+        weightKg: (profile['weight_kg'] as num?)?.toDouble(),
+        bmiFrequency: bmiFreqRaw != null
+            ? BmiFrequency.values.firstWhere(
+                (e) => e.name == bmiFreqRaw,
+                orElse: () => BmiFrequency.monthly,
+              )
+            : null,
+        smokes: profile['smokes'] as bool?,
+        cigarettesPerDay: profile['cigarettes_per_day'] as int?,
+        drinks: profile['drinks'] as bool?,
+        drinksPerWeek: profile['drinks_per_week'] as int?,
       );
 
       final lifetimeAvg = allScoresRaw.isEmpty
@@ -86,6 +107,7 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
             trendDelta: trendDelta,
             trendLabel: trendLabel,
             targets: targets,
+            habits: habits,
           ),
         ),
       );
@@ -99,5 +121,12 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
     if (current == null) return;
     emit(DataState.success(current.copyWith(targets: targets)));
     await ProfileService.instance.updateTargets(targets);
+  }
+
+  Future<void> updateHabits(HabitsData habits) async {
+    final current = state.data;
+    if (current == null) return;
+    emit(DataState.success(current.copyWith(habits: habits)));
+    await ProfileService.instance.updateHabits(habits);
   }
 }

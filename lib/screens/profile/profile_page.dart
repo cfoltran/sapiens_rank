@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/models/habits_data.dart';
+import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_cubit.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
+import 'package:sapiens_rank/screens/profile/widgets/body_sheet.dart';
+import 'package:sapiens_rank/screens/profile/widgets/habits_sheet.dart';
+import 'package:sapiens_rank/screens/profile/widgets/targets_sheet.dart';
 import 'package:sapiens_rank/services/auth_service.dart';
-import 'package:sapiens_rank/models/health_targets.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -112,6 +115,10 @@ class _LoadedBody extends StatelessWidget {
             _TrendCard(data: data),
             const SizedBox(height: 18),
             _TargetsCard(data: data),
+            const SizedBox(height: 18),
+            _HabitsCard(data: data),
+            const SizedBox(height: 18),
+            _BodyCard(data: data),
             const SizedBox(height: 18),
             _ThemeSelector(),
             const SizedBox(height: 18),
@@ -572,12 +579,7 @@ class _TargetsCard extends StatelessWidget {
       unit: 'h',
       icon: Icons.accessibility_new,
     ),
-    (
-      key: 'exercise',
-      label: 'Exercise',
-      unit: 'min/day',
-      icon: Icons.bolt,
-    ),
+    (key: 'exercise', label: 'Exercise', unit: 'min/day', icon: Icons.bolt),
   ];
 
   String _fmt(String key, HealthTargets t) => switch (key) {
@@ -593,109 +595,15 @@ class _TargetsCard extends StatelessWidget {
       ? '${v ~/ 1000},${(v % 1000).toString().padLeft(3, '0')}'
       : '$v';
 
-  void _editTarget(BuildContext context, String key) {
-    final cubit = context.read<ProfileCubit>();
-    final targets = data.targets;
-    final current = switch (key) {
-      'steps' => targets.steps.toString(),
-      'kcal' => targets.kcal.round().toString(),
-      'sleep' => targets.sleepHours.toStringAsFixed(1),
-      'stand' => targets.standHours.toString(),
-      _ => '',
-    };
-    final label = _metrics.firstWhere((m) => m.key == key).label;
-    final unit = _metrics.firstWhere((m) => m.key == key).unit;
-    final ctrl = TextEditingController(text: current);
-
-    showDialog<void>(
+  void _openEdit(BuildContext context) {
+    showModalBottomSheet<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: context.srBgElev,
-        title: Text(
-          label,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: context.srText,
-          ),
-        ),
-        content: TextField(
-          controller: ctrl,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
-          ],
-          style: GoogleFonts.spaceGrotesk(fontSize: 18, color: context.srText),
-          decoration: InputDecoration(
-            suffixText: unit,
-            suffixStyle: GoogleFonts.jetBrainsMono(color: context.srTextDim),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.srLine),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.srLime),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: context.srTextMuted)),
-          ),
-          TextButton(
-            onPressed: () {
-              final v = double.tryParse(ctrl.text);
-              if (v == null) return;
-              final updated = switch (key) {
-                'steps' => HealthTargets(
-                  steps: v.round().clamp(1000, 30000),
-                  kcal: targets.kcal,
-                  sleepHours: targets.sleepHours,
-                  standHours: targets.standHours,
-                  hrv: targets.hrv,
-                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
-                ),
-                'kcal' => HealthTargets(
-                  steps: targets.steps,
-                  kcal: v.clamp(100, 2000),
-                  sleepHours: targets.sleepHours,
-                  standHours: targets.standHours,
-                  hrv: targets.hrv,
-                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
-                ),
-                'sleep' => HealthTargets(
-                  steps: targets.steps,
-                  kcal: targets.kcal,
-                  sleepHours: v.clamp(4, 12),
-                  standHours: targets.standHours,
-                  hrv: targets.hrv,
-                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
-                ),
-                'stand' => HealthTargets(
-                  steps: targets.steps,
-                  kcal: targets.kcal,
-                  sleepHours: targets.sleepHours,
-                  standHours: v.round().clamp(1, 24),
-                  hrv: targets.hrv,
-                  dailyExerciseMinutes: targets.dailyExerciseMinutes,
-                ),
-                'exercise' => HealthTargets(
-                  steps: targets.steps,
-                  kcal: targets.kcal,
-                  sleepHours: targets.sleepHours,
-                  standHours: targets.standHours,
-                  hrv: targets.hrv,
-                  dailyExerciseMinutes: v.round().clamp(10, 120),
-                ),
-                _ => targets,
-              };
-              cubit.updateTargets(updated);
-              Navigator.pop(ctx);
-            },
-            child: Text('Save', style: TextStyle(color: context.srLimeText)),
-          ),
-        ],
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => TargetsSheet(
+        targets: data.targets,
+        onSave: (updated) =>
+            context.read<ProfileCubit>().updateTargets(updated),
       ),
     );
   }
@@ -713,52 +621,345 @@ class _TargetsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'MY TARGETS',
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 10,
-              color: context.srTextDim,
-              letterSpacing: 10 * 0.15,
-            ),
+          Row(
+            children: [
+              Text(
+                'MY TARGETS',
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 10,
+                  color: context.srTextDim,
+                  letterSpacing: 10 * 0.15,
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => _openEdit(context),
+                child: Text(
+                  'Edit →',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: context.srLimeText,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 14),
           for (var i = 0; i < _metrics.length; i++) ...[
             if (i > 0) Divider(height: 1, color: context.srTintSm),
-            GestureDetector(
-              onTap: () => _editTarget(context, _metrics[i].key),
-              behavior: HitTestBehavior.opaque,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  children: [
-                    Icon(_metrics[i].icon, size: 16, color: context.srLimeText),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _metrics[i].label,
-                        style: tt.bodyMedium!.copyWith(
-                          color: context.srTextMuted,
-                          fontWeight: FontWeight.w500,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  Icon(_metrics[i].icon, size: 16, color: context.srLimeText),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      _metrics[i].label,
+                      style: tt.bodyMedium!.copyWith(
+                        color: context.srTextMuted,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${_fmt(_metrics[i].key, data.targets)} ${_metrics[i].unit}'
+                        .trim(),
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: context.srText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _HabitsCard extends StatelessWidget {
+  const _HabitsCard({required this.data});
+  final ProfileData data;
+
+  String _smokingText() {
+    final h = data.habits;
+    if (h == null || h.smokes == null) return 'Not set';
+    if (!h.smokes!) return 'Non-smoker';
+    return h.cigarettesPerDay != null ? '${h.cigarettesPerDay}/day' : 'Smoker';
+  }
+
+  String _drinkingText() {
+    final h = data.habits;
+    if (h == null || h.drinks == null) return 'Not set';
+    if (!h.drinks!) return 'Non-drinker';
+    return h.drinksPerWeek != null ? '${h.drinksPerWeek}/wk' : 'Drinker';
+  }
+
+  void _openEdit(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => HabitsSheet(
+        habits: data.habits ?? const HabitsData(),
+        onSave: (updated) => context.read<ProfileCubit>().updateHabits(updated),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final rows = [
+      ('🚬', 'Smoking', _smokingText()),
+      ('🍷', 'Alcohol', _drinkingText()),
+    ];
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: context.srBgElev,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: context.srLineStrong),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'HABITS',
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 10,
+                  color: context.srTextDim,
+                  letterSpacing: 10 * 0.15,
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => _openEdit(context),
+                child: Text(
+                  'Edit →',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: context.srLimeText,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) Divider(height: 1, color: context.srTintSm),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  Text(rows[i].$1, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      rows[i].$2,
+                      style: tt.bodyMedium!.copyWith(
+                        color: context.srTextMuted,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    rows[i].$3,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: context.srText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _BodyCard extends StatelessWidget {
+  const _BodyCard({required this.data});
+  final ProfileData data;
+
+  static Color _bmiColor(double bmi, BuildContext context) {
+    if (bmi < 18.5) return SrColors.cyan;
+    if (bmi < 25) return context.srLime;
+    if (bmi < 30) return SrColors.amber;
+    return SrColors.rose;
+  }
+
+  static Color _bmiTextColor(double bmi, BuildContext context) {
+    if (bmi < 18.5) return SrColors.cyan;
+    if (bmi < 25) return context.srLimeText;
+    if (bmi < 30) return SrColors.amber;
+    return SrColors.rose;
+  }
+
+  static String _bmiCategory(double bmi) {
+    if (bmi < 18.5) return 'Underweight';
+    if (bmi < 25) return 'Healthy';
+    if (bmi < 30) return 'Overweight';
+    return 'Obese';
+  }
+
+  void _openEdit(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => BodySheet(
+        habits: data.habits ?? const HabitsData(),
+        onSave: (updated) => context.read<ProfileCubit>().updateHabits(updated),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final habits = data.habits;
+    final bmi = habits?.bmi;
+    final rows = [
+      (
+        Icons.height,
+        'Height',
+        habits?.heightCm != null ? '${habits!.heightCm} cm' : '—',
+      ),
+      (
+        Icons.monitor_weight_outlined,
+        'Weight',
+        habits?.weightKg != null
+            ? '${habits!.weightKg!.toStringAsFixed(1)} kg'
+            : '—',
+      ),
+    ];
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: context.srBgElev,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: context.srLineStrong),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'BODY',
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 10,
+                  color: context.srTextDim,
+                  letterSpacing: 10 * 0.15,
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => _openEdit(context),
+                child: Text(
+                  'Edit →',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: context.srLimeText,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (bmi != null) ...[
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: _bmiColor(bmi, context).withAlpha(20),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: _bmiColor(bmi, context).withAlpha(60),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'BMI',
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 10,
+                          color: context.srTextDim,
+                          letterSpacing: 10 * 0.1,
                         ),
                       ),
+                      Text(
+                        bmi.toStringAsFixed(1),
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: _bmiTextColor(bmi, context),
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 14),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: _bmiColor(bmi, context).withAlpha(60),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(
+                    _bmiCategory(bmi),
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: _bmiTextColor(bmi, context),
                     ),
-                    Text(
-                      '${_fmt(_metrics[i].key, data.targets)} ${_metrics[i].unit}'
-                          .trim(),
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: context.srText,
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 14),
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) Divider(height: 1, color: context.srTintSm),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  Icon(rows[i].$1, size: 16, color: context.srLimeText),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      rows[i].$2,
+                      style: tt.bodyMedium!.copyWith(
+                        color: context.srTextMuted,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.edit_outlined,
-                      size: 14,
-                      color: context.srTextDim,
+                  ),
+                  Text(
+                    rows[i].$3,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: context.srText,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -833,24 +1034,10 @@ class _ThemeOption extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: selected ? Border.all(color: context.srLine) : null,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: selected ? context.srLimeText : context.srTextDim,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: selected ? context.srText : context.srTextDim,
-                ),
-              ),
-            ],
+          child: Icon(
+            icon,
+            size: 18,
+            color: selected ? context.srLimeText : context.srTextDim,
           ),
         ),
       ),

@@ -9,14 +9,14 @@ class HabitChoiceCard extends StatelessWidget {
     required this.selected,
     required this.icon,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.onTap,
   });
 
   final bool selected;
   final String icon;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final VoidCallback onTap;
 
   @override
@@ -50,12 +50,13 @@ class HabitChoiceCard extends StatelessWidget {
                       color: context.srText,
                     ),
                   ),
-                  Text(
-                    subtitle,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall!.copyWith(color: context.srTextMuted),
-                  ),
+                  if (subtitle != null)
+                    Text(
+                      subtitle!,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: context.srTextMuted,
+                      ),
+                    ),
                 ],
               ),
             ),

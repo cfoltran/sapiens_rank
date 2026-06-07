@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-enum WorldScope { worldwide, country, weekly }
-
 class WorldPlayer extends Equatable {
   const WorldPlayer({
     required this.rank,
@@ -39,58 +37,19 @@ class WorldPlayer extends Equatable {
 
 class WorldData extends Equatable {
   const WorldData({
-    required this.scope,
-    required this.worldwidePlayers,
-    required this.countryPlayers,
-    this.myRankWorld,
-    this.myRankCountry,
+    required this.players,
+    this.myRank,
     required this.myScore,
     required this.myStreak,
-    required this.myCountry,
-    required this.myCountryFlag,
     this.myRankDelta,
   });
 
-  final WorldScope scope;
-  final List<WorldPlayer> worldwidePlayers;
-  final List<WorldPlayer> countryPlayers;
-  final int? myRankWorld;
-  final int? myRankCountry;
+  final List<WorldPlayer> players;
+  final int? myRank;
   final double myScore;
   final int myStreak;
-  final String myCountry;
-  final String myCountryFlag;
   final int? myRankDelta;
 
-  List<WorldPlayer> get activePlayers => switch (scope) {
-    WorldScope.worldwide || WorldScope.weekly => worldwidePlayers,
-    WorldScope.country => countryPlayers,
-  };
-
-  int? get myActiveRank => switch (scope) {
-    WorldScope.worldwide || WorldScope.weekly => myRankWorld,
-    WorldScope.country => myRankCountry,
-  };
-
-  WorldData copyWithScope(WorldScope s) => WorldData(
-    scope: s,
-    worldwidePlayers: worldwidePlayers,
-    countryPlayers: countryPlayers,
-    myRankWorld: myRankWorld,
-    myRankCountry: myRankCountry,
-    myScore: myScore,
-    myStreak: myStreak,
-    myCountry: myCountry,
-    myCountryFlag: myCountryFlag,
-    myRankDelta: myRankDelta,
-  );
-
   @override
-  List<Object?> get props => [
-    scope,
-    myRankWorld,
-    myRankCountry,
-    myScore,
-    myStreak,
-  ];
+  List<Object?> get props => [myRank, myScore, myStreak];
 }

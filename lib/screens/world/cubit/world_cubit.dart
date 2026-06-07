@@ -12,38 +12,22 @@ class WorldCubit extends Cubit<DataState<WorldData>> {
     emit(const DataState.loading());
     try {
       final myRank = await ScoreService.instance.getMyRank();
-      final myCountry = myRank?.country ?? 'FR';
 
       final results = await Future.wait([
         ScoreService.instance.getTopLeaderboard(),
-        ScoreService.instance.getTopLeaderboard(country: myCountry),
         ScoreService.instance.getStreak(),
       ]);
 
-      final worldwidePlayers = _toPlayers(
-        results[0] as List<LeaderboardEntry>,
-        worldwide: true,
-      );
-      final countryPlayers = _toPlayers(
-        results[1] as List<LeaderboardEntry>,
-        worldwide: false,
-      );
-      final streak = results[2] as int;
-
-      final myFlag = _countryFlag(myCountry);
+      final players = _toPlayers(results[0] as List<LeaderboardEntry>);
+      final streak = results[1] as int;
 
       emit(
         DataState.success(
           WorldData(
-            scope: WorldScope.worldwide,
-            worldwidePlayers: worldwidePlayers,
-            countryPlayers: countryPlayers,
-            myRankWorld: myRank?.rankWorld,
-            myRankCountry: myRank?.rankCountry,
+            players: players,
+            myRank: myRank?.rankWorld,
             myScore: myRank?.score ?? 0,
             myStreak: streak,
-            myCountry: myCountry,
-            myCountryFlag: myFlag,
             myRankDelta: myRank?.rankDelta,
           ),
         ),
@@ -53,19 +37,9 @@ class WorldCubit extends Cubit<DataState<WorldData>> {
     }
   }
 
-  void setScope(WorldScope scope) {
-    final current = state.data;
-    if (current == null) return;
-    emit(DataState.success(current.copyWithScope(scope)));
-  }
-
-  static List<WorldPlayer> _toPlayers(
-    List<LeaderboardEntry> entries, {
-    required bool worldwide,
-  }) {
+  static List<WorldPlayer> _toPlayers(List<LeaderboardEntry> entries) {
     final players = entries.map((e) {
-      final rank =
-          (worldwide ? e.rankWorld : e.rankCountry) ?? entries.indexOf(e) + 1;
+      final rank = e.rankWorld ?? entries.indexOf(e) + 1;
       final name = e.displayName ?? 'Sapien';
       return WorldPlayer(
         rank: rank,

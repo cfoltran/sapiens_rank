@@ -184,7 +184,7 @@ class ScoreService {
 
   Future<List<LeaderboardEntry>> getTopLeaderboard({
     String? country,
-    int limit = 12,
+    int limit = 1000,
   }) async {
     try {
       var query = _db

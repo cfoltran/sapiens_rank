@@ -78,11 +78,11 @@ class _LoadedBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final players = data.activePlayers;
+    final players = data.players;
     final listPlayers = players.length > 3
         ? players.sublist(3)
         : <WorldPlayer>[];
-    final myRank = data.myActiveRank;
+    final myRank = data.myRank;
     final showGap = myRank != null && myRank > (players.length + 3);
 
     return Scaffold(
@@ -95,11 +95,7 @@ class _LoadedBody extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _Header(data: data),
-                  const SizedBox(height: 16),
-                  _ScopeFilter(data: data),
-                ],
+                children: [_Header(data: data)],
               ),
             ),
             Expanded(
@@ -185,80 +181,6 @@ class _Header extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ScopeFilter extends StatelessWidget {
-  const _ScopeFilter({required this.data});
-
-  final WorldData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final cubit = context.read<WorldCubit>();
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _SrChip(
-            label: 'Worldwide',
-            active: data.scope == WorldScope.worldwide,
-            onTap: () => cubit.setScope(WorldScope.worldwide),
-          ),
-          const SizedBox(width: 8),
-          _SrChip(
-            label: data.myCountryFlag,
-            active: data.scope == WorldScope.country,
-            onTap: () => cubit.setScope(WorldScope.country),
-          ),
-          const SizedBox(width: 8),
-          _SrChip(
-            label: 'Weekly',
-            active: data.scope == WorldScope.weekly,
-            onTap: () => cubit.setScope(WorldScope.weekly),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SrChip extends StatelessWidget {
-  const _SrChip({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: active ? SrColors.lime : Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: active ? SrColors.lime : context.srLineStrong,
-            width: 1.5,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: active ? SrColors.textInk : context.srText,
-          ),
-        ),
-      ),
     );
   }
 }
@@ -563,7 +485,7 @@ class _YouCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myRank = data.myActiveRank;
+    final myRank = data.myRank;
     final delta = data.myRankDelta;
 
     return Padding(

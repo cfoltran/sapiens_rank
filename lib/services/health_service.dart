@@ -25,7 +25,7 @@ class HealthSnapshot {
     required this.sleepHours,
     required this.steps,
     required this.kcal,
-    required this.standHours,
+    this.standHours,
     this.hrv,
     this.restingHr,
     this.workouts = const [],
@@ -35,18 +35,15 @@ class HealthSnapshot {
   final double sleepHours;
   final int steps;
   final double kcal;
-  final int standHours;
+
+  /// Null when no APPLE_STAND_TIME data is available (e.g. Garmin users).
+  final int? standHours;
   final double? hrv;
   final double? restingHr;
   final List<WorkoutEntry> workouts;
   final int weeklyExerciseMinutes;
 
-  static const empty = HealthSnapshot(
-    sleepHours: 0,
-    steps: 0,
-    kcal: 0,
-    standHours: 0,
-  );
+  static const empty = HealthSnapshot(sleepHours: 0, steps: 0, kcal: 0);
 }
 
 class HealthService {
@@ -187,7 +184,7 @@ class HealthService {
       return sumType(HealthDataType.SLEEP_IN_BED) / 60.0;
     }
 
-    int standHours() {
+    int? standHours() {
       final standPts = samples
           .where(
             (p) =>
@@ -197,6 +194,8 @@ class HealthService {
                 p.dateFrom.toLocal().isBefore(dayEnd),
           )
           .toList();
+
+      if (standPts.isEmpty) return null;
 
       final watchPts = standPts
           .where((p) => p.sourceName.toLowerCase().contains('watch'))
@@ -337,7 +336,7 @@ class HealthService {
       ),
       (
         label: 'Stand hours',
-        value: snap.standHours > 0 ? '${snap.standHours} / 12' : '--',
+        value: (snap.standHours ?? 0) > 0 ? '${snap.standHours} / 12' : '--',
         icon: '🧍',
       ),
     ];

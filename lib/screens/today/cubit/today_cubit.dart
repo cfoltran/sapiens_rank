@@ -50,13 +50,18 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           ? '${v ~/ 1000},${(v % 1000).toString().padLeft(3, '0')}'
           : '$v';
 
+      final dailyExerciseMinutes = snap.workouts.fold(
+        0,
+        (s, w) => s + w.durationMinutes,
+      );
+
       final metrics = [
         TodayMetric(
           key: 'sleep',
           label: 'Sleep',
           iconName: 'sleep',
           contrib: bd.sleepPts,
-          target: 25,
+          target: bd.sleepMax,
           rawLabel: sleepH > 0
               ? '${sleepH}h ${sleepMin}m / ${targets.sleepHours.toStringAsFixed(1)}h target'
               : '-- no sleep data',
@@ -66,7 +71,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           label: 'Steps',
           iconName: 'steps',
           contrib: bd.stepsPts,
-          target: 25,
+          target: bd.stepsMax,
           rawLabel: '${fmtSteps(snap.steps)} / ${fmtSteps(targets.steps)}',
         ),
         TodayMetric(
@@ -74,7 +79,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           label: 'Active kcal',
           iconName: 'kcal',
           contrib: bd.kcalPts,
-          target: 20,
+          target: bd.kcalMax,
           rawLabel: '${snap.kcal.round()} / ${targets.kcal.round()} kcal',
         ),
         TodayMetric(
@@ -82,18 +87,30 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           label: 'Stand hours',
           iconName: 'stand',
           contrib: bd.standPts,
-          target: 15,
-          rawLabel: '${snap.standHours} / ${targets.standHours} hours',
+          target: bd.standMax,
+          rawLabel: snap.standHours != null
+              ? '${snap.standHours} / ${targets.standHours} hours'
+              : '-- no Apple Watch data',
         ),
         TodayMetric(
           key: 'hrv',
           label: 'HRV',
           iconName: 'hrv',
           contrib: bd.hrvPts,
-          target: 15,
+          target: bd.hrvMax,
           rawLabel: snap.hrv != null
               ? '${snap.hrv!.round()}ms · ${snap.hrv! > 55 ? 'above avg' : 'below avg'}'
               : '-- no data',
+        ),
+        TodayMetric(
+          key: 'exercise',
+          label: 'Exercise',
+          iconName: 'exercise',
+          contrib: bd.exercisePts,
+          target: bd.exerciseMax,
+          rawLabel: dailyExerciseMinutes > 0
+              ? '${dailyExerciseMinutes}min / ${targets.dailyExerciseMinutes}min target'
+              : '-- no workout today',
         ),
       ];
 
@@ -113,12 +130,8 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
             streak: streak,
             metrics: metrics,
             workouts: snap.workouts,
-            dailyExerciseMinutes: snap.workouts.fold(
-              0,
-              (s, w) => s + w.durationMinutes,
-            ),
-            weeklyExerciseMinutes: snap.weeklyExerciseMinutes,
-            weeklyExerciseTarget: targets.dailyExerciseMinutes * 7,
+            dailyExerciseMinutes: dailyExerciseMinutes,
+            dailyExerciseTarget: targets.dailyExerciseMinutes,
           ),
         ),
       );

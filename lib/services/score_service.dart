@@ -91,7 +91,7 @@ class ScoreService {
           if (snap.sleepHours > 0) 'sleep_hours': snap.sleepHours,
           if (snap.steps > 0) 'steps': snap.steps,
           if (snap.kcal > 0) 'kcal': snap.kcal,
-          if (snap.standHours > 0) 'stand_hours': snap.standHours,
+          if ((snap.standHours ?? 0) > 0) 'stand_hours': snap.standHours,
           if (snap.hrv != null) 'hrv': snap.hrv,
           if (snap.restingHr != null) 'resting_hr': snap.restingHr,
           if (snap.workouts.isNotEmpty)

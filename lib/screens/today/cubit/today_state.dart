@@ -47,8 +47,7 @@ class TodayData extends Equatable {
     required this.metrics,
     required this.workouts,
     required this.dailyExerciseMinutes,
-    required this.weeklyExerciseMinutes,
-    required this.weeklyExerciseTarget,
+    required this.dailyExerciseTarget,
   });
 
   final int score;
@@ -62,8 +61,7 @@ class TodayData extends Equatable {
   final List<TodayMetric> metrics;
   final List<WorkoutEntry> workouts;
   final int dailyExerciseMinutes;
-  final int weeklyExerciseMinutes;
-  final int weeklyExerciseTarget;
+  final int dailyExerciseTarget;
 
   @override
   List<Object?> get props => [
@@ -73,6 +71,6 @@ class TodayData extends Equatable {
     streak,
     metrics,
     workouts,
-    weeklyExerciseMinutes,
+    dailyExerciseMinutes,
   ];
 }

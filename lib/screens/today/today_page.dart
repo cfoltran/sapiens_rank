@@ -134,8 +134,7 @@ class _LoadedBody extends StatelessWidget {
                   _WorkoutSection(
                     workouts: data.workouts,
                     dailyMinutes: data.dailyExerciseMinutes,
-                    weeklyMinutes: data.weeklyExerciseMinutes,
-                    weeklyTarget: data.weeklyExerciseTarget,
+                    dailyTarget: data.dailyExerciseTarget,
                   ),
                   const SizedBox(height: 8),
                 ],
@@ -351,6 +350,7 @@ class _MetricCard extends StatelessWidget {
     'kcal' => Icons.local_fire_department,
     'stand' => Icons.accessibility_new,
     'hrv' => Icons.monitor_heart,
+    'exercise' => Icons.fitness_center,
     _ => Icons.circle_outlined,
   };
 
@@ -505,18 +505,16 @@ class _WorkoutSection extends StatelessWidget {
   const _WorkoutSection({
     required this.workouts,
     required this.dailyMinutes,
-    required this.weeklyMinutes,
-    required this.weeklyTarget,
+    required this.dailyTarget,
   });
 
   final List<WorkoutEntry> workouts;
   final int dailyMinutes;
-  final int weeklyMinutes;
-  final int weeklyTarget;
+  final int dailyTarget;
 
   @override
   Widget build(BuildContext context) {
-    final weeklyPct = (weeklyMinutes / weeklyTarget).clamp(0.0, 1.0);
+    final dailyPct = (dailyMinutes / dailyTarget).clamp(0.0, 1.0);
 
     return Container(
       decoration: BoxDecoration(
@@ -590,11 +588,11 @@ class _WorkoutSection extends StatelessWidget {
                               duration: const Duration(milliseconds: 600),
                               curve: Curves.easeOutCubic,
                               height: 4,
-                              width: constraints.maxWidth * weeklyPct,
+                              width: constraints.maxWidth * dailyPct,
                               decoration: BoxDecoration(
-                                color: weeklyPct >= 0.9
+                                color: dailyPct >= 0.9
                                     ? context.srLime
-                                    : weeklyPct >= 0.6
+                                    : dailyPct >= 0.6
                                     ? context.srLime.withAlpha(0xCC)
                                     : SrColors.amber,
                                 borderRadius: BorderRadius.circular(2),

@@ -90,6 +90,7 @@ class _StepRouter extends StatelessWidget {
         onNext: cubit.requestHealthPermissions,
         onBack: cubit.back,
         denied: state.permissionDenied,
+        isLoading: state.isLoading,
       ),
       OnboardingStep.sync => SyncStep(onNext: cubit.next, onBack: cubit.back),
       OnboardingStep.name => NameStep(

@@ -14,6 +14,7 @@ class PermissionStep extends StatelessWidget {
     required this.onNext,
     required this.onBack,
     this.denied = false,
+    this.isLoading = false,
   });
 
   final int progress;
@@ -21,6 +22,7 @@ class PermissionStep extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
   final bool denied;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class PermissionStep extends StatelessWidget {
         children: [
           ArenaButton(
             label: denied ? 'Open Settings →' : 'Allow health access →',
+            isLoading: isLoading,
             onTap: denied
                 ? () => launchUrl(Uri.parse('app-settings:'))
                 : onNext,

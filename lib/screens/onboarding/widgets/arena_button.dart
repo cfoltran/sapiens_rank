@@ -8,11 +8,13 @@ class ArenaButton extends StatefulWidget {
     required this.label,
     required this.onTap,
     this.color,
+    this.isLoading = false,
   });
 
   final String label;
   final VoidCallback? onTap;
   final Color? color;
+  final bool isLoading;
 
   @override
   State<ArenaButton> createState() => _ArenaButtonState();
@@ -23,11 +25,11 @@ class _ArenaButtonState extends State<ArenaButton> {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = widget.onTap != null;
+    final enabled = widget.onTap != null && !widget.isLoading;
     final color = widget.color ?? context.srLime;
 
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: enabled ? widget.onTap : null,
       onTapDown: enabled ? (_) => setState(() => _pressed = true) : null,
       onTapUp: enabled ? (_) => setState(() => _pressed = false) : null,
       onTapCancel: enabled ? () => setState(() => _pressed = false) : null,
@@ -56,14 +58,23 @@ class _ArenaButtonState extends State<ArenaButton> {
                     : null,
               ),
               child: Center(
-                child: Text(
-                  widget.label,
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: SrColors.textInk,
-                    letterSpacing: -0.16,
-                  ),
-                ),
+                child: widget.isLoading
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: SrColors.textInk,
+                        ),
+                      )
+                    : Text(
+                        widget.label,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: SrColors.textInk,
+                          letterSpacing: -0.16,
+                        ),
+                      ),
               ),
             ),
           ),

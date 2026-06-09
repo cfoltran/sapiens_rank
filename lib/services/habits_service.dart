@@ -12,7 +12,8 @@ class HabitsService {
   Future<void> saveHabits(HabitsData habits) async {
     final uid = _userId;
     if (uid == null) return;
-    await _db.from('habits').upsert({'user_id': uid, ...habits.toJson()});
+    final data = habits.toJson()..removeWhere((_, v) => v == null);
+    await _db.from('habits').upsert({'user_id': uid, ...data});
   }
 
   Future<HabitsData?> getHabits() async {

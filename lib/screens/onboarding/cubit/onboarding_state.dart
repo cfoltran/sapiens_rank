@@ -51,7 +51,7 @@ class OnboardingData extends Equatable {
   );
 
   @override
-  List<Object?> get props => [name, age, country, targets];
+  List<Object?> get props => [name, age, country, targets, habits];
 }
 
 class OnboardingState extends Equatable {

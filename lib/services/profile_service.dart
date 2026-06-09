@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
+import 'package:sapiens_rank/services/habits_service.dart';
 
 class ProfileService {
   ProfileService._();
@@ -51,11 +52,8 @@ class ProfileService {
     await _db.from('profiles').update(targets.toJson()).eq('id', uid);
   }
 
-  Future<void> updateHabits(HabitsData habits) async {
-    final uid = _userId;
-    if (uid == null) return;
-    await _db.from('profiles').update(habits.toJson()).eq('id', uid);
-  }
+  Future<void> updateHabits(HabitsData habits) =>
+      HabitsService.instance.saveHabits(habits);
 
   Future<void> deleteAccount() async {
     await _db.rpc('delete_user');

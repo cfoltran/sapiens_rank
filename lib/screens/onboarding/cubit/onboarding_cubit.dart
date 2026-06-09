@@ -54,11 +54,18 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> requestHealthPermissions() async {
+    emit(state.copyWith(isLoading: true));
     final granted = await HealthService.instance.requestPermissions();
     if (granted) {
-      emit(state.copyWith(step: OnboardingStep.sync, permissionDenied: false));
+      emit(
+        state.copyWith(
+          step: OnboardingStep.sync,
+          permissionDenied: false,
+          isLoading: false,
+        ),
+      );
     } else {
-      emit(state.copyWith(permissionDenied: true));
+      emit(state.copyWith(permissionDenied: true, isLoading: false));
     }
   }
 

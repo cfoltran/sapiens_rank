@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
+import 'package:sapiens_rank/services/habits_service.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -20,22 +21,26 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
         return;
       }
 
-      final profile = await _db
-          .from('profiles')
-          .select(
-            'name, country, created_at, '
-            'target_steps, target_kcal, target_sleep_hours, target_stand_hours, target_daily_exercise_minutes, '
-            'height_cm, weight_kg, bmi_frequency, smokes, cigarettes_per_day, drinks, drinks_per_week',
-          )
-          .eq('id', uid)
-          .single();
-      final allScoresRaw = await _db
-          .from('scores')
-          .select('score, personal_score')
-          .eq('user_id', uid);
-      final streak = await ScoreService.instance.getStreak();
-      final history30d = await ScoreService.instance
-          .getPersonalScoreHistoryDated(days: 30);
+      final results = await Future.wait<dynamic>([
+        _db
+            .from('profiles')
+            .select(
+              'name, country, created_at, '
+              'target_steps, target_kcal, target_sleep_hours, target_stand_hours, target_daily_exercise_minutes',
+            )
+            .eq('id', uid)
+            .single(),
+        _db.from('scores').select('score, personal_score').eq('user_id', uid),
+        ScoreService.instance.getStreak(),
+        ScoreService.instance.getPersonalScoreHistoryDated(days: 30),
+        HabitsService.instance.getHabits(),
+      ]);
+
+      final profile = results[0] as Map<String, dynamic>;
+      final allScoresRaw = results[1] as List<dynamic>;
+      final streak = results[2] as int;
+      final history30d = results[3] as List<(DateTime, int)>;
+      final habits = (results[4] as HabitsData?) ?? const HabitsData();
 
       final name = (profile['name'] as String?) ?? 'Sapien';
       final country = (profile['country'] as String?) ?? 'FR';
@@ -51,21 +56,6 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
         dailyExerciseMinutes:
             (profile['target_daily_exercise_minutes'] as int?) ??
             d.dailyExerciseMinutes,
-      );
-      final bmiFreqRaw = profile['bmi_frequency'] as String?;
-      final habits = HabitsData(
-        heightCm: profile['height_cm'] as int?,
-        weightKg: (profile['weight_kg'] as num?)?.toDouble(),
-        bmiFrequency: bmiFreqRaw != null
-            ? BmiFrequency.values.firstWhere(
-                (e) => e.name == bmiFreqRaw,
-                orElse: () => BmiFrequency.monthly,
-              )
-            : null,
-        smokes: profile['smokes'] as bool?,
-        cigarettesPerDay: profile['cigarettes_per_day'] as int?,
-        drinks: profile['drinks'] as bool?,
-        drinksPerWeek: profile['drinks_per_week'] as int?,
       );
 
       final lifetimeAvg = allScoresRaw.isEmpty

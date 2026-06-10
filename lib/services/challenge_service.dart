@@ -14,7 +14,7 @@ class ChallengeService {
         .select('''
           challenges!inner(
             id, metric, duration_days, starts_at, ends_at,
-            stake_icon, stake_label, status, winner_id, created_by, created_at,
+            stake_icon, stake_label, status, winner_id, created_by, created_at, goal_value,
             challenge_participants(
               user_id, is_creator, status,
               profiles!inner(name, country)
@@ -42,6 +42,8 @@ class ChallengeService {
   Future<void> createChallenge({
     required String opponentId,
     required int durationDays,
+    required String metric,
+    required double? goalValue,
     required String stakeIcon,
     required String stakeLabel,
   }) async {
@@ -49,9 +51,12 @@ class ChallengeService {
         .from('challenges')
         .insert({
           'created_by': _myId,
+          'metric': metric,
           'duration_days': durationDays,
           'stake_icon': stakeIcon,
           'stake_label': stakeLabel,
+          if (goalValue != null) 'goal_value': goalValue,
+          if (goalValue != null) 'goal_unit': 'km',
         })
         .select()
         .single();

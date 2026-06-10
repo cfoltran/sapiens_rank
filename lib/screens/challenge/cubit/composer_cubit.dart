@@ -35,8 +35,13 @@ class ComposerCubit extends Cubit<ComposerState> {
   }
 
   void selectOpponent(ComposerUser u) => emit(state.copyWith(opponent: u));
-  void setMetric(String m) => emit(state.copyWith(metric: m));
+
+  void setMetric(String m) => emit(
+    state.copyWith(metric: m, goalValue: () => null),
+  );
+
   void setDuration(String d) => emit(state.copyWith(duration: d));
+  void setGoalValue(double? v) => emit(state.copyWith(goalValue: () => v));
   void selectReward(Reward? r) => emit(state.copyWith(reward: () => r));
 
   void next() {
@@ -51,6 +56,8 @@ class ComposerCubit extends Cubit<ComposerState> {
     Future<void> Function({
       required String opponentId,
       required int durationDays,
+      required String metric,
+      required double? goalValue,
       required String stakeIcon,
       required String stakeLabel,
     })
@@ -61,6 +68,8 @@ class ComposerCubit extends Cubit<ComposerState> {
     await onCreate(
       opponentId: state.opponent!.userId,
       durationDays: int.parse(state.duration.replaceAll('d', '')),
+      metric: state.metric,
+      goalValue: state.goalValue,
       stakeIcon: state.reward!.icon,
       stakeLabel: state.reward!.label,
     );

@@ -13,6 +13,8 @@ class ComposerSheet extends StatelessWidget {
   final Future<void> Function({
     required String opponentId,
     required int durationDays,
+    required String metric,
+    required double? goalValue,
     required String stakeIcon,
     required String stakeLabel,
   })
@@ -31,6 +33,8 @@ class _ComposerView extends StatelessWidget {
   final Future<void> Function({
     required String opponentId,
     required int durationDays,
+    required String metric,
+    required double? goalValue,
     required String stakeIcon,
     required String stakeLabel,
   })
@@ -97,8 +101,10 @@ class _ComposerView extends StatelessWidget {
                         _StepSetRules(
                           metric: state.metric,
                           duration: state.duration,
+                          goalValue: state.goalValue,
                           onMetric: cubit.setMetric,
                           onDuration: cubit.setDuration,
+                          onGoalValue: cubit.setGoalValue,
                         ),
                       if (state.step == 3)
                         _StepPickReward(
@@ -413,25 +419,53 @@ class _ComposerAvatar extends StatelessWidget {
   }
 }
 
-class _StepSetRules extends StatelessWidget {
+class _StepSetRules extends StatefulWidget {
   const _StepSetRules({
     required this.metric,
     required this.duration,
+    required this.goalValue,
     required this.onMetric,
     required this.onDuration,
+    required this.onGoalValue,
   });
   final String metric;
   final String duration;
+  final double? goalValue;
   final ValueChanged<String> onMetric;
   final ValueChanged<String> onDuration;
+  final ValueChanged<double?> onGoalValue;
+
+  @override
+  State<_StepSetRules> createState() => _StepSetRulesState();
+}
+
+class _StepSetRulesState extends State<_StepSetRules> {
+  late final TextEditingController _goalController;
+
+  @override
+  void initState() {
+    super.initState();
+    _goalController = TextEditingController(
+      text: widget.goalValue != null ? widget.goalValue!.toStringAsFixed(0) : '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _goalController.dispose();
+    super.dispose();
+  }
+
+  bool get _isWorkout =>
+      widget.metric == 'running' || widget.metric == 'cycling';
 
   @override
   Widget build(BuildContext context) {
     const metrics = [
-      ('total', 'Sapiens Score', 'Overall'),
+      ('total', 'Sapiens Score', 'Avg score'),
+      ('running', 'Running', 'Distance race'),
+      ('cycling', 'Cycling', 'Distance race'),
       ('steps', 'Steps', 'Daily count'),
-      ('sleep', 'Sleep', 'Score / 100'),
-      ('kcal', 'Active kcal', 'Daily burn'),
     ];
     const durations = [
       ('1d', '24h'),
@@ -461,10 +495,10 @@ class _StepSetRules extends StatelessWidget {
           childAspectRatio: 2.6,
           children: metrics.map((m) {
             final (id, label, sub) = m;
-            final active = metric == id;
-            final locked = id != 'total';
+            final active = widget.metric == id;
+            final locked = id == 'steps';
             return GestureDetector(
-              onTap: locked ? null : () => onMetric(id),
+              onTap: locked ? null : () => widget.onMetric(id),
               child: Opacity(
                 opacity: locked ? 0.45 : 1.0,
                 child: AnimatedContainer(
@@ -529,6 +563,58 @@ class _StepSetRules extends StatelessWidget {
             );
           }).toList(),
         ),
+        if (_isWorkout) ...[
+          const SizedBox(height: 18),
+          Text(
+            'DISTANCE GOAL',
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 10,
+              color: context.srTextDim,
+              letterSpacing: 0.15 * 10,
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _goalController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            onChanged: (v) {
+              final parsed = double.tryParse(v.trim());
+              widget.onGoalValue(parsed != null && parsed > 0 ? parsed : null);
+            },
+            style: GoogleFonts.spaceGrotesk(fontSize: 14, color: context.srText),
+            decoration: InputDecoration(
+              suffixText: 'km',
+              suffixStyle: GoogleFonts.jetBrainsMono(
+                fontSize: 13,
+                color: context.srTextDim,
+              ),
+              hintText: widget.metric == 'running' ? '10' : '30',
+              hintStyle: GoogleFonts.jetBrainsMono(
+                fontSize: 13,
+                color: context.srTextDim,
+              ),
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+              filled: true,
+              fillColor: context.srTintXs,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: context.srLine),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: context.srLime),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: context.srLine),
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: 18),
         Text(
           'DURATION',
@@ -542,10 +628,10 @@ class _StepSetRules extends StatelessWidget {
         Row(
           children: durations.map((d) {
             final (id, label) = d;
-            final active = duration == id;
+            final active = widget.duration == id;
             return Expanded(
               child: GestureDetector(
-                onTap: () => onDuration(id),
+                onTap: () => widget.onDuration(id),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   margin: const EdgeInsets.only(right: 8),

@@ -3,18 +3,19 @@ import 'package:json_annotation/json_annotation.dart';
 part 'challenge_models.g.dart';
 
 enum ChallengeStatus {
-  @JsonValue('pending')  pending,
-  @JsonValue('live')     live,
-  @JsonValue('done')     done,
-  @JsonValue('cancelled') cancelled,
+  @JsonValue('pending')
+  pending,
+  @JsonValue('live')
+  live,
+  @JsonValue('done')
+  done,
+  @JsonValue('cancelled')
+  cancelled,
 }
 
 @JsonSerializable()
 class ChallengeParticipantProfile {
-  const ChallengeParticipantProfile({
-    required this.name,
-    this.country,
-  });
+  const ChallengeParticipantProfile({required this.name, this.country});
 
   final String name;
   final String? country;
@@ -64,6 +65,7 @@ class ChallengeRow {
     this.startsAt,
     this.endsAt,
     this.winnerId,
+    this.goalValue,
   });
 
   final String id;
@@ -91,6 +93,9 @@ class ChallengeRow {
 
   @JsonKey(name: 'winner_id')
   final String? winnerId;
+
+  @JsonKey(name: 'goal_value')
+  final double? goalValue;
 
   @JsonKey(name: 'challenge_participants')
   final List<ChallengeParticipant> challengeParticipants;

@@ -55,6 +55,7 @@ ChallengeRow _$ChallengeRowFromJson(Map<String, dynamic> json) => ChallengeRow(
       ? null
       : DateTime.parse(json['ends_at'] as String),
   winnerId: json['winner_id'] as String?,
+  goalValue: (json['goal_value'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$ChallengeRowToJson(ChallengeRow instance) =>
@@ -69,6 +70,7 @@ Map<String, dynamic> _$ChallengeRowToJson(ChallengeRow instance) =>
       'starts_at': instance.startsAt?.toIso8601String(),
       'ends_at': instance.endsAt?.toIso8601String(),
       'winner_id': instance.winnerId,
+      'goal_value': instance.goalValue,
       'challenge_participants': instance.challengeParticipants,
     };
 

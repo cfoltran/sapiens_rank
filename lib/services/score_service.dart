@@ -78,7 +78,7 @@ class ScoreService {
         habits: habits,
       );
 
-      await Future.wait([
+      final futures = <Future>[
         _db.from('scores').upsert({
           'user_id': uid,
           'date': _isoDate(date),
@@ -100,7 +100,30 @@ class ScoreService {
               (s, w) => s + w.durationMinutes,
             ),
         }),
-      ]);
+      ];
+
+      if (snap.workouts.isNotEmpty) {
+        futures.add(
+          _db.from('workouts').upsert(
+            snap.workouts
+                .map(
+                  (w) => {
+                    'user_id': uid,
+                    'date': _isoDate(date),
+                    'workout_type': w.type.toLowerCase(),
+                    'duration_minutes': w.durationMinutes,
+                    if (w.distanceKm != null) 'distance_km': w.distanceKm,
+                    if (w.kcal > 0) 'kcal': w.kcal,
+                    'started_at': w.startTime.toUtc().toIso8601String(),
+                  },
+                )
+                .toList(),
+            onConflict: 'user_id,started_at',
+          ),
+        );
+      }
+
+      await Future.wait(futures);
     } catch (_) {}
   }
 

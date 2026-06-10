@@ -33,6 +33,7 @@ class ComposerState {
     this.opponent,
     this.metric = 'total',
     this.duration = '1d',
+    this.goalValue,
     this.reward,
     this.sending = false,
     this.sent = false,
@@ -44,13 +45,19 @@ class ComposerState {
   final ComposerUser? opponent;
   final String metric;
   final String duration;
+  final double? goalValue;
   final Reward? reward;
   final bool sending;
   final bool sent;
 
+  bool get isWorkout => metric == 'running' || metric == 'cycling';
+
   bool get canContinue {
     if (step == 1) return opponent != null;
-    if (step == 2) return duration.isNotEmpty;
+    if (step == 2) {
+      if (isWorkout && (goalValue == null || goalValue! <= 0)) return false;
+      return duration.isNotEmpty;
+    }
     if (step == 3) return reward != null && reward!.label.isNotEmpty;
     return false;
   }
@@ -62,6 +69,7 @@ class ComposerState {
     ComposerUser? opponent,
     String? metric,
     String? duration,
+    double? Function()? goalValue,
     Reward? Function()? reward,
     bool? sending,
     bool? sent,
@@ -72,6 +80,7 @@ class ComposerState {
     opponent: opponent ?? this.opponent,
     metric: metric ?? this.metric,
     duration: duration ?? this.duration,
+    goalValue: goalValue != null ? goalValue() : this.goalValue,
     reward: reward != null ? reward() : this.reward,
     sending: sending ?? this.sending,
     sent: sent ?? this.sent,

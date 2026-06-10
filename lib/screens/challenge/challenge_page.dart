@@ -43,11 +43,15 @@ class _ChallengeViewState extends State<_ChallengeView> {
             ({
               required opponentId,
               required durationDays,
+              required metric,
+              required goalValue,
               required stakeIcon,
               required stakeLabel,
             }) => cubit.createChallenge(
               opponentId: opponentId,
               durationDays: durationDays,
+              metric: metric,
+              goalValue: goalValue,
               stakeIcon: stakeIcon,
               stakeLabel: stakeLabel,
             ),
@@ -313,8 +317,12 @@ class _DuelCard extends StatelessWidget {
     final me = fight.me;
     final opponent = fight.opponents.first;
     final meWinning = me.score > opponent.score;
-    final diff = (me.score - opponent.score).abs().toStringAsFixed(0);
-    final myPct = (me.score + opponent.score) > 0
+    final diff = fight.isWorkout
+        ? '${(me.score - opponent.score).abs().toStringAsFixed(1)} km'
+        : (me.score - opponent.score).abs().toStringAsFixed(0);
+    final myPct = fight.goalValue != null
+        ? (me.score / fight.goalValue!).clamp(0.0, 1.0)
+        : (me.score + opponent.score) > 0
         ? me.score / (me.score + opponent.score)
         : 0.5;
 
@@ -349,9 +357,9 @@ class _DuelCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          me.score.toStringAsFixed(0),
+                          fight.formatScore(me.score),
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 36,
+                            fontSize: fight.isWorkout ? 26 : 36,
                             fontWeight: FontWeight.w700,
                             color: meWinning
                                 ? context.srLimeText
@@ -414,9 +422,9 @@ class _DuelCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          opponent.score.toStringAsFixed(0),
+                          fight.formatScore(opponent.score),
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 36,
+                            fontSize: fight.isWorkout ? 26 : 36,
                             fontWeight: FontWeight.w700,
                             color: !meWinning ? SrColors.amber : context.srText,
                             letterSpacing: -0.04 * 36,
@@ -474,7 +482,9 @@ class _DuelCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'SAPIENS SCORE',
+                        fight.isWorkout
+                            ? '${fight.goalValue?.toStringAsFixed(0) ?? '?'} KM GOAL'
+                            : 'SAPIENS SCORE',
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
                           color: context.srTextDim,

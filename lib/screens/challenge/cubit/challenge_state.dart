@@ -35,6 +35,8 @@ class LiveChallenge extends Equatable {
     required this.stakeLabel,
     required this.endsAt,
     required this.participants,
+    required this.metric,
+    this.goalValue,
   });
 
   final String id;
@@ -42,6 +44,15 @@ class LiveChallenge extends Equatable {
   final String stakeLabel;
   final DateTime endsAt;
   final List<ChallengePlayer> participants;
+  final String metric;
+  final double? goalValue;
+
+  bool get isWorkout => metric == 'running' || metric == 'cycling';
+
+  String formatScore(double score) {
+    if (!isWorkout) return score.toStringAsFixed(0);
+    return '${score.toStringAsFixed(1)} km';
+  }
 
   ChallengePlayer get me => participants.firstWhere((p) => p.isMe);
   List<ChallengePlayer> get opponents =>
@@ -71,6 +82,8 @@ class PendingChallenge extends Equatable {
     required this.stakeLabel,
     required this.opponent,
     required this.iAmCreator,
+    required this.metric,
+    this.goalValue,
   });
 
   final String id;
@@ -78,6 +91,10 @@ class PendingChallenge extends Equatable {
   final String stakeLabel;
   final ChallengePlayer opponent;
   final bool iAmCreator;
+  final String metric;
+  final double? goalValue;
+
+  bool get isWorkout => metric == 'running' || metric == 'cycling';
 
   @override
   List<Object?> get props => [id];

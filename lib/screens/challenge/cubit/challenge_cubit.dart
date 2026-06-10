@@ -52,6 +52,8 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
                 stakeLabel: c.stakeLabel,
                 endsAt: c.endsAt!,
                 participants: participants,
+                metric: c.metric,
+                goalValue: c.goalValue,
               ),
             );
 
@@ -75,6 +77,8 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
                   isMe: false,
                 ),
                 iAmCreator: myRow.isCreator,
+                metric: c.metric,
+                goalValue: c.goalValue,
               ),
             );
 
@@ -123,12 +127,16 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
   Future<void> createChallenge({
     required String opponentId,
     required int durationDays,
+    required String metric,
+    required double? goalValue,
     required String stakeIcon,
     required String stakeLabel,
   }) async {
     await _service.createChallenge(
       opponentId: opponentId,
       durationDays: durationDays,
+      metric: metric,
+      goalValue: goalValue,
       stakeIcon: stakeIcon,
       stakeLabel: stakeLabel,
     );

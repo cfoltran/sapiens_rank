@@ -5,6 +5,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/challenge_page.dart';
 import 'package:sapiens_rank/screens/challenge/sheets/invite_sheet.dart';
 import 'package:sapiens_rank/screens/challenge/sheets/result_sheet.dart';
+import 'package:sapiens_rank/screens/map/map_page.dart';
 import 'package:sapiens_rank/screens/profile/profile_page.dart';
 import 'package:sapiens_rank/screens/today/today_page.dart';
 import 'package:sapiens_rank/screens/world/world_page.dart';
@@ -75,6 +76,7 @@ class _HomePageState extends State<HomePage> {
           TodayPage(onNavigateToWorld: () => _switchTab(1)),
           const WorldPage(),
           ChallengePage(key: _challengeKey),
+          const MapPage(),
           const ProfilePage(),
         ],
       ),
@@ -93,6 +95,7 @@ class _SrTabBar extends StatelessWidget {
     _TabItem(label: 'Today', icon: Icons.auto_awesome),
     _TabItem(label: 'World', icon: Icons.public),
     _TabItem(label: 'Challenge', icon: Icons.flash_on),
+    _TabItem(label: 'Map', icon: Icons.map),
     _TabItem(label: 'Profile', icon: Icons.person),
   ];
 

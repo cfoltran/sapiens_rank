@@ -95,7 +95,7 @@ class _SrTabBar extends StatelessWidget {
     _TabItem(label: 'Today', icon: Icons.auto_awesome),
     _TabItem(label: 'World', icon: Icons.public),
     _TabItem(label: 'Challenge', icon: Icons.flash_on),
-    _TabItem(label: 'Map', icon: Icons.map),
+    _TabItem(label: 'Battle', icon: Icons.fort),
     _TabItem(label: 'Profile', icon: Icons.person),
   ];
 

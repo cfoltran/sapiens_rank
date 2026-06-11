@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/services/health_service.dart';
@@ -53,6 +55,7 @@ class ScoreBreakdown {
     HealthSnapshot snap, {
     HealthTargets targets = HealthTargets.defaults,
     HabitsData? habits,
+    bool rewardOvershoot = false,
   }) {
     final hasHrv = snap.hrv != null;
     final hasStand = snap.standHours != null;
@@ -99,10 +102,14 @@ class ScoreBreakdown {
       (s, w) => s + w.durationMinutes,
     );
 
+    double volume(num value, num target) => rewardOvershoot
+        ? _overshootRatio(value / target)
+        : (value / target).clamp(0.0, 1.0);
+
     final sleep =
         (snap.sleepHours / targets.sleepHours).clamp(0.0, 1.0) * sleepMax;
-    final steps = (snap.steps / targets.steps).clamp(0.0, 1.0) * stepsMax;
-    final kcal = (snap.kcal / targets.kcal).clamp(0.0, 1.0) * kcalMax;
+    final steps = volume(snap.steps, targets.steps) * stepsMax;
+    final kcal = volume(snap.kcal, targets.kcal) * kcalMax;
     final stand = hasStand
         ? (snap.standHours! / targets.standHours).clamp(0.0, 1.0) * standMax
         : 0.0;
@@ -110,8 +117,7 @@ class ScoreBreakdown {
         ? (snap.hrv! / targets.hrv).clamp(0.0, 1.0) * hrvMax
         : 0.0;
     final exercise =
-        (exerciseMinutes / targets.dailyExerciseMinutes).clamp(0.0, 1.0) *
-        exerciseMax;
+        volume(exerciseMinutes, targets.dailyExerciseMinutes) * exerciseMax;
 
     final raw = (sleep + steps + kcal + stand + hrv + exercise).round();
     final penalty = habits != null ? _habitsPenalty(habits) : 0;
@@ -135,7 +141,20 @@ class ScoreBreakdown {
   }
 
   /// Fixed-target score used for the leaderboard and challenges.
-  static ScoreBreakdown computeRanking(HealthSnapshot snap) => compute(snap);
+  ///
+  /// Unlike the personal score, exceeding a volume target (steps, kcal,
+  /// exercise) earns bonus points with diminishing returns, so big training
+  /// days are rewarded without letting one outlier day dominate the ranking.
+  static ScoreBreakdown computeRanking(HealthSnapshot snap) =>
+      compute(snap, rewardOvershoot: true);
+
+  /// Diminishing returns above target: linear up to 1.0, then
+  /// 1 + 0.5*sqrt(r-1), capped at 1.5 (reached at 2x the target).
+  /// Sleep, stand and HRV stay hard-clamped — exceeding them is not healthier.
+  static double _overshootRatio(double r) {
+    if (r <= 1.0) return max(r, 0.0);
+    return min(1.0 + 0.5 * sqrt(r - 1.0), 1.5);
+  }
 
   static int _habitsPenalty(HabitsData h) {
     int penalty = 0;

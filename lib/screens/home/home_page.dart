@@ -36,6 +36,8 @@ class _HomePageState extends State<HomePage> {
         context,
         onChallengeInvite: _handleChallengeInvite,
         onChallengeResult: _handleChallengeResult,
+        onMap: () => _switchTab(3),
+        onToday: () => _switchTab(0),
       );
     });
   }

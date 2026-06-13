@@ -55,6 +55,8 @@ class MessagingService {
     BuildContext context, {
     required void Function(String challengeId) onChallengeInvite,
     required void Function(String challengeId) onChallengeResult,
+    required VoidCallback onMap,
+    required VoidCallback onToday,
   }) {
     _log.info('Initializing MessagingService');
 
@@ -67,6 +69,8 @@ class MessagingService {
           link,
           onChallengeInvite: onChallengeInvite,
           onChallengeResult: onChallengeResult,
+          onMap: onMap,
+          onToday: onToday,
         );
       }
     });
@@ -95,6 +99,8 @@ class MessagingService {
                         link,
                         onChallengeInvite: onChallengeInvite,
                         onChallengeResult: onChallengeResult,
+                        onMap: onMap,
+                        onToday: onToday,
                       );
                     }
                   },
@@ -112,6 +118,8 @@ class MessagingService {
           link,
           onChallengeInvite: onChallengeInvite,
           onChallengeResult: onChallengeResult,
+          onMap: onMap,
+          onToday: onToday,
         );
       }
     });
@@ -122,13 +130,21 @@ class MessagingService {
     String link, {
     required void Function(String) onChallengeInvite,
     required void Function(String) onChallengeResult,
+    required VoidCallback onMap,
+    required VoidCallback onToday,
   }) {
     final uri = Uri.parse(link);
-    if (uri.scheme != 'challenge') return;
-    if (uri.host == 'result' && uri.pathSegments.isNotEmpty) {
-      onChallengeResult(uri.pathSegments.first);
-    } else if (uri.host.isNotEmpty) {
-      onChallengeInvite(uri.host);
+    switch (uri.scheme) {
+      case 'challenge':
+        if (uri.host == 'result' && uri.pathSegments.isNotEmpty) {
+          onChallengeResult(uri.pathSegments.first);
+        } else if (uri.host.isNotEmpty) {
+          onChallengeInvite(uri.host);
+        }
+      case 'map':
+        onMap();
+      case 'today':
+        onToday();
     }
   }
 

@@ -53,10 +53,11 @@ class _GuildView extends StatelessWidget {
         builder: (context, state) => state.when(
           success: (data) => data.isInGuild
               ? _GuildBody(data: data)
-              : const _NoGuildBody(),
+              : _NoGuildBody(takenColors: data.takenColors),
           loading: () => Center(
             child: CircularProgressIndicator(
-              color: context.srLime, strokeWidth: 2,
+              color: context.srLime,
+              strokeWidth: 2,
             ),
           ),
           error: (_) => Center(
@@ -72,7 +73,9 @@ class _GuildView extends StatelessWidget {
 }
 
 class _NoGuildBody extends StatelessWidget {
-  const _NoGuildBody();
+  const _NoGuildBody({required this.takenColors});
+
+  final Set<String> takenColors;
 
   void _openCreate(BuildContext context) {
     final cubit = context.read<GuildCubit>();
@@ -81,6 +84,7 @@ class _NoGuildBody extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => CreateGuildSheet(
+        takenColors: takenColors,
         onCreate: (name, color) => cubit.createGuild(name: name, color: color),
       ),
     );
@@ -92,9 +96,8 @@ class _NoGuildBody extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => JoinGuildSheet(
-        onJoin: (guildId) => cubit.joinGuild(guildId),
-      ),
+      builder: (_) =>
+          JoinGuildSheet(onJoin: (guildId) => cubit.joinGuild(guildId)),
     );
   }
 
@@ -117,7 +120,11 @@ class _NoGuildBody extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Join or create a guild to conquer territories and fight other guilds together.',
-              style: TextStyle(color: context.srTextMuted, fontSize: 14, height: 1.5),
+              style: TextStyle(
+                color: context.srTextMuted,
+                fontSize: 14,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 32),
             _ActionCard(
@@ -225,7 +232,7 @@ class _GuildBody extends StatelessWidget {
           _AttackHistoryCard(attacks: data.attackHistory),
         ],
         const SizedBox(height: 24),
-        _LeaveButton(guildName: guild.name),
+        _LeaveButton(guildId: guild.id, guildName: guild.name),
       ],
     );
   }
@@ -250,19 +257,17 @@ class _GuildHeader extends StatelessWidget {
         color: context.srBgElev,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: guildColor.withAlpha(80)),
-        boxShadow: [
-          BoxShadow(
-            color: guildColor.withAlpha(30),
-            blurRadius: 20,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: guildColor.withAlpha(30), blurRadius: 20)],
       ),
       child: Row(
         children: [
           Container(
             width: 52,
             height: 52,
-            decoration: BoxDecoration(color: guildColor, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: guildColor,
+              shape: BoxShape.circle,
+            ),
             child: Center(
               child: Text(
                 guild.name[0].toUpperCase(),
@@ -313,7 +318,11 @@ class _GuildHeader extends StatelessWidget {
 }
 
 class _StatChip extends StatelessWidget {
-  const _StatChip({required this.icon, required this.label, required this.color});
+  const _StatChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
   final IconData icon;
   final String label;
   final Color color;
@@ -358,7 +367,9 @@ class _MembersCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          ...data.members.map((m) => _MemberRow(member: m, guildColor: guildColor)),
+          ...data.members.map(
+            (m) => _MemberRow(member: m, guildColor: guildColor),
+          ),
         ],
       ),
     );
@@ -372,15 +383,20 @@ class _MemberRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initials = member.name.trim().split(' ').take(2)
-        .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '').join();
+    final initials = member.name
+        .trim()
+        .split(' ')
+        .take(2)
+        .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '')
+        .join();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
           Container(
-            width: 36, height: 36,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: guildColor.withAlpha(40),
               shape: BoxShape.circle,
@@ -509,7 +525,8 @@ class _AttackRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  attack.metric.name[0].toUpperCase() + attack.metric.name.substring(1),
+                  attack.metric.name[0].toUpperCase() +
+                      attack.metric.name.substring(1),
                   style: TextStyle(
                     color: context.srText,
                     fontSize: 13,
@@ -547,7 +564,8 @@ class _AttackRow extends StatelessWidget {
 }
 
 class _LeaveButton extends StatelessWidget {
-  const _LeaveButton({required this.guildName});
+  const _LeaveButton({required this.guildId, required this.guildName});
+  final String guildId;
   final String guildName;
 
   @override
@@ -556,7 +574,7 @@ class _LeaveButton extends StatelessWidget {
       onTap: () async {
         final confirm = await showDialog<bool>(
           context: context,
-          builder: (_) => AlertDialog(
+          builder: (dialogContext) => AlertDialog(
             backgroundColor: context.srBgElev,
             title: Text(
               'Leave guild?',
@@ -568,18 +586,30 @@ class _LeaveButton extends StatelessWidget {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text('Cancel', style: TextStyle(color: context.srTextMuted)),
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: context.srTextMuted),
+                ),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () => Navigator.pop(dialogContext, true),
                 child: Text('Leave', style: TextStyle(color: context.srRose)),
               ),
             ],
           ),
         );
-        if (confirm == true && context.mounted) {
-          context.read<GuildCubit>().leaveGuild();
+        if (confirm != true || !context.mounted) return;
+        try {
+          await context.read<GuildCubit>().leaveGuild(guildId);
+        } catch (_) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Could not leave guild. Try again.'),
+              ),
+            );
+          }
         }
       },
       child: Center(

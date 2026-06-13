@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/map/cubit/map_cubit.dart';
 import 'package:sapiens_rank/screens/map/cubit/map_state.dart';
@@ -12,6 +13,7 @@ import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/guild_page.dart';
 import 'package:sapiens_rank/screens/map/widgets/hex_grid_painter.dart';
 import 'package:sapiens_rank/screens/map/widgets/rules_sheet.dart';
+import 'package:sapiens_rank/screens/map/widgets/territory_info_sheet.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -139,17 +141,13 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
       );
     } else {
       final scene = _transformController.toScene(pos);
-      _animateCameraTo(_matrixFor(scene, 1.2));
+      _animateCameraTo(_matrixFor(scene, _fitScale * 1.7));
     }
   }
 
   void _recenter(MapData data) {
     HapticFeedback.lightImpact();
-    final mine = data.myGuildId == null
-        ? const <Territory>[]
-        : data.territories
-              .where((t) => t.ownerGuildId == data.myGuildId)
-              .toList();
+    final mine = data.ownTerritories;
     Offset target;
     double scale;
     if (mine.isEmpty) {
@@ -161,7 +159,7 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
         sum += hexCenter(t.gridX, t.gridY);
       }
       target = sum / mine.length.toDouble();
-      scale = 1.0;
+      scale = _fitScale * 1.25;
     }
     _animateCameraTo(_matrixFor(target, scale));
   }
@@ -185,16 +183,12 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
         territory.ownerGuildId == data.myGuildId && data.myGuildId != null;
 
     if (activeAttack != null) {
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => BattleSheet(
-          attack: activeAttack,
-          territory: territory,
-          territories: data.territories,
-          myGuildId: data.myGuildId,
-        ),
+      BattleSheet.show(
+        context,
+        attack: activeAttack,
+        territory: territory,
+        territories: data.territories,
+        myGuildId: data.myGuildId,
       );
       return;
     }
@@ -202,7 +196,9 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
     if (isMine) return;
 
     if (!isAttackable) {
-      if (data.myGuildId == null) {
+      if (!territory.isNeutral) {
+        TerritoryInfoSheet.show(context, territory: territory);
+      } else if (data.myGuildId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Join a guild to attack territories')),
         );
@@ -212,18 +208,14 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
 
     HapticFeedback.mediumImpact();
     final cubit = context.read<MapCubit>();
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => AttackSheet(
-        territory: territory,
-        onConfirm: ({required metric, required endsAt}) => cubit.launchAttack(
-          territoryId: territory.id,
-          defenderGuildId: territory.ownerGuildId,
-          metric: metric,
-          endsAt: endsAt,
-        ),
+    AttackSheet.show(
+      context,
+      territory: territory,
+      onConfirm: ({required metric, required endsAt}) => cubit.launchAttack(
+        territoryId: territory.id,
+        defenderGuildId: territory.ownerGuildId,
+        metric: metric,
+        endsAt: endsAt,
       ),
     );
   }
@@ -243,6 +235,7 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
               bounceController: _bounceController,
               bounceHex: _bounceHex,
               minScale: math.min(_fitScale * 0.8, 1.0),
+              maxScale: math.max(_fitScale * 2, 2.0),
               onLayout: _handleLayout,
               onTapUp: (details) => _onTap(context, details, data),
               onDoubleTapDown: (details) =>
@@ -276,12 +269,7 @@ class _MapViewState extends State<_MapView> with TickerProviderStateMixin {
   }
 
   void _openRules(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const RulesSheet(),
-    );
+    RulesSheet.show(context);
   }
 
   Future<void> _openGuild(BuildContext context) async {
@@ -307,6 +295,7 @@ class _MapCanvas extends StatelessWidget {
     required this.bounceController,
     required this.bounceHex,
     required this.minScale,
+    required this.maxScale,
     required this.onLayout,
     required this.onTapUp,
     required this.onDoubleTapDown,
@@ -323,6 +312,7 @@ class _MapCanvas extends StatelessWidget {
   final AnimationController bounceController;
   final (int, int)? bounceHex;
   final double minScale;
+  final double maxScale;
   final ValueChanged<Size> onLayout;
   final ValueChanged<TapUpDetails> onTapUp;
   final ValueChanged<TapDownDetails> onDoubleTapDown;
@@ -354,7 +344,7 @@ class _MapCanvas extends StatelessWidget {
                       transformationController: transformController,
                       constrained: false,
                       minScale: minScale,
-                      maxScale: 2,
+                      maxScale: maxScale,
                       boundaryMargin: EdgeInsets.all(constraints.maxWidth),
                       child: CustomPaint(
                         size: Size(canvasWidth, canvasHeight),
@@ -495,12 +485,7 @@ class _GuildBadge extends StatelessWidget {
                 width: 18,
                 height: 18,
                 decoration: BoxDecoration(
-                  color: Color(
-                    int.parse(
-                      'FF${guild.color.replaceAll('#', '')}',
-                      radix: 16,
-                    ),
-                  ),
+                  color: guildColorFromHex(guild.color),
                   shape: BoxShape.circle,
                 ),
               ),

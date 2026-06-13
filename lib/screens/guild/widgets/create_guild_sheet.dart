@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 
 const _colorPalette = [
-  '#E74C3C', '#E67E22', '#F1C40F', '#2ECC71',
-  '#1ABC9C', '#3498DB', '#9B59B6', '#E91E63',
+  '#E74C3C',
+  '#E67E22',
+  '#F1C40F',
+  '#2ECC71',
+  '#1ABC9C',
+  '#3498DB',
+  '#9B59B6',
+  '#E91E63',
 ];
 
 Color _parse(String hex) {
@@ -12,9 +18,14 @@ Color _parse(String hex) {
 }
 
 class CreateGuildSheet extends StatefulWidget {
-  const CreateGuildSheet({super.key, required this.onCreate});
+  const CreateGuildSheet({
+    super.key,
+    required this.onCreate,
+    this.takenColors = const {},
+  });
 
   final void Function(String name, String color) onCreate;
+  final Set<String> takenColors;
 
   @override
   State<CreateGuildSheet> createState() => _CreateGuildSheetState();
@@ -22,8 +33,17 @@ class CreateGuildSheet extends StatefulWidget {
 
 class _CreateGuildSheetState extends State<CreateGuildSheet> {
   final _controller = TextEditingController();
-  String _color = _colorPalette[5];
+  late String _color;
   bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _color = _colorPalette.firstWhere(
+      (c) => !widget.takenColors.contains(c),
+      orElse: () => _colorPalette.first,
+    );
+  }
 
   @override
   void dispose() {
@@ -51,7 +71,10 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.fromLTRB(
-        24, 16, 24, MediaQuery.of(context).viewInsets.bottom + 32,
+        24,
+        16,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 32,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -59,7 +82,8 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
         children: [
           Center(
             child: Container(
-              width: 36, height: 4,
+              width: 36,
+              height: 4,
               decoration: BoxDecoration(
                 color: context.srLine,
                 borderRadius: BorderRadius.circular(2),
@@ -115,24 +139,37 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
           Row(
             children: _colorPalette.map((hex) {
               final selected = _color == hex;
+              final taken = widget.takenColors.contains(hex);
               return GestureDetector(
-                onTap: () => setState(() => _color = hex),
+                onTap: taken ? null : () => setState(() => _color = hex),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   margin: const EdgeInsets.only(right: 10),
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: _parse(hex),
+                    color: _parse(hex).withAlpha(taken ? 60 : 255),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: selected ? Colors.white : Colors.transparent,
                       width: 2.5,
                     ),
                     boxShadow: selected
-                        ? [BoxShadow(color: _parse(hex).withAlpha(120), blurRadius: 8)]
+                        ? [
+                            BoxShadow(
+                              color: _parse(hex).withAlpha(120),
+                              blurRadius: 8,
+                            ),
+                          ]
                         : null,
                   ),
+                  child: taken
+                      ? Icon(
+                          Icons.close,
+                          size: 14,
+                          color: _parse(hex).withAlpha(160),
+                        )
+                      : null,
                 ),
               );
             }).toList(),
@@ -152,14 +189,19 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
               ),
               child: _loading
                   ? const SizedBox(
-                      width: 18, height: 18,
+                      width: 18,
+                      height: 18,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.black,
+                        strokeWidth: 2,
+                        color: Colors.black,
                       ),
                     )
                   : const Text(
                       'Create',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
             ),
           ),

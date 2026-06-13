@@ -8,6 +8,7 @@ class GuildData extends Equatable {
     required this.territoryCount,
     required this.attackHistory,
     this.guild,
+    this.takenColors = const {},
   });
 
   final GuildRow? guild;
@@ -15,6 +16,7 @@ class GuildData extends Equatable {
   final int maxMembers;
   final int territoryCount;
   final List<Attack> attackHistory;
+  final Set<String> takenColors;
 
   bool get isInGuild => guild != null;
   int get memberCount => members.length;
@@ -28,5 +30,12 @@ class GuildData extends Equatable {
   }
 
   @override
-  List<Object?> get props => [guild, members, maxMembers, territoryCount, attackHistory];
+  List<Object?> get props => [
+    guild,
+    members,
+    maxMembers,
+    territoryCount,
+    attackHistory,
+    takenColors,
+  ];
 }

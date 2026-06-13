@@ -16,12 +16,22 @@ class GuildCubit extends Cubit<DataState<GuildData>> {
       final guild = await _guildService.fetchMyGuild();
 
       if (guild == null) {
-        emit(const DataState.success(GuildData(
-          members: [],
-          maxMembers: 5,
-          territoryCount: 0,
-          attackHistory: [],
-        )));
+        final territories = await _mapService.fetchTerritories();
+        final takenColors = territories
+            .where((t) => t.guilds?.color != null)
+            .map((t) => t.guilds!.color)
+            .toSet();
+        emit(
+          DataState.success(
+            GuildData(
+              members: [],
+              maxMembers: 5,
+              territoryCount: 0,
+              attackHistory: [],
+              takenColors: takenColors,
+            ),
+          ),
+        );
         return;
       }
 
@@ -32,16 +42,21 @@ class GuildCubit extends Cubit<DataState<GuildData>> {
       ]);
 
       final territories = await MapService.instance.fetchTerritories();
-      final territoryCount =
-          territories.where((t) => t.ownerGuildId == guild.id).length;
+      final territoryCount = territories
+          .where((t) => t.ownerGuildId == guild.id)
+          .length;
 
-      emit(DataState.success(GuildData(
-        guild: guild,
-        members: results[0] as dynamic,
-        maxMembers: results[1] as int,
-        territoryCount: territoryCount,
-        attackHistory: results[2] as dynamic,
-      )));
+      emit(
+        DataState.success(
+          GuildData(
+            guild: guild,
+            members: results[0] as dynamic,
+            maxMembers: results[1] as int,
+            territoryCount: territoryCount,
+            attackHistory: results[2] as dynamic,
+          ),
+        ),
+      );
     } catch (e, st) {
       emit(DataState.error('fetch_failed', error: e, stackTrace: st));
     }
@@ -60,9 +75,7 @@ class GuildCubit extends Cubit<DataState<GuildData>> {
     load();
   }
 
-  Future<void> leaveGuild() async {
-    final guildId = state.data?.guild?.id;
-    if (guildId == null) return;
+  Future<void> leaveGuild(String guildId) async {
     await _guildService.leaveGuild(guildId);
     load();
   }

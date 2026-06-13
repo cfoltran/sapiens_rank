@@ -1,15 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/common/widgets/guild_avatar.dart';
+import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
-
-const _metricInfo = {
-  AttackMetric.steps: ('👟', 'steps'),
-  AttackMetric.sleep: ('😴', 'sleep'),
-  AttackMetric.calories: ('🔥', 'calories'),
-  AttackMetric.stand: ('🧍', 'stand hours'),
-  AttackMetric.hrv: ('💓', 'HRV'),
-};
 
 class BattleSheet extends StatefulWidget {
   const BattleSheet({
@@ -24,6 +19,24 @@ class BattleSheet extends StatefulWidget {
   final Territory territory;
   final List<Territory> territories;
   final String? myGuildId;
+
+  static Future<void> show(
+    BuildContext context, {
+    required Attack attack,
+    required Territory territory,
+    required List<Territory> territories,
+    required String? myGuildId,
+  }) {
+    return SrBottomSheet.show(
+      context: context,
+      child: BattleSheet(
+        attack: attack,
+        territory: territory,
+        territories: territories,
+        myGuildId: myGuildId,
+      ),
+    );
+  }
 
   @override
   State<BattleSheet> createState() => _BattleSheetState();
@@ -55,179 +68,131 @@ class _BattleSheetState extends State<BattleSheet> {
     return null;
   }
 
-  Color _guildColor(TerritoryGuild? guild, Color fallback) {
-    if (guild == null) return fallback;
-    return Color(int.parse('FF${guild.color.replaceAll('#', '')}', radix: 16));
-  }
-
   String _formatRemaining(Duration d) {
     if (d.isNegative) return 'Ending…';
     final h = d.inHours;
     final m = d.inMinutes % 60;
-    return h > 0 ? '${h}h ${m}m left' : '${m}m left';
+    return h > 0 ? '${h}h ${m}m' : '${m}m';
   }
 
   @override
   Widget build(BuildContext context) {
     final attack = widget.attack;
-    final (emoji, metricLabel) = _metricInfo[attack.metric]!;
+    final metricLabel = attack.metric.label;
     final attacker = _guildById(attack.attackerGuildId);
     final defender = widget.territory.guilds;
-    final attackerColor = _guildColor(attacker, context.srTextMuted);
-    final defenderColor = _guildColor(defender, context.srTextMuted);
+    final attackerColor = attacker != null
+        ? guildColorFromHex(attacker.color)
+        : context.srAmber;
+    final defenderColor = defender != null
+        ? guildColorFromHex(defender.color)
+        : context.srTextMuted;
     final remaining = attack.endsAt.difference(DateTime.now());
-
     final isMyAttack = widget.myGuildId == attack.attackerGuildId;
     final isMyDefense =
         widget.myGuildId != null && widget.myGuildId == attack.defenderGuildId;
-
     final a = attack.attackerScore ?? 0;
     final d = attack.defenderScore ?? 0;
     final frac = (a + d) == 0 ? 0.5 : a / (a + d);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: context.srBgElev,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: EdgeInsets.fromLTRB(
-        24,
-        16,
-        24,
-        MediaQuery.of(context).padding.bottom + 32,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: context.srLine,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _MetricHeader(
+          emoji: attack.metric.emoji,
+          metricLabel: metricLabel,
+          remaining: _formatRemaining(remaining),
+        ),
+        if (isMyAttack || isMyDefense) ...[
+          const SizedBox(height: 14),
+          _MyGuildBanner(isAttacking: isMyAttack, metricLabel: metricLabel),
+        ],
+        const SizedBox(height: 24),
+        _FaceOff(
+          attackerName: attacker?.name ?? 'Attacker',
+          attackerColor: attackerColor,
+          attackerScore: a,
+          defenderName: defender?.name ?? 'Unclaimed',
+          defenderColor: defenderColor,
+          defenderScore: d,
+        ),
+        const SizedBox(height: 14),
+        _TugOfWarBar(
+          fraction: frac,
+          attackerColor: attackerColor,
+          defenderColor: defenderColor,
+        ),
+      ],
+    );
+  }
+}
+
+class _MetricHeader extends StatelessWidget {
+  const _MetricHeader({
+    required this.emoji,
+    required this.metricLabel,
+    required this.remaining,
+  });
+
+  final String emoji;
+  final String metricLabel;
+  final String remaining;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Battle in progress',
-                      style: TextStyle(
-                        color: context.srText,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Most $metricLabel posted by ${_formatRemaining(remaining).toLowerCase()} wins this territory.',
-                      style: TextStyle(
-                        color: context.srTextMuted,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(emoji, style: const TextStyle(fontSize: 40)),
-            ],
-          ),
-          if (isMyAttack || isMyDefense) ...[
-            const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: context.srLime.withAlpha(30),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: context.srLime),
-              ),
-              child: Text(
-                isMyAttack
-                    ? '🗡️ Your guild is attacking — every $metricLabel counts!'
-                    : '🛡️ Your guild is defending — hold the line!',
+              Text(
+                '⚔️  Battle in progress',
                 style: TextStyle(
-                  color: context.srLimeText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  color: context.srText,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
-          ],
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _GuildLabel(
-                  name: attacker?.name ?? 'Attacker',
-                  color: attackerColor,
-                  score: a,
-                  alignEnd: false,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'VS',
-                  style: TextStyle(
-                    color: context.srTextDim,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: _GuildLabel(
-                  name: defender?.name ?? 'Unclaimed',
-                  color: defenderColor,
-                  score: d,
-                  alignEnd: true,
-                ),
+              const SizedBox(height: 4),
+              Text(
+                'Most $metricLabel logged wins this territory.',
+                style: TextStyle(color: context.srTextMuted, fontSize: 13),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          _TugOfWarBar(
-            fraction: frac,
-            attackerColor: attackerColor,
-            defenderColor: defenderColor,
-          ),
-          const SizedBox(height: 16),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: context.srBgElev2,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: context.srLine),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    size: 14,
-                    color: context.srTextMuted,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    _formatRemaining(remaining),
-                    style: TextStyle(
-                      color: context.srTextMuted,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
+        ),
+        const SizedBox(width: 12),
+        _TimerChip(remaining: remaining),
+      ],
+    );
+  }
+}
+
+class _TimerChip extends StatelessWidget {
+  const _TimerChip({required this.remaining});
+  final String remaining;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: context.srAmber.withAlpha(20),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: context.srAmber.withAlpha(80)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.timer_outlined, size: 13, color: context.srAmber),
+          const SizedBox(width: 4),
+          Text(
+            remaining,
+            style: TextStyle(
+              color: context.srAmber,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -236,8 +201,91 @@ class _BattleSheetState extends State<BattleSheet> {
   }
 }
 
-class _GuildLabel extends StatelessWidget {
-  const _GuildLabel({
+class _MyGuildBanner extends StatelessWidget {
+  const _MyGuildBanner({required this.isAttacking, required this.metricLabel});
+  final bool isAttacking;
+  final String metricLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: context.srLime.withAlpha(25),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.srLime.withAlpha(100)),
+      ),
+      child: Text(
+        isAttacking
+            ? '🗡️  Your guild is attacking — every $metricLabel counts!'
+            : '🛡️  Your guild is defending — hold the line!',
+        style: TextStyle(
+          color: context.srLimeText,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _FaceOff extends StatelessWidget {
+  const _FaceOff({
+    required this.attackerName,
+    required this.attackerColor,
+    required this.attackerScore,
+    required this.defenderName,
+    required this.defenderColor,
+    required this.defenderScore,
+  });
+
+  final String attackerName;
+  final Color attackerColor;
+  final double attackerScore;
+  final String defenderName;
+  final Color defenderColor;
+  final double defenderScore;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _GuildCard(
+            name: attackerName,
+            color: attackerColor,
+            score: attackerScore,
+            alignEnd: false,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            'VS',
+            style: TextStyle(
+              color: context.srTextDim,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2,
+            ),
+          ),
+        ),
+        Expanded(
+          child: _GuildCard(
+            name: defenderName,
+            color: defenderColor,
+            score: defenderScore,
+            alignEnd: true,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _GuildCard extends StatelessWidget {
+  const _GuildCard({
     required this.name,
     required this.color,
     required this.score,
@@ -256,49 +304,28 @@ class _GuildLabel extends StatelessWidget {
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!alignEnd) ...[_Dot(color: color), const SizedBox(width: 6)],
-            Flexible(
-              child: Text(
-                name,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: context.srText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            if (alignEnd) ...[const SizedBox(width: 6), _Dot(color: color)],
-          ],
-        ),
-        const SizedBox(height: 2),
+        GuildAvatar(color: color, initials: guildInitials(name)),
+        const SizedBox(height: 8),
         Text(
           score.round().toString(),
           style: TextStyle(
+            color: color,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          name,
+          overflow: TextOverflow.ellipsis,
+          textAlign: alignEnd ? TextAlign.right : TextAlign.left,
+          style: TextStyle(
             color: context.srTextMuted,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Dot extends StatelessWidget {
-  const _Dot({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }
@@ -318,20 +345,20 @@ class _TugOfWarBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.5, end: fraction.clamp(0.05, 0.95)),
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 900),
       curve: Curves.easeOutCubic,
       builder: (context, value, _) {
         return ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
           child: SizedBox(
-            height: 14,
+            height: 10,
             child: Row(
               children: [
                 Expanded(
                   flex: (value * 1000).round(),
                   child: ColoredBox(color: attackerColor),
                 ),
-                Container(width: 3, color: context.srBgElev),
+                Container(width: 2, color: context.srBgElev),
                 Expanded(
                   flex: ((1 - value) * 1000).round(),
                   child: ColoredBox(color: defenderColor),

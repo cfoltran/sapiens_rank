@@ -41,6 +41,10 @@ class MapData extends Equatable {
     return result;
   }
 
+  List<Territory> get ownTerritories => myGuildId == null
+      ? const []
+      : territories.where((t) => t.ownerGuildId == myGuildId).toList();
+
   Territory? territoryAt(int x, int y) {
     try {
       return territories.firstWhere((t) => t.gridX == x && t.gridY == y);

@@ -1,10 +1,11 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 
 const double hexSize = 34.0;
-const int gridCols = 12;
-const int gridRows = 18;
+const int gridCols = 6;
+const int gridRows = 9;
 
 const double _tileGap = 3.5;
 const double _tileDepth = 4.0;
@@ -43,11 +44,6 @@ Path _hexPath(Offset center, double size, {double corner = _cornerRadius}) {
     path.quadraticBezierTo(vertex.dx, vertex.dy, end.dx, end.dy);
   }
   return path..close();
-}
-
-Color _parseGuildColor(String hex) {
-  final h = hex.replaceAll('#', '');
-  return Color(int.parse('FF$h', radix: 16));
 }
 
 String? _hitTest(Offset canvasPoint) {
@@ -157,7 +153,7 @@ class HexGridPainter extends CustomPainter {
           faceColor = neutralColor;
         } else {
           final raw = territory.guilds?.color ?? '#888888';
-          faceColor = _parseGuildColor(raw).withAlpha(isMine ? 230 : 180);
+          faceColor = guildColorFromHex(raw).withAlpha(isMine ? 230 : 180);
         }
 
         final facePath = _hexPath(center, faceSize);
@@ -224,12 +220,7 @@ class HexGridPainter extends CustomPainter {
         final alpha = ((scale - 0.5) * 2).clamp(0.0, 1.0);
 
         final center = hexCenter(c, r);
-        final initials = territory.guilds!.name
-            .trim()
-            .split(' ')
-            .take(2)
-            .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '')
-            .join();
+        final initials = guildInitials(territory.guilds!.name);
 
         final tp = TextPainter(
           text: TextSpan(

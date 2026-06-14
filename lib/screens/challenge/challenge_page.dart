@@ -62,98 +62,146 @@ class _ChallengeViewState extends State<_ChallengeView> {
         final cubit = context.read<ChallengeCubit>();
         final data = state.data;
         final liveCount = data?.live.length ?? 0;
+        final bottomInset = MediaQuery.of(context).padding.bottom + 16;
 
         return Scaffold(
           backgroundColor: context.srBg,
-          body: Column(
+          body: Stack(
             children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  18,
-                  MediaQuery.of(context).padding.top + 8,
-                  18,
-                  0,
-                ),
-                child: Column(
-                  children: [
-                    _Header(liveCount: liveCount, onNew: _openComposer),
-                    const SizedBox(height: 16),
-                    _TabSwitcher(
-                      tab: _tab,
-                      pendingCount: data?.pending.length ?? 0,
-                      onSelect: (t) => setState(() => _tab = t),
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      18,
+                      MediaQuery.of(context).padding.top + 8,
+                      18,
+                      0,
                     ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: switch (state.status) {
-                  DataStatus.loading => const Center(
-                    child: CircularProgressIndicator(color: SrColors.lime),
-                  ),
-                  DataStatus.error => Center(
-                    child: GestureDetector(
-                      onTap: cubit.load,
-                      child: Text(
-                        'Retry',
-                        style: GoogleFonts.spaceGrotesk(
-                          color: SrColors.lime,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  _ => RefreshIndicator(
-                    onRefresh: cubit.load,
-                    color: context.srLime,
-                    backgroundColor: context.srBgElev,
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
+                    child: Column(
                       children: [
-                        if (_tab == _ChallengeTab.live) ...[
-                          ...?data?.live.map(
-                            (f) => Padding(
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: f.is1v1
-                                  ? _DuelCard(fight: f)
-                                  : _RoyaleCard(fight: f),
-                            ),
-                          ),
-                          if (data?.live.isEmpty ?? true)
-                            const _EmptyState(label: 'No live challenges'),
-                        ],
-                        if (_tab == _ChallengeTab.pending) ...[
-                          ...?data?.pending.map(
-                            (f) => Padding(
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: _PendingCard(
-                                fight: f,
-                                onAccept: () =>
-                                    cubit.respond(f.id, accept: true),
-                                onDecline: () =>
-                                    cubit.respond(f.id, accept: false),
-                                onCancel: () => cubit.cancel(f.id),
-                              ),
-                            ),
-                          ),
-                          if (data?.pending.isEmpty ?? true)
-                            const _EmptyState(label: 'No pending invites'),
-                        ],
-                        if (_tab == _ChallengeTab.history) ...[
-                          ...?data?.history.map(
-                            (f) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: _HistoryRow(fight: f),
-                            ),
-                          ),
-                          if (data?.history.isEmpty ?? true)
-                            const _EmptyState(label: 'No challenges yet'),
-                        ],
+                        _Header(liveCount: liveCount),
+                        const SizedBox(height: 16),
+                        _TabSwitcher(
+                          tab: _tab,
+                          pendingCount: data?.pending.length ?? 0,
+                          onSelect: (t) => setState(() => _tab = t),
+                        ),
                       ],
                     ),
                   ),
-                },
+                  Expanded(
+                    child: switch (state.status) {
+                      DataStatus.loading => const Center(
+                        child: CircularProgressIndicator(color: SrColors.lime),
+                      ),
+                      DataStatus.error => Center(
+                        child: GestureDetector(
+                          onTap: cubit.load,
+                          child: Text(
+                            'Retry',
+                            style: GoogleFonts.spaceGrotesk(
+                              color: SrColors.lime,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      _ => RefreshIndicator(
+                        onRefresh: cubit.load,
+                        color: context.srLime,
+                        backgroundColor: context.srBgElev,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
+                          children: [
+                            if (_tab == _ChallengeTab.live) ...[
+                              ...?data?.live.map(
+                                (f) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: f.is1v1
+                                      ? _DuelCard(fight: f)
+                                      : _RoyaleCard(fight: f),
+                                ),
+                              ),
+                              if (data?.live.isEmpty ?? true)
+                                const _EmptyState(label: 'No live challenges'),
+                            ],
+                            if (_tab == _ChallengeTab.pending) ...[
+                              ...?data?.pending.map(
+                                (f) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: _PendingCard(
+                                    fight: f,
+                                    onAccept: () =>
+                                        cubit.respond(f.id, accept: true),
+                                    onDecline: () =>
+                                        cubit.respond(f.id, accept: false),
+                                    onCancel: () => cubit.cancel(f.id),
+                                  ),
+                                ),
+                              ),
+                              if (data?.pending.isEmpty ?? true)
+                                const _EmptyState(label: 'No pending invites'),
+                            ],
+                            if (_tab == _ChallengeTab.history) ...[
+                              ...?data?.history.map(
+                                (f) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: _HistoryRow(fight: f),
+                                ),
+                              ),
+                              if (data?.history.isEmpty ?? true)
+                                const _EmptyState(label: 'No challenges yet'),
+                            ],
+                          ],
+                        ),
+                      ),
+                    },
+                  ),
+                ],
+              ),
+              Positioned(
+                bottom: bottomInset,
+                right: 18,
+                child: GestureDetector(
+                  onTap: _openComposer,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: SrColors.lime,
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: SrColors.lime.withAlpha(0x66),
+                          blurRadius: 24,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.add,
+                          size: 16,
+                          color: SrColors.textInk,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'New challenge',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: SrColors.textInk,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -164,68 +212,36 @@ class _ChallengeViewState extends State<_ChallengeView> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.liveCount, required this.onNew});
+  const _Header({required this.liveCount});
   final int liveCount;
-  final VoidCallback onNew;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'CHALLENGES · $liveCount LIVE',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 11,
-                  color: context.srTextDim,
-                  letterSpacing: 0.15 * 11,
-                ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'CHALLENGES · $liveCount LIVE',
+              style: GoogleFonts.jetBrainsMono(
+                fontSize: 11,
+                color: context.srTextDim,
+                letterSpacing: 0.15 * 11,
               ),
-              const SizedBox(height: 2),
-              Text(
-                'Challenge',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w600,
-                  color: context.srText,
-                  letterSpacing: -0.03 * 30,
-                  height: 1.1,
-                ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'Challenge',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 30,
+                fontWeight: FontWeight.w600,
+                color: context.srText,
+                letterSpacing: -0.03 * 30,
+                height: 1.1,
               ),
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: onNew,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-            decoration: BoxDecoration(
-              color: SrColors.lime,
-              borderRadius: BorderRadius.circular(100),
-              boxShadow: [
-                BoxShadow(color: SrColors.lime.withAlpha(0x44), blurRadius: 20),
-              ],
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.add, size: 14, color: SrColors.textInk),
-                const SizedBox(width: 4),
-                Text(
-                  'New',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: SrColors.textInk,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ],
     );

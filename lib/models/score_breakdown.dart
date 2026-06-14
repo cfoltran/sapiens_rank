@@ -123,7 +123,7 @@ class ScoreBreakdown {
     final penalty = habits != null ? _habitsPenalty(habits) : 0;
 
     return ScoreBreakdown(
-      score: (raw - penalty).clamp(0, 100),
+      score: (raw - penalty).clamp(0, rewardOvershoot ? 200 : 100),
       sleepPts: sleep.round(),
       stepsPts: steps.round(),
       kcalPts: kcal.round(),
@@ -143,8 +143,10 @@ class ScoreBreakdown {
   /// Fixed-target score used for the leaderboard and challenges.
   ///
   /// Unlike the personal score, exceeding a volume target (steps, kcal,
-  /// exercise) earns bonus points with diminishing returns, so big training
-  /// days are rewarded without letting one outlier day dominate the ranking.
+  /// exercise) earns bonus points with diminishing returns, and the daily total
+  /// is not capped at 100, so big training days reward output instead of being
+  /// wasted. Per-metric diminishing returns still keep any single metric from
+  /// dominating.
   static ScoreBreakdown computeRanking(HealthSnapshot snap) =>
       compute(snap, rewardOvershoot: true);
 

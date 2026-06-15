@@ -166,6 +166,7 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
         center: tile.position.clone(),
         startsAt: attack.startsAt,
         endsAt: attack.endsAt,
+        metric: attack.metric,
       );
       _sieges[territoryId] = ring;
       world.add(ring);

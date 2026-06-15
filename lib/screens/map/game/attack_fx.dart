@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
+import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/map/game/hex_geometry.dart';
 
 const _siegeColor = Color(0xFFFF8A33);
@@ -14,6 +16,7 @@ class SiegeRing extends PositionComponent {
     required Vector2 center,
     required this.startsAt,
     required this.endsAt,
+    required this.metric,
   }) : super(
          position: center,
          size: Vector2.all(hexSize * 2),
@@ -23,6 +26,7 @@ class SiegeRing extends PositionComponent {
 
   final DateTime startsAt;
   final DateTime endsAt;
+  final AttackMetric metric;
   double _t = 0;
 
   @override
@@ -68,6 +72,15 @@ class SiegeRing extends PositionComponent {
           ..color = _siegeColor.withAlpha(((1 - e) * 200).round()),
       );
     }
+
+    final tp = TextPainter(
+      text: TextSpan(
+        text: metric.emoji,
+        style: TextStyle(fontSize: hexSize * 0.5),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, c - Offset(tp.width / 2, tp.height / 2));
   }
 }
 

@@ -289,7 +289,7 @@ class _RankTeaserCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            if (data.rankDelta != null)
+                            if (data.rankDelta != null && data.rankDelta != 0)
                               Text(
                                 data.rankDelta! >= 0
                                     ? '↑${data.rankDelta}'

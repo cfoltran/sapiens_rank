@@ -17,32 +17,33 @@ Users earn a daily score (0–100) from Apple HealthKit data and compete on worl
 
 ## Two-score system
 
-There are two distinct scores, both out of 100, computed from the same 5 HealthKit metrics:
+There are two distinct scores, both out of 100, computed on-device from 6 HealthKit metrics:
 
 | Metric   | Max pts | Global target |
 |----------|---------|---------------|
 | Sleep    | 25      | 7h            |
-| Steps    | 25      | 7,000         |
-| Calories | 20      | 380 kcal      |
+| Steps    | 22      | 7,000         |
+| Calories | 18      | 380 kcal      |
 | Stand    | 15      | 12h           |
-| HRV      | 15      | 60 ms         |
+| HRV      | 10      | 60 ms         |
+| Exercise | 10      | 30 min        |
 
-Each metric is clamped 0–1 then multiplied by its max. If HRV is unavailable, its 15 pts are redistributed across the other four metrics.
+Each metric is scored as a 0–1 ratio against its target, multiplied by its max. When HRV and/or stand data is missing (e.g. Garmin users lack `APPLE_STAND_TIME`), the missing metric's points are redistributed proportionally across the others so no user is structurally penalised by their device. **Sleep is never redistributed** — a missing sleep value just scores 0.
 
-**Personal score** — computed on-device with the user's own targets (`HealthTargets` from `profiles.target_*`). Shown in the Today ring, sparkline, delta, and profile chart. Stored in `scores.personal_score`.
+**Personal score** — computed with the user's own targets (`HealthTargets` from `profiles.target_*`), each metric hard-clamped 0–1. Shown in the Today ring, sparkline, delta, and profile chart. Stored in `scores.personal_score`.
 
-**Global score** — computed with fixed universal targets (`HealthTargets.defaults`). Used for the leaderboard, world rank, and challenges. Stored in `scores.score`.
+**Global / ranking score** — computed with fixed universal targets (`HealthTargets.defaults`). Used for the leaderboard, world rank, and challenges. Stored in `scores.score`. Unlike the personal score, exceeding a **volume** target (steps, calories, exercise) earns bonus points with diminishing returns (`1 + 0.5·√(ratio−1)`, capped at 1.5× the metric's points at 2× target), so big training days are rewarded without one outlier day dominating. Sleep, stand and HRV stay hard-clamped (exceeding them isn't healthier). Total still capped at 100.
 
-`ScoreBreakdown.compute(snap, targets: targets)` → personal. `ScoreBreakdown.computeRanking(snap)` → global (alias with defaults).
+`ScoreBreakdown.compute(snap, targets: targets)` → personal. `ScoreBreakdown.computeRanking(snap)` → global (`compute` with `rewardOvershoot: true`).
 
-On launch: backfills the last 7 missing days from HealthKit, storing both scores.
+On launch: backfills missing days since `profiles.latest_sync` (capped at the last 7 days) from HealthKit, storing both scores. Setting `latest_sync` to null forces a full 7-day re-score on next open.
 
 ## Leaderboard (Supabase)
 
 - `scores` table: one row per user per day — `score` (global) + `personal_score` (personal)
 - `daily_metrics` table: raw HealthKit values (private, RLS per user) — used for future recalculation
-- `leaderboard` table: 7-day rolling average of `score` with `rank_world`, `rank_country`, `rank_delta`
-- `refresh_leaderboard()` Postgres function: recomputes ranks via window functions — called after every sync
+- `leaderboard` table: sum of each user's last-7-days `score` / 7 (missed days count as 0, so inactive users decay toward 0) with `rank_world`, `rank_country`, `rank_delta`
+- `refresh_leaderboard()` Postgres function: recomputes the score and ranks for **everyone on the board** (not just recently active users) via window functions; tiebreaker is unrounded score then `user_id` — called after every sync
 - Challenges use `personal_score` via `get_challenge_standings()`
 - Leaderboard is publicly readable, everything else is RLS-enforced
 

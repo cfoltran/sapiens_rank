@@ -123,7 +123,7 @@ class _LoadedBody extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'SCORE',
+                            'TREND',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 10,
                               color: context.srTextDim,
@@ -355,7 +355,7 @@ class _PodiumBlock extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      player.score.toStringAsFixed(0),
+                      '#${player.rank}',
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: scoreSize,
                         fontWeight: FontWeight.w700,
@@ -363,15 +363,10 @@ class _PodiumBlock extends StatelessWidget {
                         height: 1.0,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '#${player.rank}',
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 11,
-                        letterSpacing: 11 * 0.1,
-                        color: context.srTextMuted,
-                      ),
-                    ),
+                    if (player.rankDelta != null && player.rankDelta != 0) ...[
+                      const SizedBox(height: 6),
+                      _DeltaBadge(delta: player.rankDelta!),
+                    ],
                   ],
                 ),
               ),
@@ -436,14 +431,8 @@ class _PlayerRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            player.score.toStringAsFixed(0),
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: context.srText,
-            ),
-          ),
+          if (player.rankDelta != null && player.rankDelta != 0)
+            _DeltaBadge(delta: player.rankDelta!),
         ],
       ),
     );
@@ -483,6 +472,12 @@ class _YouCard extends StatelessWidget {
 
   final WorldData data;
 
+  static String _fmtRank(int? rank) {
+    if (rank == null) return '---';
+    if (rank < 1000) return rank.toString();
+    return '${rank ~/ 1000},${(rank % 1000).toString().padLeft(3, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final myRank = data.myRank;
@@ -517,35 +512,19 @@ class _YouCard extends StatelessWidget {
                 ],
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    myRank != null ? '#$myRank' : '---',
-                    style: GoogleFonts.jetBrainsMono(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: context.srLimeText,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              'You',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: context.srText,
-                              ),
-                            ),
-                            if (delta != null) ...[
-                              const SizedBox(width: 6),
-                              _DeltaBadge(delta: delta),
-                            ],
-                          ],
+                        Text(
+                          'You',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: context.srText,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -558,14 +537,33 @@ class _YouCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Text(
-                    data.myScore.toStringAsFixed(0),
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: context.srText,
-                      height: 1.0,
-                    ),
+                  if (delta != null && delta != 0) ...[
+                    _DeltaBadge(delta: delta),
+                    const SizedBox(width: 10),
+                  ],
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        '#',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 15,
+                          color: context.srTextMuted,
+                        ),
+                      ),
+                      const SizedBox(width: 1),
+                      Text(
+                        _fmtRank(myRank),
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: context.srText,
+                          height: 1.0,
+                          letterSpacing: 28 * -0.04,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

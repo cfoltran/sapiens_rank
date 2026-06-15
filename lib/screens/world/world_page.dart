@@ -363,6 +363,14 @@ class _PodiumBlock extends StatelessWidget {
                         height: 1.0,
                       ),
                     ),
+                    const SizedBox(height: 3),
+                    Text(
+                      player.score.toStringAsFixed(0),
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 10,
+                        color: context.srTextDim,
+                      ),
+                    ),
                     if (player.rankDelta != null && player.rankDelta != 0) ...[
                       const SizedBox(height: 6),
                       _DeltaBadge(delta: player.rankDelta!),
@@ -431,8 +439,17 @@ class _PlayerRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          if (player.rankDelta != null && player.rankDelta != 0)
+          Text(
+            player.score.toStringAsFixed(0),
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 11,
+              color: context.srTextDim,
+            ),
+          ),
+          if (player.rankDelta != null && player.rankDelta != 0) ...[
+            const SizedBox(width: 8),
             _DeltaBadge(delta: player.rankDelta!),
+          ],
         ],
       ),
     );

@@ -446,8 +446,20 @@ class _StepSetRulesState extends State<_StepSetRules> {
   void initState() {
     super.initState();
     _goalController = TextEditingController(
-      text: widget.goalValue != null ? widget.goalValue!.toStringAsFixed(0) : '',
+      text: widget.goalValue != null
+          ? widget.goalValue!.toStringAsFixed(0)
+          : '',
     );
+  }
+
+  @override
+  void didUpdateWidget(_StepSetRules oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.metric != widget.metric) {
+      _goalController.text = widget.goalValue != null
+          ? widget.goalValue!.toStringAsFixed(0)
+          : '';
+    }
   }
 
   @override
@@ -581,7 +593,10 @@ class _StepSetRulesState extends State<_StepSetRules> {
               final parsed = double.tryParse(v.trim());
               widget.onGoalValue(parsed != null && parsed > 0 ? parsed : null);
             },
-            style: GoogleFonts.spaceGrotesk(fontSize: 14, color: context.srText),
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 14,
+              color: context.srText,
+            ),
             decoration: InputDecoration(
               suffixText: 'km',
               suffixStyle: GoogleFonts.jetBrainsMono(

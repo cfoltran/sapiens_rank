@@ -86,14 +86,14 @@ class _WelcomeStepState extends State<WelcomeStep>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '2,401,839 sapiens ranked today',
-                    style: tt.bodySmall!.copyWith(
-                      color: context.srTextMuted,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  // const SizedBox(height: 8),
+                  // Text(
+                  //   '2,401,839 sapiens ranked today',
+                  //   style: tt.bodySmall!.copyWith(
+                  //     color: context.srTextMuted,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

@@ -200,7 +200,7 @@ class _HealthKitCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Icon(Icons.check, size: 16, color: context.srLime),
+          Icon(Icons.check, size: 16, color: context.srLimeText),
         ],
       ),
     );

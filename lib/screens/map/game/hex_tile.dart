@@ -20,7 +20,6 @@ class HexTileComponent extends PositionComponent
     required Color faceColor,
     required this.isMine,
     required this.attackable,
-    required this.label,
   }) : _territory = territory,
        _faceColor = faceColor,
        _targetColor = faceColor,
@@ -40,7 +39,6 @@ class HexTileComponent extends PositionComponent
   Color _targetColor;
   bool isMine;
   bool attackable;
-  String label;
 
   Territory get territory => _territory;
 
@@ -65,13 +63,11 @@ class HexTileComponent extends PositionComponent
     Color faceColor,
     bool mine,
     bool canAttack,
-    String newLabel,
   ) {
     final ownerChanged = territory.ownerGuildId != _territory.ownerGuildId;
     _territory = territory;
     isMine = mine;
     attackable = canAttack;
-    label = newLabel;
     if (ownerChanged) {
       playCapture(faceColor);
     } else {
@@ -205,6 +201,14 @@ class HexTileComponent extends PositionComponent
             (160 + 95 * breath).round(),
           ),
       );
+    } else if (!_territory.isNeutral) {
+      canvas.drawPath(
+        face,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5
+          ..color = Color.lerp(color, Colors.white, 0.35)!,
+      );
     } else {
       canvas.drawPath(
         face,
@@ -213,26 +217,6 @@ class HexTileComponent extends PositionComponent
           ..strokeWidth = 1
           ..color = game.colors.border.withAlpha(120),
       );
-    }
-
-    if (label.isNotEmpty && scale > 0.5) {
-      final alpha = ((scale - 0.5) * 2).clamp(0.0, 1.0);
-      final tp = TextPainter(
-        text: TextSpan(
-          text: label,
-          style: TextStyle(
-            color: Color.lerp(
-              game.colors.text.withAlpha(0),
-              game.colors.text,
-              alpha,
-            ),
-            fontSize: hexSize * 0.35,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      tp.paint(canvas, c - Offset(tp.width / 2, tp.height / 2));
     }
 
     canvas.restore();

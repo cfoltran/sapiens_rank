@@ -116,7 +116,6 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
         faceColor: _faceColor(t, mine),
         isMine: mine,
         attackable: attackable.contains(t.id),
-        label: t.guilds == null ? '' : guildInitials(t.guilds!.name),
       );
       _tiles[t.id] = tile;
       world.add(tile);
@@ -136,13 +135,7 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
       final tile = _tiles[t.id];
       final mine = _isMine(t, data);
       if (tile == null) continue;
-      tile.syncState(
-        t,
-        _faceColor(t, mine),
-        mine,
-        attackable.contains(t.id),
-        t.guilds == null ? '' : guildInitials(t.guilds!.name),
-      );
+      tile.syncState(t, _faceColor(t, mine), mine, attackable.contains(t.id));
     }
     _syncSieges(data);
   }

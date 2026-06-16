@@ -47,6 +47,24 @@ On launch: backfills missing days since `profiles.latest_sync` (capped at the la
 - Challenges use `personal_score` via `get_challenge_standings()`
 - Leaderboard is publicly readable, everything else is RLS-enforced
 
+## Guilds & territory map
+
+A team layer on top of the solo scores: users group into **guilds** that fight over a shared **hex map** of territories. Code lives in `lib/screens/guild/` (roster, create/join) and `lib/screens/map/` (the board + combat), backed by `GuildService` / `MapService` and the `20260610140000_guild_map.sql` migration.
+
+**Guilds** (`guilds`, `guild_members`)
+- A guild has a unique `name` and a `color` (used to tint its territories). Members have a `role` (`leader` | `member`); the creator becomes leader.
+- Capacity = **5 base + 1 per territory owned** (`guild_max_members()`); a DB trigger enforces it, plus single-guild membership. Creating a guild also claims one random neutral territory (`on_guild_created`).
+- `GuildCubit` → `GuildData` (guild, members, maxMembers, territoryCount, attackHistory). When the user has no guild it still loads `takenColors` so the create sheet can avoid duplicates.
+
+**Map** (`territories`)
+- A **6×9 grid** of hex tiles, one row per `(grid_x, grid_y)` (unique). `owner_guild_id` null = **neutral**. Adjacency is **4-neighbour on grid coords** (±1 in x or y), not true hex adjacency.
+- `MapCubit` → `MapData` (territories, activeAttacks, myGuildId). `attackableTerritoryIds` is computed **client-side**: tiles adjacent to one you own, not already yours, not under attack — and empty while your guild already has an active attack (one at a time). Tap routing in `map_page.dart`: attackable tile → `AttackSheet`, tile under attack → `BattleSheet`, other → `TerritoryInfoSheet`, no guild → snackbar.
+
+**Attacks / combat** (`attacks`)
+- An attack picks a single **metric** (`steps` | `sleep` | `calories` | `stand`) and runs for a fixed **24h**. Attacking a guild-owned tile sets a `defender_guild_id`; a neutral tile has none (auto-claimed if unopposed).
+- The winner is decided by **raw HealthKit volume**, not score: each side sums that metric across its members' `daily_metrics` over the window. This is distinct from the personal/global scores — it's a direct head-to-head total.
+- Resolution is **server-side**, never on the client. A 15-min cron (`close_expired_attacks`) calls `update_active_attack_scores()` to keep live `attacker_score`/`defender_score` fresh for the `BattleSheet`, then `resolve_attack()` once `ends_at` passes: higher total wins and takes the territory (`conquered_at` set); a tie leaves the defender in place. A DB trigger validates adjacency + the one-active-attack rule on insert.
+
 ## Theme system
 
 Use the `SrTheme` extension on `BuildContext` (`lib/common/theme/sr_theme.dart`) — always use `context.sr*` instead of raw `SrColors.*` so colors adapt between light and dark mode.
@@ -62,14 +80,14 @@ Key tokens:
 
 ```
 lib/
-  models/         # HealthTargets, LeaderboardEntry, ScoreBreakdown (json_serializable)
-  screens/        # onboarding, today, world, fight, home, profile
-  services/       # ScoreService, HealthService, AuthService, ProfileService, ChallengeService
+  models/         # HealthTargets, LeaderboardEntry, ScoreBreakdown, guild_models (json_serializable)
+  screens/        # onboarding, today, world, fight, home, profile, guild, map
+  services/       # ScoreService, HealthService, AuthService, ProfileService, ChallengeService, GuildService, MapService
   common/
     theme/        # DkTheme, SrColors, SrTheme extension, skeletons
     data_state/   # DataState<T> wrapper (loading/error/data)
 supabase/
-  migrations/     # profiles, scores, leaderboard, FCM, challenges, daily_metrics, targets
+  migrations/     # profiles, scores, leaderboard, FCM, challenges, daily_metrics, targets, guild_map
 ```
 
 Architecture: UI → cubits/states → services → models

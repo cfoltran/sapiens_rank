@@ -39,9 +39,7 @@ class _AttackSheetState extends State<AttackSheet> {
   AttackMetric _metric = AttackMetric.steps;
   bool _buttonPressed = false;
 
-  static final _metrics = AttackMetric.values
-      .where((m) => m != AttackMetric.hrv)
-      .toList();
+  static const _metrics = AttackMetric.values;
 
   @override
   Widget build(BuildContext context) {

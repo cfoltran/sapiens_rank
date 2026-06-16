@@ -124,7 +124,6 @@ const _$AttackMetricEnumMap = {
   AttackMetric.sleep: 'sleep',
   AttackMetric.calories: 'calories',
   AttackMetric.stand: 'stand',
-  AttackMetric.hrv: 'hrv',
 };
 
 const _$AttackStatusEnumMap = {

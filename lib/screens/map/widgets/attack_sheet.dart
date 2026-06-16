@@ -37,10 +37,9 @@ class AttackSheet extends StatefulWidget {
 
 class _AttackSheetState extends State<AttackSheet> {
   AttackMetric _metric = AttackMetric.steps;
-  int _durationHours = 24;
   bool _buttonPressed = false;
 
-  static const _durations = [24, 48, 72];
+  static const _metrics = AttackMetric.values;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +69,7 @@ class _AttackSheetState extends State<AttackSheet> {
                   const SizedBox(height: 4),
                   Text(
                     isNeutral
-                        ? 'No defender — territory is yours if you post any data.'
+                        ? 'No defender, territory is yours in 24h.'
                         : 'Your guild\'s total beats their guild\'s total.',
                     style: TextStyle(color: context.srTextMuted, fontSize: 13),
                   ),
@@ -100,7 +99,7 @@ class _AttackSheetState extends State<AttackSheet> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: AttackMetric.values.map((metric) {
+          children: _metrics.map((metric) {
             final selected = _metric == metric;
             return GestureDetector(
               onTap: () {
@@ -126,45 +125,6 @@ class _AttackSheetState extends State<AttackSheet> {
             );
           }).toList(),
         ),
-        const SizedBox(height: 24),
-        _SectionLabel('DURATION'),
-        const SizedBox(height: 10),
-        Row(
-          children: _durations.map((h) {
-            final selected = _durationHours == h;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() => _durationHours = h);
-                },
-                child: AnimatedScale(
-                  scale: selected ? 1.05 : 1.0,
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOutBack,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: h != 72 ? 8 : 0),
-                    child: _SelectableChip(
-                      selected: selected,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        '${h}h',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: selected ? context.srLimeText : context.srText,
-                          fontSize: 14,
-                          fontWeight: selected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
         const SizedBox(height: 28),
         Listener(
           onPointerDown: (_) => setState(() => _buttonPressed = true),
@@ -182,7 +142,7 @@ class _AttackSheetState extends State<AttackSheet> {
                   Navigator.pop(context);
                   widget.onConfirm(
                     metric: _metric,
-                    endsAt: DateTime.now().add(Duration(hours: _durationHours)),
+                    endsAt: DateTime.now().add(const Duration(hours: 24)),
                   );
                 },
                 style: FilledButton.styleFrom(
@@ -228,21 +188,16 @@ class _SectionLabel extends StatelessWidget {
 }
 
 class _SelectableChip extends StatelessWidget {
-  const _SelectableChip({
-    required this.selected,
-    required this.child,
-    this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-  });
+  const _SelectableChip({required this.selected, required this.child});
 
   final bool selected;
   final Widget child;
-  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
-      padding: padding,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: selected ? context.srLime.withAlpha(30) : context.srBgElev2,
         borderRadius: BorderRadius.circular(10),

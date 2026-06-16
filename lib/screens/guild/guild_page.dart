@@ -489,7 +489,6 @@ class _AttackRow extends StatelessWidget {
     AttackMetric.sleep: '😴',
     AttackMetric.calories: '🔥',
     AttackMetric.stand: '🧍',
-    AttackMetric.hrv: '💓',
   };
 
   @override

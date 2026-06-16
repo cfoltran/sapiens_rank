@@ -186,14 +186,14 @@ class SrCountryRow extends StatelessWidget {
                     color: context.srText,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  '${country.sapiens} sapiens',
-                  style: tt.labelMedium!.copyWith(
-                    fontWeight: FontWeight.normal,
-                    color: context.srTextDim,
-                  ),
-                ),
+                // const SizedBox(height: 2),
+                // Text(
+                //   '${country.sapiens} sapiens',
+                //   style: tt.labelMedium!.copyWith(
+                //     fontWeight: FontWeight.normal,
+                //     color: context.srTextDim,
+                //   ),
+                // ),
               ],
             ),
           ),

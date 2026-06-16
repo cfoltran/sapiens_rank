@@ -27,8 +27,6 @@ enum AttackMetric {
   calories,
   @JsonValue('stand')
   stand,
-  @JsonValue('hrv')
-  hrv,
 }
 
 // Nested profile inside GuildMember

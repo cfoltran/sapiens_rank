@@ -26,7 +26,6 @@ extension AttackMetricVisuals on AttackMetric {
     AttackMetric.sleep => '😴',
     AttackMetric.calories => '🔥',
     AttackMetric.stand => '🧍',
-    AttackMetric.hrv => '💓',
   };
 
   String get label => switch (this) {
@@ -34,6 +33,5 @@ extension AttackMetricVisuals on AttackMetric {
     AttackMetric.sleep => 'Sleep',
     AttackMetric.calories => 'Calories',
     AttackMetric.stand => 'Stand',
-    AttackMetric.hrv => 'HRV',
   };
 }

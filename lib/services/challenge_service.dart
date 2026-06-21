@@ -14,6 +14,7 @@ class ChallengeService {
         .select('''
           challenges!inner(
             id, metric, duration_days, starts_at, ends_at,
+            challenge_type, workout_type, target_distance_km,
             stake_icon, stake_label, status, winner_id, created_by, created_at,
             challenge_participants(
               user_id, is_creator, status,
@@ -44,6 +45,9 @@ class ChallengeService {
     required int durationDays,
     required String stakeIcon,
     required String stakeLabel,
+    ChallengeType challengeType = ChallengeType.score,
+    String? workoutType,
+    double? targetDistanceKm,
   }) async {
     final challenge = await _db
         .from('challenges')
@@ -52,6 +56,9 @@ class ChallengeService {
           'duration_days': durationDays,
           'stake_icon': stakeIcon,
           'stake_label': stakeLabel,
+          'challenge_type': challengeType.name,
+          'workout_type': ?workoutType,
+          'target_distance_km': ?targetDistanceKm,
         })
         .select()
         .single();

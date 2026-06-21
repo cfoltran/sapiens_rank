@@ -7,6 +7,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_cubit.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 import 'package:sapiens_rank/screens/challenge/sheets/composer_sheet.dart';
+import 'package:sapiens_rank/screens/challenge/workout_format.dart';
 
 enum _ChallengeTab { live, pending, history }
 
@@ -45,11 +46,17 @@ class _ChallengeViewState extends State<_ChallengeView> {
               required durationDays,
               required stakeIcon,
               required stakeLabel,
+              required challengeType,
+              workoutType,
+              targetDistanceKm,
             }) => cubit.createChallenge(
               opponentId: opponentId,
               durationDays: durationDays,
               stakeIcon: stakeIcon,
               stakeLabel: stakeLabel,
+              challengeType: challengeType,
+              workoutType: workoutType,
+              targetDistanceKm: targetDistanceKm,
             ),
       ),
     );
@@ -118,7 +125,9 @@ class _ChallengeViewState extends State<_ChallengeView> {
                               ...?data?.live.map(
                                 (f) => Padding(
                                   padding: const EdgeInsets.only(bottom: 14),
-                                  child: f.is1v1
+                                  child: f.isWorkout
+                                      ? _WorkoutCard(fight: f)
+                                      : f.is1v1
                                       ? _DuelCard(fight: f)
                                       : _RoyaleCard(fight: f),
                                 ),
@@ -645,6 +654,138 @@ class _RoyaleCard extends StatelessWidget {
   }
 }
 
+class _WorkoutCard extends StatelessWidget {
+  const _WorkoutCard({required this.fight});
+  final LiveChallenge fight;
+
+  @override
+  Widget build(BuildContext context) {
+    final players = fight.participants;
+    final leadSeconds = players
+        .where((p) => p.completed)
+        .map((p) => p.durationSeconds!)
+        .fold<int?>(null, (min, s) => min == null || s < min ? s : min);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        decoration: BoxDecoration(
+          color: context.srBgElev,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: context.srLineStrong),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _StatusStrip(
+              label:
+                  '${WorkoutFormat.sportIcon(fight.workoutType)} ${WorkoutFormat.sportLabel(fight.workoutType).toUpperCase()} · ${WorkoutFormat.distance(fight.targetDistanceKm)}',
+              endsIn: fight.endsInFormatted,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                children: List.generate(players.length, (i) {
+                  final p = players[i];
+                  final isLeader =
+                      p.completed && p.durationSeconds == leadSeconds;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: p.isMe
+                            ? SrColors.lime.withAlpha(0x14)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: p.isMe
+                              ? SrColors.lime.withAlpha(0x44)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 18,
+                            child: Text(
+                              p.completed ? '${p.rank}' : '–',
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isLeader
+                                    ? SrColors.lime
+                                    : context.srTextMuted,
+                              ),
+                            ),
+                          ),
+                          _Avatar(player: p, size: 30, ring: p.isMe),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  p.isMe ? 'You' : p.firstName,
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 13,
+                                    fontWeight: p.isMe
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                    color: context.srText,
+                                  ),
+                                ),
+                                Text(
+                                  p.completed
+                                      ? WorkoutFormat.pace(
+                                          p.durationSeconds,
+                                          fight.targetDistanceKm,
+                                        )
+                                      : 'reached ${WorkoutFormat.distance(p.distanceKm)}',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 10,
+                                    color: context.srTextDim,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            p.completed
+                                ? WorkoutFormat.time(p.durationSeconds)
+                                : 'DNF',
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: isLeader
+                                  ? context.srLimeText
+                                  : p.completed
+                                  ? context.srText
+                                  : context.srTextDim,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            _StakeBanner(
+              icon: fight.stakeIcon,
+              label: fight.stakeLabel,
+              isLime: true,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _PendingCard extends StatelessWidget {
   const _PendingCard({
     required this.fight,
@@ -839,7 +980,9 @@ class _HistoryRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${fight.myScore.toStringAsFixed(0)}–${fight.opponentScore.toStringAsFixed(0)} · ${fight.stakeLabel} · ${fight.dateFormatted}',
+                  fight.isWorkout
+                      ? '${WorkoutFormat.time(fight.myDurationSeconds)} vs ${WorkoutFormat.time(fight.opponentDurationSeconds)} · ${fight.stakeLabel} · ${fight.dateFormatted}'
+                      : '${fight.myScore.toStringAsFixed(0)}–${fight.opponentScore.toStringAsFixed(0)} · ${fight.stakeLabel} · ${fight.dateFormatted}',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 10,
                     color: context.srTextDim,

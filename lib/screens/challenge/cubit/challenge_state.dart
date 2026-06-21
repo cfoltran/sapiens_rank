@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/models/challenge_models.dart';
 
 class ChallengePlayer extends Equatable {
   const ChallengePlayer({
@@ -11,6 +12,9 @@ class ChallengePlayer extends Equatable {
     required this.score,
     required this.rank,
     required this.isMe,
+    this.durationSeconds,
+    this.distanceKm,
+    this.completed = false,
   });
 
   final String userId;
@@ -21,11 +25,14 @@ class ChallengePlayer extends Equatable {
   final double score;
   final int rank;
   final bool isMe;
+  final int? durationSeconds;
+  final double? distanceKm;
+  final bool completed;
 
   String get firstName => displayName.split(' ').first;
 
   @override
-  List<Object?> get props => [userId, score, rank, isMe];
+  List<Object?> get props => [userId, score, rank, isMe, durationSeconds];
 }
 
 class LiveChallenge extends Equatable {
@@ -35,6 +42,9 @@ class LiveChallenge extends Equatable {
     required this.stakeLabel,
     required this.endsAt,
     required this.participants,
+    this.challengeType = ChallengeType.score,
+    this.workoutType,
+    this.targetDistanceKm,
   });
 
   final String id;
@@ -42,6 +52,11 @@ class LiveChallenge extends Equatable {
   final String stakeLabel;
   final DateTime endsAt;
   final List<ChallengePlayer> participants;
+  final ChallengeType challengeType;
+  final String? workoutType;
+  final double? targetDistanceKm;
+
+  bool get isWorkout => challengeType == ChallengeType.workout;
 
   ChallengePlayer get me => participants.firstWhere((p) => p.isMe);
   List<ChallengePlayer> get opponents =>
@@ -92,6 +107,9 @@ class HistoryChallenge extends Equatable {
     required this.opponentScore,
     required this.won,
     required this.endedAt,
+    this.challengeType = ChallengeType.score,
+    this.myDurationSeconds,
+    this.opponentDurationSeconds,
   });
 
   final String id;
@@ -101,6 +119,11 @@ class HistoryChallenge extends Equatable {
   final double opponentScore;
   final bool? won; // null = draw
   final DateTime endedAt;
+  final ChallengeType challengeType;
+  final int? myDurationSeconds;
+  final int? opponentDurationSeconds;
+
+  bool get isWorkout => challengeType == ChallengeType.workout;
 
   String get dateFormatted {
     final diff = DateTime.now().difference(endedAt);

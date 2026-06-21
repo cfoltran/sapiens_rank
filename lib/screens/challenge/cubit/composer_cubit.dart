@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/composer_state.dart';
 import 'package:sapiens_rank/services/challenge_service.dart';
@@ -39,6 +40,23 @@ class ComposerCubit extends Cubit<ComposerState> {
   void setDuration(String d) => emit(state.copyWith(duration: d));
   void selectReward(Reward? r) => emit(state.copyWith(reward: () => r));
 
+  void setChallengeType(ChallengeType t) {
+    final isWorkout = t == ChallengeType.workout;
+    emit(
+      state.copyWith(
+        challengeType: t,
+        workoutType: () => isWorkout ? state.workoutType : null,
+        targetDistanceKm: () => isWorkout ? state.targetDistanceKm : null,
+      ),
+    );
+  }
+
+  void setWorkoutType(String t) =>
+      emit(state.copyWith(workoutType: () => t, targetDistanceKm: () => null));
+
+  void setTargetDistance(double? km) =>
+      emit(state.copyWith(targetDistanceKm: () => km));
+
   void next() {
     if (state.step < 3) emit(state.copyWith(step: state.step + 1));
   }
@@ -53,6 +71,9 @@ class ComposerCubit extends Cubit<ComposerState> {
       required int durationDays,
       required String stakeIcon,
       required String stakeLabel,
+      required ChallengeType challengeType,
+      String? workoutType,
+      double? targetDistanceKm,
     })
     onCreate,
   ) async {
@@ -63,6 +84,9 @@ class ComposerCubit extends Cubit<ComposerState> {
       durationDays: int.parse(state.duration.replaceAll('d', '')),
       stakeIcon: state.reward!.icon,
       stakeLabel: state.reward!.label,
+      challengeType: state.challengeType,
+      workoutType: state.isWorkout ? state.workoutType : null,
+      targetDistanceKm: state.isWorkout ? state.targetDistanceKm : null,
     );
     emit(state.copyWith(sending: false, sent: true));
   }

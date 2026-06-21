@@ -48,6 +48,15 @@ ChallengeRow _$ChallengeRowFromJson(Map<String, dynamic> json) => ChallengeRow(
   challengeParticipants: (json['challenge_participants'] as List<dynamic>)
       .map((e) => ChallengeParticipant.fromJson(e as Map<String, dynamic>))
       .toList(),
+  challengeType:
+      $enumDecodeNullable(
+        _$ChallengeTypeEnumMap,
+        json['challenge_type'],
+        unknownValue: ChallengeType.score,
+      ) ??
+      ChallengeType.score,
+  workoutType: json['workout_type'] as String?,
+  targetDistanceKm: (json['target_distance_km'] as num?)?.toDouble(),
   startsAt: json['starts_at'] == null
       ? null
       : DateTime.parse(json['starts_at'] as String),
@@ -61,6 +70,9 @@ Map<String, dynamic> _$ChallengeRowToJson(ChallengeRow instance) =>
     <String, dynamic>{
       'id': instance.id,
       'metric': instance.metric,
+      'challenge_type': _$ChallengeTypeEnumMap[instance.challengeType]!,
+      'workout_type': instance.workoutType,
+      'target_distance_km': instance.targetDistanceKm,
       'duration_days': instance.durationDays,
       'status': _$ChallengeStatusEnumMap[instance.status]!,
       'stake_icon': instance.stakeIcon,
@@ -79,11 +91,19 @@ const _$ChallengeStatusEnumMap = {
   ChallengeStatus.cancelled: 'cancelled',
 };
 
+const _$ChallengeTypeEnumMap = {
+  ChallengeType.score: 'score',
+  ChallengeType.workout: 'workout',
+};
+
 ChallengeStanding _$ChallengeStandingFromJson(Map<String, dynamic> json) =>
     ChallengeStanding(
       userId: json['user_id'] as String,
       score: (json['score'] as num).toDouble(),
       rank: (json['rank'] as num).toInt(),
+      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
+      distanceKm: (json['distance_km'] as num?)?.toDouble(),
+      completed: json['completed'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ChallengeStandingToJson(ChallengeStanding instance) =>
@@ -91,6 +111,9 @@ Map<String, dynamic> _$ChallengeStandingToJson(ChallengeStanding instance) =>
       'user_id': instance.userId,
       'score': instance.score,
       'rank': instance.rank,
+      'duration_seconds': instance.durationSeconds,
+      'distance_km': instance.distanceKm,
+      'completed': instance.completed,
     };
 
 OpponentRow _$OpponentRowFromJson(Map<String, dynamic> json) => OpponentRow(

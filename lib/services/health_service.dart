@@ -6,6 +6,7 @@ class WorkoutEntry {
     required this.icon,
     required this.startTime,
     required this.durationMinutes,
+    required this.durationSeconds,
     required this.kcal,
     this.distanceKm,
     this.avgHeartRate,
@@ -15,6 +16,7 @@ class WorkoutEntry {
   final String icon;
   final DateTime startTime;
   final int durationMinutes;
+  final int durationSeconds;
   final int kcal;
   final double? distanceKm;
   final int? avgHeartRate;
@@ -221,6 +223,7 @@ class HealthService {
         final val = p.value;
         if (val is! WorkoutHealthValue) continue;
         final dur = p.dateTo.difference(p.dateFrom).inMinutes;
+        final durSeconds = p.dateTo.difference(p.dateFrom).inSeconds;
         if (dur <= 0) continue;
         weeklyExerciseMinutes += dur;
 
@@ -233,6 +236,7 @@ class HealthService {
               icon: _workoutIcon(val.workoutActivityType),
               startTime: p.dateFrom.toLocal(),
               durationMinutes: dur,
+              durationSeconds: durSeconds,
               kcal: kcalVal,
               distanceKm: distM != null && distM > 0 ? distM / 1000 : null,
             ),

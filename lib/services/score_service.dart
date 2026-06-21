@@ -78,6 +78,22 @@ class ScoreService {
         habits: habits,
       );
 
+      final workoutRows = <Map<String, dynamic>>[];
+      for (final w in snap.workouts) {
+        final type = _workoutType(w.type);
+        if (type == null || w.distanceKm == null || w.durationSeconds <= 0) {
+          continue;
+        }
+        workoutRows.add({
+          'user_id': uid,
+          'type': type,
+          'started_at': w.startTime.toUtc().toIso8601String(),
+          'distance_km': w.distanceKm,
+          'duration_seconds': w.durationSeconds,
+          'kcal': w.kcal,
+        });
+      }
+
       await Future.wait([
         _db.from('scores').upsert({
           'user_id': uid,
@@ -85,6 +101,10 @@ class ScoreService {
           'score': ranking.score,
           'personal_score': personal.score,
         }, onConflict: 'user_id,date'),
+        if (workoutRows.isNotEmpty)
+          _db
+              .from('workouts')
+              .upsert(workoutRows, onConflict: 'user_id,type,started_at'),
         _db.from('daily_metrics').upsert({
           'user_id': uid,
           'date': _isoDate(date),
@@ -238,6 +258,14 @@ class ScoreService {
       return 0;
     }
   }
+
+  static String? _workoutType(String label) => switch (label) {
+    'Running' => 'running',
+    'Walking' => 'walking',
+    'Swimming' => 'swimming',
+    'Cycling' => 'cycling',
+    _ => null,
+  };
 
   static DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
   static String _isoDate(DateTime d) =>

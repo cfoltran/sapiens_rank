@@ -52,6 +52,9 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
                 stakeLabel: c.stakeLabel,
                 endsAt: c.endsAt!,
                 participants: participants,
+                challengeType: c.challengeType,
+                workoutType: c.workoutType,
+                targetDistanceKm: c.targetDistanceKm,
               ),
             );
 
@@ -68,12 +71,7 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
                 id: c.id,
                 stakeIcon: c.stakeIcon,
                 stakeLabel: c.stakeLabel,
-                opponent: _toParticipant(
-                  opponentRow,
-                  score: 0,
-                  rank: 0,
-                  isMe: false,
-                ),
+                opponent: _toParticipant(opponentRow, isMe: false),
                 iAmCreator: myRow.isCreator,
               ),
             );
@@ -105,6 +103,9 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
                 opponentScore: opponent.score,
                 won: won,
                 endedAt: c.endsAt!,
+                challengeType: c.challengeType,
+                myDurationSeconds: me.durationSeconds,
+                opponentDurationSeconds: opponent.durationSeconds,
               ),
             );
         }
@@ -125,12 +126,18 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
     required int durationDays,
     required String stakeIcon,
     required String stakeLabel,
+    ChallengeType challengeType = ChallengeType.score,
+    String? workoutType,
+    double? targetDistanceKm,
   }) async {
     await _service.createChallenge(
       opponentId: opponentId,
       durationDays: durationDays,
       stakeIcon: stakeIcon,
       stakeLabel: stakeLabel,
+      challengeType: challengeType,
+      workoutType: workoutType,
+      targetDistanceKm: targetDistanceKm,
     );
     load();
   }
@@ -149,14 +156,12 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
     List<ChallengeParticipant> participants,
     List<ChallengeStanding> standings,
   ) {
-    final scoreMap = {for (final s in standings) s.userId: s.score};
-    final rankMap = {for (final s in standings) s.userId: s.rank};
+    final standingMap = {for (final s in standings) s.userId: s};
 
     return participants.map((p) {
       return _toParticipant(
         p,
-        score: scoreMap[p.userId] ?? 0,
-        rank: rankMap[p.userId] ?? 0,
+        standing: standingMap[p.userId],
         isMe: p.userId == _myId,
       );
     }).toList()..sort((a, b) => a.rank.compareTo(b.rank));
@@ -164,9 +169,8 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
 
   ChallengePlayer _toParticipant(
     ChallengeParticipant p, {
-    required double score,
-    required int rank,
-    required bool isMe,
+    ChallengeStanding? standing,
+    bool? isMe,
   }) {
     final name = p.profiles.name;
     final country = p.profiles.country;
@@ -176,9 +180,12 @@ class ChallengeCubit extends Cubit<DataState<ChallengeData>> {
       initials: _initials(name),
       avatarColor: _avatarColor(p.userId),
       flag: country != null ? _countryFlag(country) : '🌍',
-      score: score,
-      rank: rank,
-      isMe: isMe,
+      score: standing?.score ?? 0,
+      rank: standing?.rank ?? 0,
+      isMe: isMe ?? (p.userId == _myId),
+      durationSeconds: standing?.durationSeconds,
+      distanceKm: standing?.distanceKm,
+      completed: standing?.completed ?? false,
     );
   }
 

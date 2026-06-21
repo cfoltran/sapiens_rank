@@ -6,6 +6,7 @@ import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/result_cubit.dart';
+import 'package:sapiens_rank/screens/challenge/workout_format.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResultSheet extends StatelessWidget {
@@ -138,12 +139,49 @@ class _ResultViewState extends State<_ResultView>
             .where((p) => p.userId != myId)
             .firstOrNull;
 
+        final isWorkout = challenge.isWorkout;
         final myScore = (myStanding?.score ?? 0).round();
         final oppScore = (oppStanding?.score ?? 0).round();
         final margin = myScore - oppScore;
         final oppName =
             oppParticipant?.profiles.name.split(' ').first ?? 'Opponent';
         final oppUserId = oppStanding?.userId ?? '';
+
+        final myValue = isWorkout
+            ? WorkoutFormat.time(myStanding?.durationSeconds)
+            : '$myScore';
+        final oppValue = isWorkout
+            ? WorkoutFormat.time(oppStanding?.durationSeconds)
+            : '$oppScore';
+        final mySub = isWorkout
+            ? WorkoutFormat.pace(
+                myStanding?.durationSeconds,
+                challenge.targetDistanceKm,
+              )
+            : 'avg score';
+        final oppSub = isWorkout
+            ? WorkoutFormat.pace(
+                oppStanding?.durationSeconds,
+                challenge.targetDistanceKm,
+              )
+            : 'avg score';
+
+        final bool showMargin;
+        final String marginLabel;
+        if (isWorkout) {
+          final my = myStanding?.durationSeconds;
+          final opp = oppStanding?.durationSeconds;
+          if (my != null && opp != null && my != opp) {
+            showMargin = true;
+            marginLabel = WorkoutFormat.time((my - opp).abs());
+          } else {
+            showMargin = false;
+            marginLabel = '';
+          }
+        } else {
+          showMargin = margin.abs() > 0;
+          marginLabel = '${margin.abs()} point${margin.abs() != 1 ? 's' : ''}';
+        }
 
         final accent = isDraw
             ? context.srAmber
@@ -249,7 +287,8 @@ class _ResultViewState extends State<_ResultView>
                                   isWin: isWin,
                                   isDraw: isDraw,
                                   oppName: oppName,
-                                  margin: margin,
+                                  showMargin: showMargin,
+                                  marginLabel: marginLabel,
                                   accentText: accentText,
                                 ),
                               ),
@@ -259,8 +298,10 @@ class _ResultViewState extends State<_ResultView>
                                 child: _ScoreFaceoff(
                                   isWin: isWin,
                                   isDraw: isDraw,
-                                  myScore: myScore,
-                                  oppScore: oppScore,
+                                  myValue: myValue,
+                                  oppValue: oppValue,
+                                  mySub: mySub,
+                                  oppSub: oppSub,
                                   oppName: oppName,
                                   oppUserId: oppUserId,
                                   accent: accent,
@@ -456,14 +497,16 @@ class _TitleSection extends StatelessWidget {
     required this.isWin,
     required this.isDraw,
     required this.oppName,
-    required this.margin,
+    required this.showMargin,
+    required this.marginLabel,
     required this.accentText,
   });
 
   final bool isWin;
   final bool isDraw;
   final String oppName;
-  final int margin;
+  final bool showMargin;
+  final String marginLabel;
   final Color accentText;
 
   @override
@@ -478,13 +521,12 @@ class _TitleSection extends StatelessWidget {
         : isDraw
         ? 'Draw.'
         : 'Defeated.';
-    final sub = isWin
-        ? 'You beat $oppName by '
-        : isDraw
+    final winLead = isWin ? 'You beat $oppName' : '$oppName won';
+    final sub = isDraw
         ? 'You and $oppName are perfectly matched.'
-        : '$oppName won by ';
-    final showMargin = (isWin || (!isDraw)) && margin.abs() > 0;
-    final marginLabel = '${margin.abs()} point${margin.abs() != 1 ? 's' : ''}';
+        : showMargin
+        ? '$winLead by '
+        : '$winLead.';
 
     return Column(
       children: [
@@ -550,8 +592,10 @@ class _ScoreFaceoff extends StatelessWidget {
   const _ScoreFaceoff({
     required this.isWin,
     required this.isDraw,
-    required this.myScore,
-    required this.oppScore,
+    required this.myValue,
+    required this.oppValue,
+    required this.mySub,
+    required this.oppSub,
     required this.oppName,
     required this.oppUserId,
     required this.accent,
@@ -560,8 +604,10 @@ class _ScoreFaceoff extends StatelessWidget {
 
   final bool isWin;
   final bool isDraw;
-  final int myScore;
-  final int oppScore;
+  final String myValue;
+  final String oppValue;
+  final String mySub;
+  final String oppSub;
   final String oppName;
   final String oppUserId;
   final Color accent;
@@ -588,7 +634,8 @@ class _ScoreFaceoff extends StatelessWidget {
           Expanded(
             child: _PlayerColumn(
               label: 'You',
-              score: myScore,
+              value: myValue,
+              subLabel: mySub,
               isWinner: isWin || isDraw,
               showCrown: isWin,
               accentText: accentText,
@@ -612,7 +659,8 @@ class _ScoreFaceoff extends StatelessWidget {
           Expanded(
             child: _PlayerColumn(
               label: oppName,
-              score: oppScore,
+              value: oppValue,
+              subLabel: oppSub,
               isWinner: !isWin && !isDraw,
               showCrown: !isWin && !isDraw,
               accentText: accentText,
@@ -630,7 +678,8 @@ class _ScoreFaceoff extends StatelessWidget {
 class _PlayerColumn extends StatelessWidget {
   const _PlayerColumn({
     required this.label,
-    required this.score,
+    required this.value,
+    required this.subLabel,
     required this.isWinner,
     required this.showCrown,
     required this.accentText,
@@ -640,7 +689,8 @@ class _PlayerColumn extends StatelessWidget {
   });
 
   final String label;
-  final int score;
+  final String value;
+  final String subLabel;
   final bool isWinner;
   final bool showCrown;
   final Color accentText;
@@ -700,18 +750,19 @@ class _PlayerColumn extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '$score',
+            value,
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 40,
+              fontSize: 36,
               fontWeight: FontWeight.w700,
               fontStyle: FontStyle.italic,
-              letterSpacing: 40 * -0.05,
+              letterSpacing: 36 * -0.05,
               height: 1,
               color: isWinner ? accentText : context.srTextMuted,
             ),
           ),
+          const SizedBox(height: 2),
           Text(
-            'avg score',
+            subLabel,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 9,
               color: context.srTextDim,

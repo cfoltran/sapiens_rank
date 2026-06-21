@@ -3,18 +3,26 @@ import 'package:json_annotation/json_annotation.dart';
 part 'challenge_models.g.dart';
 
 enum ChallengeStatus {
-  @JsonValue('pending')  pending,
-  @JsonValue('live')     live,
-  @JsonValue('done')     done,
-  @JsonValue('cancelled') cancelled,
+  @JsonValue('pending')
+  pending,
+  @JsonValue('live')
+  live,
+  @JsonValue('done')
+  done,
+  @JsonValue('cancelled')
+  cancelled,
+}
+
+enum ChallengeType {
+  @JsonValue('score')
+  score,
+  @JsonValue('workout')
+  workout,
 }
 
 @JsonSerializable()
 class ChallengeParticipantProfile {
-  const ChallengeParticipantProfile({
-    required this.name,
-    this.country,
-  });
+  const ChallengeParticipantProfile({required this.name, this.country});
 
   final String name;
   final String? country;
@@ -61,6 +69,9 @@ class ChallengeRow {
     required this.stakeLabel,
     required this.createdBy,
     required this.challengeParticipants,
+    this.challengeType = ChallengeType.score,
+    this.workoutType,
+    this.targetDistanceKm,
     this.startsAt,
     this.endsAt,
     this.winnerId,
@@ -68,6 +79,21 @@ class ChallengeRow {
 
   final String id;
   final String metric;
+
+  @JsonKey(
+    name: 'challenge_type',
+    defaultValue: ChallengeType.score,
+    unknownEnumValue: ChallengeType.score,
+  )
+  final ChallengeType challengeType;
+
+  @JsonKey(name: 'workout_type')
+  final String? workoutType;
+
+  @JsonKey(name: 'target_distance_km')
+  final double? targetDistanceKm;
+
+  bool get isWorkout => challengeType == ChallengeType.workout;
 
   @JsonKey(name: 'duration_days')
   final int durationDays;
@@ -107,6 +133,9 @@ class ChallengeStanding {
     required this.userId,
     required this.score,
     required this.rank,
+    this.durationSeconds,
+    this.distanceKm,
+    this.completed = false,
   });
 
   @JsonKey(name: 'user_id')
@@ -114,6 +143,15 @@ class ChallengeStanding {
 
   final double score;
   final int rank;
+
+  @JsonKey(name: 'duration_seconds')
+  final int? durationSeconds;
+
+  @JsonKey(name: 'distance_km')
+  final double? distanceKm;
+
+  @JsonKey(defaultValue: false)
+  final bool completed;
 
   factory ChallengeStanding.fromJson(Map<String, dynamic> json) =>
       _$ChallengeStandingFromJson(json);

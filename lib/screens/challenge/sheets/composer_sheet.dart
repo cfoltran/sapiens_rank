@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/composer_cubit.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/composer_state.dart';
+import 'package:sapiens_rank/screens/challenge/workout_format.dart';
 
 class ComposerSheet extends StatelessWidget {
   const ComposerSheet({super.key, required this.onCreateChallenge});
@@ -15,6 +17,9 @@ class ComposerSheet extends StatelessWidget {
     required int durationDays,
     required String stakeIcon,
     required String stakeLabel,
+    required ChallengeType challengeType,
+    String? workoutType,
+    double? targetDistanceKm,
   })
   onCreateChallenge;
 
@@ -33,6 +38,9 @@ class _ComposerView extends StatelessWidget {
     required int durationDays,
     required String stakeIcon,
     required String stakeLabel,
+    required ChallengeType challengeType,
+    String? workoutType,
+    double? targetDistanceKm,
   })
   onCreateChallenge;
 
@@ -95,9 +103,13 @@ class _ComposerView extends StatelessWidget {
                         ),
                       if (state.step == 2)
                         _StepSetRules(
-                          metric: state.metric,
+                          challengeType: state.challengeType,
+                          workoutType: state.workoutType,
+                          targetDistanceKm: state.targetDistanceKm,
                           duration: state.duration,
-                          onMetric: cubit.setMetric,
+                          onChallengeType: cubit.setChallengeType,
+                          onWorkoutType: cubit.setWorkoutType,
+                          onTargetDistance: cubit.setTargetDistance,
                           onDuration: cubit.setDuration,
                         ),
                       if (state.step == 3)
@@ -413,63 +425,117 @@ class _ComposerAvatar extends StatelessWidget {
   }
 }
 
-class _StepSetRules extends StatelessWidget {
+class _StepSetRules extends StatefulWidget {
   const _StepSetRules({
-    required this.metric,
+    required this.challengeType,
+    required this.workoutType,
+    required this.targetDistanceKm,
     required this.duration,
-    required this.onMetric,
+    required this.onChallengeType,
+    required this.onWorkoutType,
+    required this.onTargetDistance,
     required this.onDuration,
   });
-  final String metric;
+  final ChallengeType challengeType;
+  final String? workoutType;
+  final double? targetDistanceKm;
   final String duration;
-  final ValueChanged<String> onMetric;
+  final ValueChanged<ChallengeType> onChallengeType;
+  final ValueChanged<String> onWorkoutType;
+  final ValueChanged<double?> onTargetDistance;
   final ValueChanged<String> onDuration;
 
   @override
-  Widget build(BuildContext context) {
-    const metrics = [
-      ('total', 'Sapiens Score', 'Overall'),
-      ('steps', 'Steps', 'Daily count'),
-      ('sleep', 'Sleep', 'Score / 100'),
-      ('kcal', 'Active kcal', 'Daily burn'),
-    ];
-    const durations = [
-      ('1d', '24h'),
-      ('3d', '3 days'),
-      ('7d', '1 week'),
-      ('30d', '30 days'),
-    ];
+  State<_StepSetRules> createState() => _StepSetRulesState();
+}
 
+class _StepSetRulesState extends State<_StepSetRules> {
+  final _customController = TextEditingController();
+  bool _customOpen = false;
+
+  @override
+  void dispose() {
+    _customController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'METRIC',
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 10,
-            color: context.srTextDim,
-            letterSpacing: 0.15 * 10,
-          ),
-        ),
+        _SectionLabel('CHALLENGE TYPE'),
         const SizedBox(height: 10),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: 2.6,
-          children: metrics.map((m) {
-            final (id, label, sub) = m;
-            final active = metric == id;
-            final locked = id != 'total';
-            return GestureDetector(
-              onTap: locked ? null : () => onMetric(id),
-              child: Opacity(
-                opacity: locked ? 0.45 : 1.0,
+        Row(
+          children:
+              [
+                (ChallengeType.score, 'Sapiens Score', '📊'),
+                (ChallengeType.workout, 'Workout', '🏃'),
+              ].map((t) {
+                final (id, label, icon) = t;
+                final active = widget.challengeType == id;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => widget.onChallengeType(id),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: active
+                            ? context.srLime.withAlpha(0x1A)
+                            : context.srTintXs,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: active ? context.srLime : context.srLine,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(icon, style: const TextStyle(fontSize: 15)),
+                          const SizedBox(width: 6),
+                          Text(
+                            label,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: active
+                                  ? context.srLimeText
+                                  : context.srText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+        ),
+        const SizedBox(height: 18),
+        if (widget.challengeType == ChallengeType.workout) ...[
+          _SectionLabel('SPORT'),
+          const SizedBox(height: 10),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            childAspectRatio: 3.0,
+            children: workoutSports.map((s) {
+              final active = widget.workoutType == s.id;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _customOpen = false;
+                    _customController.clear();
+                  });
+                  widget.onWorkoutType(s.id);
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: active
                         ? context.srLime.withAlpha(0x1A)
@@ -479,104 +545,246 @@ class _StepSetRules extends StatelessWidget {
                       color: active ? context.srLime : context.srLine,
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              label,
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: context.srText,
-                              ),
-                            ),
-                          ),
-                          if (locked)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: context.srTintMd,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Soon',
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 8,
-                                  color: context.srTextDim,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                      Text(s.icon, style: const TextStyle(fontSize: 18)),
+                      const SizedBox(width: 10),
                       Text(
-                        sub,
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 10,
-                          color: context.srTextDim,
+                        s.label,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: active ? context.srLimeText : context.srText,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 18),
+              );
+            }).toList(),
+          ),
+          if (widget.workoutType != null) ...[
+            const SizedBox(height: 18),
+            _SectionLabel('DISTANCE'),
+            const SizedBox(height: 10),
+            _DistancePicker(
+              presets: sportById(widget.workoutType)!.presets,
+              selected: widget.targetDistanceKm,
+              customOpen: _customOpen,
+              customController: _customController,
+              onPreset: (km) {
+                setState(() {
+                  _customOpen = false;
+                  _customController.clear();
+                });
+                widget.onTargetDistance(km);
+              },
+              onToggleCustom: () => setState(() {
+                _customOpen = !_customOpen;
+                if (_customOpen) {
+                  widget.onTargetDistance(null);
+                } else {
+                  _customController.clear();
+                }
+              }),
+              onCustomChanged: (v) {
+                final km = double.tryParse(v.trim().replaceAll(',', '.'));
+                widget.onTargetDistance(km != null && km > 0 ? km : null);
+              },
+            ),
+          ],
+          const SizedBox(height: 18),
+        ],
+        _SectionLabel('DURATION'),
+        const SizedBox(height: 4),
         Text(
-          'DURATION',
+          widget.challengeType == ChallengeType.workout
+              ? 'Time window to log your effort'
+              : 'How long the score battle runs',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
             color: context.srTextDim,
-            letterSpacing: 0.15 * 10,
           ),
         ),
         const SizedBox(height: 10),
         Row(
-          children: durations.map((d) {
-            final (id, label) = d;
-            final active = duration == id;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => onDuration(id),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(vertical: 9),
-                  decoration: BoxDecoration(
-                    color: active
-                        ? context.srLime.withAlpha(0x1A)
-                        : context.srTintXs,
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      color: active ? context.srLime : context.srLine,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      label,
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+          children:
+              const [
+                ('1d', '24h'),
+                ('3d', '3 days'),
+                ('7d', '1 week'),
+                ('30d', '30 days'),
+              ].map((d) {
+                final (id, label) = d;
+                final active = widget.duration == id;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => widget.onDuration(id),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 9),
+                      decoration: BoxDecoration(
                         color: active
-                            ? context.srLimeText
-                            : context.srTextMuted,
+                            ? context.srLime.withAlpha(0x1A)
+                            : context.srTintXs,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: active ? context.srLime : context.srLine,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          label,
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: active
+                                ? context.srLimeText
+                                : context.srTextMuted,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         ),
       ],
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: GoogleFonts.jetBrainsMono(
+      fontSize: 10,
+      color: context.srTextDim,
+      letterSpacing: 0.15 * 10,
+    ),
+  );
+}
+
+class _DistancePicker extends StatelessWidget {
+  const _DistancePicker({
+    required this.presets,
+    required this.selected,
+    required this.customOpen,
+    required this.customController,
+    required this.onPreset,
+    required this.onToggleCustom,
+    required this.onCustomChanged,
+  });
+  final List<double> presets;
+  final double? selected;
+  final bool customOpen;
+  final TextEditingController customController;
+  final ValueChanged<double> onPreset;
+  final VoidCallback onToggleCustom;
+  final ValueChanged<String> onCustomChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...presets.map((km) {
+              final active = !customOpen && selected == km;
+              return _Chip(
+                label: WorkoutFormat.distance(km),
+                active: active,
+                onTap: () => onPreset(km),
+              );
+            }),
+            _Chip(label: '+ Custom', active: customOpen, onTap: onToggleCustom),
+          ],
+        ),
+        if (customOpen) ...[
+          const SizedBox(height: 10),
+          TextField(
+            controller: customController,
+            autofocus: true,
+            onChanged: onCustomChanged,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 14,
+              color: context.srText,
+            ),
+            decoration: InputDecoration(
+              suffixText: 'km',
+              suffixStyle: GoogleFonts.spaceGrotesk(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: context.srLimeText,
+              ),
+              hintText: 'e.g. 8',
+              hintStyle: GoogleFonts.jetBrainsMono(
+                fontSize: 13,
+                color: context.srTextDim,
+              ),
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+              filled: true,
+              fillColor: context.srTintXs,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: context.srLine),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: context.srLime),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: context.srLine),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({required this.label, required this.active, required this.onTap});
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        decoration: BoxDecoration(
+          color: active ? context.srLime.withAlpha(0x1A) : context.srTintXs,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: active ? context.srLime : context.srLine),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: active ? context.srLimeText : context.srTextMuted,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 
 class Reward {
@@ -32,6 +33,9 @@ class ComposerState {
     this.step = 1,
     this.opponent,
     this.metric = 'total',
+    this.challengeType = ChallengeType.score,
+    this.workoutType,
+    this.targetDistanceKm,
     this.duration = '1d',
     this.reward,
     this.sending = false,
@@ -43,14 +47,26 @@ class ComposerState {
   final int step;
   final ComposerUser? opponent;
   final String metric;
+  final ChallengeType challengeType;
+  final String? workoutType;
+  final double? targetDistanceKm;
   final String duration;
   final Reward? reward;
   final bool sending;
   final bool sent;
 
+  bool get isWorkout => challengeType == ChallengeType.workout;
+
   bool get canContinue {
     if (step == 1) return opponent != null;
-    if (step == 2) return duration.isNotEmpty;
+    if (step == 2) {
+      if (isWorkout) {
+        return workoutType != null &&
+            (targetDistanceKm ?? 0) > 0 &&
+            duration.isNotEmpty;
+      }
+      return duration.isNotEmpty;
+    }
     if (step == 3) return reward != null && reward!.label.isNotEmpty;
     return false;
   }
@@ -61,6 +77,9 @@ class ComposerState {
     int? step,
     ComposerUser? opponent,
     String? metric,
+    ChallengeType? challengeType,
+    String? Function()? workoutType,
+    double? Function()? targetDistanceKm,
     String? duration,
     Reward? Function()? reward,
     bool? sending,
@@ -71,6 +90,11 @@ class ComposerState {
     step: step ?? this.step,
     opponent: opponent ?? this.opponent,
     metric: metric ?? this.metric,
+    challengeType: challengeType ?? this.challengeType,
+    workoutType: workoutType != null ? workoutType() : this.workoutType,
+    targetDistanceKm: targetDistanceKm != null
+        ? targetDistanceKm()
+        : this.targetDistanceKm,
     duration: duration ?? this.duration,
     reward: reward != null ? reward() : this.reward,
     sending: sending ?? this.sending,

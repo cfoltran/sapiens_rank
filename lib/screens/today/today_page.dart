@@ -7,6 +7,7 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/today_skeleton.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_cubit.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
+import 'package:sapiens_rank/screens/profile/profile_page.dart';
 import 'package:sapiens_rank/screens/today/widgets/harvest_hero.dart';
 import 'package:sapiens_rank/screens/today/widgets/sapie_coin.dart';
 import 'package:sapiens_rank/screens/today/widgets/sparkline_chart.dart';
@@ -191,6 +192,28 @@ class _LoadedBody extends StatelessWidget {
               children: [
                 Row(
                   children: [
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ProfilePage()),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.srBgElev,
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(color: context.srLineStrong),
+                        ),
+                        child: Icon(
+                          Icons.person_outline,
+                          color: context.srTextMuted,
+                          size: 18,
+                        ),
+                      ),
+                    ),
                     const Spacer(),
                     WalletPill(balance: balance, bump: walletBump),
                   ],

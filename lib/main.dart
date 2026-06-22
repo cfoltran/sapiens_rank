@@ -65,6 +65,7 @@ class _MaterialAppRouter extends StatelessWidget {
     final authService = context.watch<AuthService>();
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       theme: DkTheme.light(),
       darkTheme: DkTheme.dark(),
       themeMode: authService.themeMode,

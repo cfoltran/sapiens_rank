@@ -68,7 +68,7 @@ class WalletPill extends StatelessWidget {
       duration: const Duration(milliseconds: 260),
       curve: Curves.easeOutBack,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: SrColors.coin.withAlpha(0x1f),
           borderRadius: BorderRadius.circular(100),
@@ -77,12 +77,12 @@ class WalletPill extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SapieCoin(size: 15),
-            const SizedBox(width: 5),
+            const SapieCoin(size: 18),
+            const SizedBox(width: 6),
             Text(
               _formatBalance(balance),
               style: GoogleFonts.jetBrainsMono(
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: context.isDark ? SrColors.coinLight : SrColors.coinDeep,
               ),

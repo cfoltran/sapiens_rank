@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_cubit.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_state.dart';
+import 'package:sapiens_rank/common/widgets/sr_app_bar.dart';
 import 'package:sapiens_rank/screens/guild/widgets/create_guild_sheet.dart';
 import 'package:sapiens_rank/screens/guild/widgets/join_guild_sheet.dart';
 
@@ -33,22 +33,7 @@ class _GuildView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.srBg,
-      appBar: AppBar(
-        backgroundColor: context.srBg,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: context.srText),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'GUILD',
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 11,
-            color: context.srTextDim,
-            letterSpacing: 11 * 0.15,
-          ),
-        ),
-      ),
+      appBar: const SrAppBar(title: 'GUILD'),
       body: BlocBuilder<GuildCubit, DataState<GuildData>>(
         builder: (context, state) => state.when(
           success: (data) => data.isInGuild

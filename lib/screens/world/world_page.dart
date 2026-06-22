@@ -110,7 +110,7 @@ class _LoadedBody extends StatelessWidget {
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.fromLTRB(
                         18,
-                        24,
+                        18,
                         18,
                         100 + MediaQuery.of(context).padding.bottom,
                       ),
@@ -273,7 +273,6 @@ class _PodiumSlot extends StatelessWidget {
       children: [
         if (crown) ...[
           const Text('👑', style: TextStyle(fontSize: 22)),
-          const SizedBox(height: 4),
         ] else
           const SizedBox(height: 26),
         _Avatar(player: player, size: avatarSize),

@@ -6,6 +6,7 @@ import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
+import 'package:sapiens_rank/common/widgets/sr_app_bar.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_cubit.dart';
 import 'package:sapiens_rank/screens/profile/cubit/profile_state.dart';
 import 'package:sapiens_rank/screens/profile/widgets/body_sheet.dart';
@@ -42,6 +43,7 @@ class _LoadingBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const SrAppBar(title: 'PROFILE'),
       backgroundColor: context.srBg,
       body: Center(
         child: CircularProgressIndicator(color: context.srLime, strokeWidth: 2),
@@ -58,6 +60,7 @@ class _ErrorBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.srBg,
+      appBar: const SrAppBar(title: 'PROFILE'),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -97,20 +100,12 @@ class _LoadedBody extends StatelessWidget {
     final bottomPad = MediaQuery.of(context).padding.bottom + 96.0;
     return Scaffold(
       backgroundColor: context.srBg,
+      appBar: const SrAppBar(title: 'PROFILE'),
       body: SafeArea(
         bottom: false,
         child: ListView(
           padding: EdgeInsets.fromLTRB(18, 4, 18, bottomPad),
           children: [
-            Text(
-              'PROFILE',
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 11,
-                color: context.srTextDim,
-                letterSpacing: 11 * 0.15,
-              ),
-            ),
-            const SizedBox(height: 16),
             _IdentityCard(data: data),
             const SizedBox(height: 18),
             _TrendCard(data: data),
@@ -126,10 +121,10 @@ class _LoadedBody extends StatelessWidget {
             _SignOutRow(),
             const SizedBox(height: 12),
             _ContactRow(),
-            const SizedBox(height: 12),
-            _DeleteAccountRow(),
             const SizedBox(height: 18),
             _LegalLinks(),
+            const SizedBox(height: 16),
+            _DeleteAccountRow(),
           ],
         ),
       ),
@@ -189,8 +184,6 @@ class _IdentityCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              _ShareButton(),
             ],
           ),
           Padding(
@@ -277,22 +270,6 @@ class _ProfileAvatar extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ShareButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 38,
-      height: 38,
-      decoration: BoxDecoration(
-        color: context.srTintSm,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: context.srLineStrong),
-      ),
-      child: Icon(Icons.ios_share, color: context.srText, size: 17),
     );
   }
 }
@@ -1098,30 +1075,15 @@ class _DeleteAccountRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _confirmDelete(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: context.srRose.withAlpha(12),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: context.srRose.withAlpha(60)),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.delete_forever_outlined,
-              size: 18,
-              color: context.srRose,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Delete account',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: context.srRose,
-              ),
-            ),
-          ],
+      child: Center(
+        child: Text(
+          'Delete account',
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 11,
+            color: context.srRose.withAlpha(160),
+            decoration: TextDecoration.underline,
+            decorationColor: context.srRose.withAlpha(100),
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
+import 'package:sapiens_rank/services/sapies_service.dart';
 import 'package:sapiens_rank/services/score_service.dart';
 
 class TodayCubit extends Cubit<DataState<TodayData>> {
@@ -25,6 +26,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
             .getStreak(), // consecutive days (DB is up-to-date)
         ScoreService.instance.getPersonalScoreHistory(), // last 14 days from DB
         ProfileService.instance.getPersonalTargets(), // adaptive targets
+        SapiesService.instance.load(), // Sapie wallet (balance + harvested)
       ]);
 
       final snap = results[0] as HealthSnapshot;
@@ -32,6 +34,7 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
       final streak = results[2] as int;
       final dbHistory = results[3] as List<int>;
       final targets = results[4] as HealthTargets;
+      final wallet = results[5] as SapiesWallet;
 
       final bd = ScoreBreakdown.compute(snap, targets: targets);
 
@@ -132,11 +135,45 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
             workouts: snap.workouts,
             dailyExerciseMinutes: dailyExerciseMinutes,
             dailyExerciseTarget: targets.dailyExerciseMinutes,
+            sapiesBalance: wallet.balance,
+            harvestedToday: wallet.harvestedToday,
           ),
         ),
       );
     } catch (e, st) {
       emit(DataState.error('fetch_failed', error: e, stackTrace: st));
+    }
+  }
+
+  /// Collects today's uncollected Sapies. Drains the ring optimistically,
+  /// then reconciles the balance with the server (rolling back on failure).
+  Future<void> harvest() async {
+    final current = state.data;
+    if (current == null || current.harvestable <= 0) return;
+
+    emit(DataState.success(current.copyWith(harvestedToday: current.score)));
+
+    try {
+      final result = await SapiesService.instance.harvest();
+      final after = state.data;
+      if (after == null) return;
+      emit(
+        DataState.success(
+          after.copyWith(
+            sapiesBalance: result.balance,
+            harvestedToday: current.score,
+          ),
+        ),
+      );
+    } catch (_) {
+      final after = state.data;
+      if (after != null) {
+        emit(
+          DataState.success(
+            after.copyWith(harvestedToday: current.harvestedToday),
+          ),
+        );
+      }
     }
   }
 

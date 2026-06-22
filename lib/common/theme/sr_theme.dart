@@ -9,11 +9,13 @@ extension SrTheme on BuildContext {
   Color get srBgElev2 => isDark ? SrColors.bgElev2 : SrColors.surfaceLightElev;
 
   Color get srText => isDark ? SrColors.text : SrColors.textLight;
-  Color get srTextMuted => isDark ? SrColors.textMuted : SrColors.textLightMuted;
+  Color get srTextMuted =>
+      isDark ? SrColors.textMuted : SrColors.textLightMuted;
   Color get srTextDim => isDark ? SrColors.textDim : SrColors.textLightDim;
 
   Color get srLine => isDark ? SrColors.line : SrColors.lineLight;
-  Color get srLineStrong => isDark ? SrColors.lineStrong : SrColors.lineStrongLight;
+  Color get srLineStrong =>
+      isDark ? SrColors.lineStrong : SrColors.lineStrongLight;
 
   Color get srTintXxs => isDark ? SrColors.tintXxs : SrColors.tintXxsDark;
   Color get srTintXs => isDark ? SrColors.tintXs : SrColors.tintXsDark;
@@ -23,8 +25,10 @@ extension SrTheme on BuildContext {
 
   Color get srNavBg => isDark ? SrColors.navBg : SrColors.navBgLight;
   Color get srShadow => isDark ? SrColors.shadow : SrColors.shadowLight;
-  Color get srBgElev2Fade => isDark ? SrColors.bgElev2Fade : SrColors.bgElev2FadeLight;
-  Color get srBgElev2Opaque => isDark ? SrColors.bgElev2Opaque : SrColors.bgElev2OpaqueLight;
+  Color get srBgElev2Fade =>
+      isDark ? SrColors.bgElev2Fade : SrColors.bgElev2FadeLight;
+  Color get srBgElev2Opaque =>
+      isDark ? SrColors.bgElev2Opaque : SrColors.bgElev2OpaqueLight;
 
   /// Lime for fills, rings, progress bars — electric on dark, fluo on light.
   Color get srLime => isDark ? SrColors.lime : SrColors.limeLight;
@@ -34,6 +38,11 @@ extension SrTheme on BuildContext {
 
   /// Amber accent (rank / warmth).
   Color get srAmber => isDark ? SrColors.amber : SrColors.amberLight;
+
+  /// Sapie coin gold — same warm brass on both themes (gold reads on both).
+  Color get srCoin => SrColors.coin;
+  Color get srCoinLight => SrColors.coinLight;
+  Color get srCoinDeep => SrColors.coinDeep;
 
   /// Rose accent (negative / loss).
   Color get srRose => isDark ? SrColors.rose : SrColors.roseLight;

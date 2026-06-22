@@ -73,6 +73,11 @@ abstract final class SrColors {
   static const amber = Color(0xFFF0A64A);
   static const amberLight = Color(0xFFE8902F);
 
+  // Sapie coin — warm brass gold, distinct from amber
+  static const coin = Color(0xFFE0A72E);
+  static const coinLight = Color(0xFFF4CF6A);
+  static const coinDeep = Color(0xFFA9741A);
+
   // Rose
   static const rose = Color(0xFFFF6B7A);
   static const roseLight = Color(0xFFE0414F);

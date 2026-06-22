@@ -89,62 +89,81 @@ class _LoadedBody extends StatelessWidget {
       backgroundColor: context.srBg,
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [_Header(data: data)],
-              ),
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: context.read<WorldCubit>().load,
-                color: context.srLime,
-                backgroundColor: context.srBgElev,
-                child: ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(18, 24, 18, 16),
-                  children: [
-                    if (players.length >= 3) _Podium(players: players),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'RANK',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 10,
-                              color: context.srTextDim,
-                              letterSpacing: 10 * 0.2,
-                            ),
-                          ),
-                          Text(
-                            'TREND',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 10,
-                              color: context.srTextDim,
-                              letterSpacing: 10 * 0.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    ...listPlayers.map((p) => _PlayerRow(player: p)),
-                    if (showGap) ...[
-                      const SizedBox(height: 4),
-                      _GapIndicator(gapCount: myRank - players.length),
-                    ],
-                  ],
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [_Header(data: data)],
+                  ),
                 ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: context.read<WorldCubit>().load,
+                    color: context.srLime,
+                    backgroundColor: context.srBgElev,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(
+                        18,
+                        24,
+                        18,
+                        100 + MediaQuery.of(context).padding.bottom,
+                      ),
+                      children: [
+                        if (players.length >= 3) _Podium(players: players),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'RANK',
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 10,
+                                  color: context.srTextDim,
+                                  letterSpacing: 10 * 0.2,
+                                ),
+                              ),
+                              Text(
+                                'TREND',
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 10,
+                                  color: context.srTextDim,
+                                  letterSpacing: 10 * 0.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ...listPlayers.map((p) => _PlayerRow(player: p)),
+                        if (showGap) ...[
+                          const SizedBox(height: 4),
+                          _GapIndicator(gapCount: myRank - players.length),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom,
+                ),
+                child: _YouCard(data: data),
               ),
             ),
-            _YouCard(data: data),
-            SizedBox(height: MediaQuery.of(context).padding.bottom),
           ],
         ),
       ),
@@ -506,27 +525,16 @@ class _YouCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(18),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [context.srBgElev2Fade, context.srBgElev2Opaque],
-                ),
+                color: context.srNavBg,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: SrColors.lime.withAlpha(100),
                   width: 1.5,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: SrColors.lime.withAlpha(30),
-                    blurRadius: 20,
-                    spreadRadius: 0,
-                  ),
-                ],
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -48,6 +48,8 @@ class TodayData extends Equatable {
     required this.workouts,
     required this.dailyExerciseMinutes,
     required this.dailyExerciseTarget,
+    required this.sapiesBalance,
+    required this.harvestedToday,
   });
 
   final int score;
@@ -63,6 +65,30 @@ class TodayData extends Equatable {
   final int dailyExerciseMinutes;
   final int dailyExerciseTarget;
 
+  /// Running Sapie balance and how much of today's score is already collected.
+  final int sapiesBalance;
+  final int harvestedToday;
+
+  /// Coins still collectable from today's score.
+  int get harvestable => (score - harvestedToday).clamp(0, score);
+
+  TodayData copyWith({int? sapiesBalance, int? harvestedToday}) => TodayData(
+    score: score,
+    scoreHistory: scoreHistory,
+    scoreDelta: scoreDelta,
+    rankWorld: rankWorld,
+    rankCountry: rankCountry,
+    rankDelta: rankDelta,
+    countryFlag: countryFlag,
+    streak: streak,
+    metrics: metrics,
+    workouts: workouts,
+    dailyExerciseMinutes: dailyExerciseMinutes,
+    dailyExerciseTarget: dailyExerciseTarget,
+    sapiesBalance: sapiesBalance ?? this.sapiesBalance,
+    harvestedToday: harvestedToday ?? this.harvestedToday,
+  );
+
   @override
   List<Object?> get props => [
     score,
@@ -72,5 +98,7 @@ class TodayData extends Equatable {
     metrics,
     workouts,
     dailyExerciseMinutes,
+    sapiesBalance,
+    harvestedToday,
   ];
 }

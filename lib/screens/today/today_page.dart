@@ -7,7 +7,8 @@ import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/today_skeleton.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_cubit.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
-import 'package:sapiens_rank/screens/today/widgets/score_ring.dart';
+import 'package:sapiens_rank/screens/today/widgets/harvest_hero.dart';
+import 'package:sapiens_rank/screens/today/widgets/sapie_coin.dart';
 import 'package:sapiens_rank/screens/today/widgets/sparkline_chart.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
@@ -23,11 +24,66 @@ class TodayPage extends StatefulWidget {
 class _TodayPageState extends State<TodayPage> {
   String? _openMetricKey;
 
+  bool _walletBump = false;
+  int _lastBalance = 0;
+  bool _seenData = false;
+
+  /// Reacts to a balance increase (a harvest landing) with the toast + bump.
+  /// The first data emission only seeds [_lastBalance] so loads don't toast.
+  void _onWalletChanged(TodayData data) {
+    final delta = data.sapiesBalance - _lastBalance;
+    final firstSight = !_seenData;
+    _lastBalance = data.sapiesBalance;
+    _seenData = true;
+    if (firstSight || delta <= 0) return;
+
+    // Slight delay so the coins appear to land before the wallet ticks up.
+    Future.delayed(const Duration(milliseconds: 450), () {
+      if (!mounted) return;
+      _showHarvestToast(delta);
+      setState(() => _walletBump = true);
+      Future.delayed(const Duration(milliseconds: 520), () {
+        if (mounted) setState(() => _walletBump = false);
+      });
+    });
+  }
+
+  void _showHarvestToast(int amount) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: SrColors.coin,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(milliseconds: 2200),
+          shape: const StadiumBorder(),
+          width: 240,
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SapieCoin(size: 16),
+              const SizedBox(width: 8),
+              Text(
+                '+$amount Sapies harvested',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF15130F),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => TodayCubit()..load(),
-      child: BlocBuilder<TodayCubit, DataState<TodayData>>(
+      child: BlocConsumer<TodayCubit, DataState<TodayData>>(
+        listenWhen: (_, curr) => curr.data != null,
+        listener: (ctx, state) => _onWalletChanged(state.data!),
         builder: (ctx, state) {
           if (state.status == DataStatus.loading) {
             return const TodayLoadingSkeleton();
@@ -38,6 +94,10 @@ class _TodayPageState extends State<TodayPage> {
           final data = state.data!;
           return _LoadedBody(
             data: data,
+            balance: data.sapiesBalance,
+            walletBump: _walletBump,
+            harvestable: data.harvestable,
+            onHarvest: () => ctx.read<TodayCubit>().harvest(),
             openMetricKey: _openMetricKey,
             onMetricTap: (key) => setState(
               () => _openMetricKey = _openMetricKey == key ? null : key,
@@ -91,6 +151,10 @@ class _ErrorBody extends StatelessWidget {
 class _LoadedBody extends StatelessWidget {
   const _LoadedBody({
     required this.data,
+    required this.balance,
+    required this.walletBump,
+    required this.harvestable,
+    required this.onHarvest,
     required this.openMetricKey,
     required this.onMetricTap,
     required this.onRefresh,
@@ -98,6 +162,10 @@ class _LoadedBody extends StatelessWidget {
   });
 
   final TodayData data;
+  final int balance;
+  final bool walletBump;
+  final int harvestable;
+  final VoidCallback onHarvest;
   final String? openMetricKey;
   final ValueChanged<String> onMetricTap;
   final Future<void> Function() onRefresh;
@@ -121,7 +189,20 @@ class _LoadedBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Center(child: ScoreRing(score: data.score.toDouble())),
+                Row(
+                  children: [
+                    const Spacer(),
+                    WalletPill(balance: balance, bump: walletBump),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Center(
+                  child: HarvestHero(
+                    score: data.score,
+                    harvestable: harvestable,
+                    onHarvest: onHarvest,
+                  ),
+                ),
                 const SizedBox(height: 10),
                 _DeltaRow(
                   scoreDelta: data.scoreDelta,

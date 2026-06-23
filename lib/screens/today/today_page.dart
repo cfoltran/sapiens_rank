@@ -6,6 +6,7 @@ import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/today_skeleton.dart';
 import 'package:sapiens_rank/common/widgets/sr_pill.dart';
+import 'package:sapiens_rank/models/announcement.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_cubit.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
 import 'package:sapiens_rank/screens/profile/profile_page.dart';
@@ -16,10 +17,16 @@ import 'package:sapiens_rank/screens/today/widgets/sparkline_chart.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
 class TodayPage extends StatefulWidget {
-  const TodayPage({super.key, this.onNavigateToWorld, this.onNavigateToBattle});
+  const TodayPage({
+    super.key,
+    this.onNavigateToWorld,
+    this.onNavigateToBattle,
+    this.onOpenLink,
+  });
 
   final VoidCallback? onNavigateToWorld;
   final VoidCallback? onNavigateToBattle;
+  final ValueChanged<String>? onOpenLink;
 
   @override
   State<TodayPage> createState() => _TodayPageState();
@@ -109,6 +116,10 @@ class _TodayPageState extends State<TodayPage> {
             onRefresh: () => ctx.read<TodayCubit>().load(),
             onNavigateToWorld: widget.onNavigateToWorld,
             onNavigateToBattle: widget.onNavigateToBattle,
+            announcements: data.announcements,
+            onOpenLink: widget.onOpenLink,
+            onDismissAnnouncement: (id) =>
+                ctx.read<TodayCubit>().dismissAnnouncement(id),
           );
         },
       ),
@@ -153,6 +164,90 @@ class _ErrorBody extends StatelessWidget {
   }
 }
 
+class _AnnouncementBanner extends StatelessWidget {
+  const _AnnouncementBanner({
+    required this.announcement,
+    required this.onDismiss,
+    this.onOpenLink,
+  });
+
+  final Announcement announcement;
+  final VoidCallback onDismiss;
+  final ValueChanged<String>? onOpenLink;
+
+  @override
+  Widget build(BuildContext context) {
+    final link = announcement.link;
+    final tappable = link != null && onOpenLink != null;
+
+    return GestureDetector(
+      onTap: tappable ? () => onOpenLink!(link) : null,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+        decoration: BoxDecoration(
+          color: context.srAmber.withAlpha(20),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: context.srAmber.withAlpha(60)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.campaign_outlined, size: 18, color: context.srAmber),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    announcement.body,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: context.srText,
+                      height: 1.35,
+                    ),
+                  ),
+                  if (tappable) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          announcement.linkLabel ?? 'En savoir plus',
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: context.srAmber,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 12,
+                          color: context.srAmber,
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: onDismiss,
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Icon(Icons.close, size: 16, color: context.srTextMuted),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _LoadedBody extends StatelessWidget {
   const _LoadedBody({
     required this.data,
@@ -163,8 +258,11 @@ class _LoadedBody extends StatelessWidget {
     required this.openMetricKey,
     required this.onMetricTap,
     required this.onRefresh,
+    required this.announcements,
+    required this.onDismissAnnouncement,
     this.onNavigateToWorld,
     this.onNavigateToBattle,
+    this.onOpenLink,
   });
 
   final TodayData data;
@@ -175,8 +273,11 @@ class _LoadedBody extends StatelessWidget {
   final String? openMetricKey;
   final ValueChanged<String> onMetricTap;
   final Future<void> Function() onRefresh;
+  final List<Announcement> announcements;
+  final ValueChanged<String> onDismissAnnouncement;
   final VoidCallback? onNavigateToWorld;
   final VoidCallback? onNavigateToBattle;
+  final ValueChanged<String>? onOpenLink;
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +330,15 @@ class _LoadedBody extends StatelessWidget {
                   scoreDelta: data.scoreDelta,
                   history: data.scoreHistory,
                 ),
-                const SizedBox(height: 20),
+                for (final a in announcements) ...[
+                  const SizedBox(height: 16),
+                  _AnnouncementBanner(
+                    announcement: a,
+                    onOpenLink: onOpenLink,
+                    onDismiss: () => onDismissAnnouncement(a.id),
+                  ),
+                ],
+                const SizedBox(height: 8),
                 _RankTeaserCard(data: data, onTap: onNavigateToWorld),
                 const SizedBox(height: 8),
                 if (data.workouts.isNotEmpty) ...[

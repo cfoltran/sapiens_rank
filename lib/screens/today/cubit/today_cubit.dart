@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/screens/today/cubit/today_state.dart';
+import 'package:sapiens_rank/services/announcement_service.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 import 'package:sapiens_rank/services/profile_service.dart';
 import 'package:sapiens_rank/services/sapies_service.dart';
@@ -140,9 +141,21 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
           ),
         ),
       );
+
+      // Announcements load separately so a slow/failed fetch never delays
+      // the Today screen — the banner just appears once it resolves.
+      _loadAnnouncements();
     } catch (e, st) {
       emit(DataState.error('fetch_failed', error: e, stackTrace: st));
     }
+  }
+
+  Future<void> _loadAnnouncements() async {
+    final announcements = await AnnouncementService.instance.getActive();
+    if (announcements.isEmpty) return;
+    final current = state.data;
+    if (current == null) return;
+    emit(DataState.success(current.copyWith(announcements: announcements)));
   }
 
   /// Collects today's uncollected Sapies. Drains the ring optimistically,
@@ -175,6 +188,21 @@ class TodayCubit extends Cubit<DataState<TodayData>> {
         );
       }
     }
+  }
+
+  Future<void> dismissAnnouncement(String id) async {
+    final current = state.data;
+    if (current == null) return;
+    emit(
+      DataState.success(
+        current.copyWith(
+          announcements: current.announcements
+              .where((a) => a.id != id)
+              .toList(),
+        ),
+      ),
+    );
+    await AnnouncementService.instance.dismiss(id);
   }
 
   static String _countryFlag(String code) => code

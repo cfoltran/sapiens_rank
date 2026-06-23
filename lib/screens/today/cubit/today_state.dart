@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sapiens_rank/models/announcement.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
 class TodayMetric extends Equatable {
@@ -50,6 +51,7 @@ class TodayData extends Equatable {
     required this.dailyExerciseTarget,
     required this.sapiesBalance,
     required this.harvestedToday,
+    this.announcements = const [],
   });
 
   final int score;
@@ -69,10 +71,17 @@ class TodayData extends Equatable {
   final int sapiesBalance;
   final int harvestedToday;
 
+  /// Active in-app announcements (banners), already filtered of dismissals.
+  final List<Announcement> announcements;
+
   /// Coins still collectable from today's score.
   int get harvestable => (score - harvestedToday).clamp(0, score);
 
-  TodayData copyWith({int? sapiesBalance, int? harvestedToday}) => TodayData(
+  TodayData copyWith({
+    int? sapiesBalance,
+    int? harvestedToday,
+    List<Announcement>? announcements,
+  }) => TodayData(
     score: score,
     scoreHistory: scoreHistory,
     scoreDelta: scoreDelta,
@@ -87,6 +96,7 @@ class TodayData extends Equatable {
     dailyExerciseTarget: dailyExerciseTarget,
     sapiesBalance: sapiesBalance ?? this.sapiesBalance,
     harvestedToday: harvestedToday ?? this.harvestedToday,
+    announcements: announcements ?? this.announcements,
   );
 
   @override
@@ -100,5 +110,6 @@ class TodayData extends Equatable {
     dailyExerciseMinutes,
     sapiesBalance,
     harvestedToday,
+    announcements,
   ];
 }

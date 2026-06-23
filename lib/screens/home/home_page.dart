@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/challenge_page.dart';
 import 'package:sapiens_rank/screens/challenge/sheets/invite_sheet.dart';
@@ -64,6 +65,35 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Hybrid link handler for announcement banners: http(s) opens the browser,
+  /// app schemes (challenge://, map://, today://) route in-app.
+  Future<void> _openLink(String link) async {
+    final uri = Uri.tryParse(link);
+    if (uri == null) return;
+
+    if (uri.scheme == 'http' || uri.scheme == 'https') {
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
+      return;
+    }
+
+    switch (uri.scheme) {
+      case 'challenge':
+        if (uri.host == 'result' && uri.pathSegments.isNotEmpty) {
+          _handleChallengeResult(uri.pathSegments.first);
+        } else if (uri.host.isNotEmpty && uri.host != 'list') {
+          _handleChallengeInvite(uri.host);
+        } else {
+          _switchTab(2);
+        }
+      case 'map':
+        _switchTab(3);
+      case 'today':
+        _switchTab(0);
+      default:
+        if (await canLaunchUrl(uri)) await launchUrl(uri);
+    }
+  }
+
   void _switchTab(int index) => setState(() => _tab = index);
 
   @override
@@ -77,6 +107,7 @@ class _HomePageState extends State<HomePage> {
           TodayPage(
             onNavigateToWorld: () => _switchTab(1),
             onNavigateToBattle: () => _switchTab(3),
+            onOpenLink: _openLink,
           ),
           const WorldPage(),
           ChallengePage(key: _challengeKey),

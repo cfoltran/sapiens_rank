@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/profile_skeleton.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
@@ -25,28 +26,13 @@ class ProfilePage extends StatelessWidget {
       child: BlocBuilder<ProfileCubit, DataState<ProfileData>>(
         builder: (ctx, state) {
           if (state.status == DataStatus.loading) {
-            return const _LoadingBody();
+            return const ProfileLoadingSkeleton();
           }
           if (state.status == DataStatus.error || state.data == null) {
             return _ErrorBody(onRetry: () => ctx.read<ProfileCubit>().load());
           }
           return _LoadedBody(data: state.data!);
         },
-      ),
-    );
-  }
-}
-
-class _LoadingBody extends StatelessWidget {
-  const _LoadingBody();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const SrAppBar(title: 'PROFILE'),
-      backgroundColor: context.srBg,
-      body: Center(
-        child: CircularProgressIndicator(color: context.srLime, strokeWidth: 2),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/common/theme/guild_skeleton.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_cubit.dart';
@@ -40,12 +41,7 @@ class _GuildView extends StatelessWidget {
           success: (data) => data.isInGuild
               ? _GuildBody(data: data)
               : _NoGuildBody(takenColors: data.takenColors),
-          loading: () => Center(
-            child: CircularProgressIndicator(
-              color: context.srLime,
-              strokeWidth: 2,
-            ),
-          ),
+          loading: () => const GuildLoadingSkeleton(),
           error: (_) => Center(
             child: TextButton(
               onPressed: () => context.read<GuildCubit>().load(),

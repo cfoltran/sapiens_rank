@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
+import 'package:sapiens_rank/common/theme/challenge_skeleton.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_cubit.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
@@ -98,9 +99,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
                   ),
                   Expanded(
                     child: switch (state.status) {
-                      DataStatus.loading => const Center(
-                        child: CircularProgressIndicator(color: SrColors.lime),
-                      ),
+                      DataStatus.loading => const ChallengeLoadingSkeleton(),
                       DataStatus.error => Center(
                         child: GestureDetector(
                           onTap: cubit.load,

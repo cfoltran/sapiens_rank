@@ -4,6 +4,7 @@ import 'package:sapiens_rank/models/booster.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/services/guild_service.dart';
 import 'package:sapiens_rank/services/map_service.dart';
+import 'package:sapiens_rank/services/sapies_service.dart';
 import 'map_state.dart';
 
 class MapCubit extends Cubit<DataState<MapData>> {
@@ -19,11 +20,13 @@ class MapCubit extends Cubit<DataState<MapData>> {
         _mapService.fetchTerritories(),
         _mapService.fetchActiveAttacks(),
         _guildService.fetchMyGuild(),
+        SapiesService.instance.load(),
       ]);
 
       final territories = results[0] as List<Territory>;
       final attacks = results[1] as List<Attack>;
       final myGuild = results[2] as GuildRow?;
+      final wallet = results[3] as SapiesWallet;
 
       emit(
         DataState.success(
@@ -31,6 +34,7 @@ class MapCubit extends Cubit<DataState<MapData>> {
             territories: territories,
             activeAttacks: attacks,
             myGuildId: myGuild?.id,
+            sapiesBalance: wallet.balance,
           ),
         ),
       );

@@ -1,0 +1,822 @@
+{
+  "/Users/clem/apps/sapiens_rank/.mcp.json": {
+    "mtime": 1779953650.167904,
+    "ast_hash": "a54f904e9f230a51587c0b849f780800",
+    "semantic_hash": "a54f904e9f230a51587c0b849f780800"
+  },
+  "/Users/clem/apps/sapiens_rank/firebase.json": {
+    "mtime": 1780056496.2033617,
+    "ast_hash": "3a567c3f28a0d2ab13300bf460b52496",
+    "semantic_hash": "3a567c3f28a0d2ab13300bf460b52496"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/data/countries.dart": {
+    "mtime": 1781624705.3352864,
+    "ast_hash": "6673a25f5ce3ece0bdb5d01b1c97afac",
+    "semantic_hash": "6673a25f5ce3ece0bdb5d01b1c97afac"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/data_state.dart": {
+    "mtime": 1779964676.2282407,
+    "ast_hash": "4125d6e650168301add148adad3ba6ed",
+    "semantic_hash": "4125d6e650168301add148adad3ba6ed"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/helpers/guild_visuals.dart": {
+    "mtime": 1781624705.335471,
+    "ast_hash": "7c45c3ee16f4e85b6a78852f6f3d4775",
+    "semantic_hash": "7c45c3ee16f4e85b6a78852f6f3d4775"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/helpers/l10n_helper.dart": {
+    "mtime": 1779964676.2306235,
+    "ast_hash": "a2a51b9159dcfe775f8fabdc4a09121b",
+    "semantic_hash": "a2a51b9159dcfe775f8fabdc4a09121b"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/colors.dart": {
+    "mtime": 1782147897.710065,
+    "ast_hash": "d95af6addbe932bfe27757c45ca4ceb7",
+    "semantic_hash": "d95af6addbe932bfe27757c45ca4ceb7"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/skeleton.dart": {
+    "mtime": 1782165303.199878,
+    "ast_hash": "86d26c9bfec743b417cca635e0ca2ccf",
+    "semantic_hash": "86d26c9bfec743b417cca635e0ca2ccf"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/sr_slider.dart": {
+    "mtime": 1780583279.5192957,
+    "ast_hash": "d99450ea815e6675e08dd13963d01c21",
+    "semantic_hash": "d99450ea815e6675e08dd13963d01c21"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/sr_text_styles.dart": {
+    "mtime": 1779964676.2256966,
+    "ast_hash": "28fcd6a38ee36f67cd88057032852216",
+    "semantic_hash": "28fcd6a38ee36f67cd88057032852216"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/sr_theme.dart": {
+    "mtime": 1782147897.7103488,
+    "ast_hash": "9df589f2ed2cd2d2496a564ee8b5683b",
+    "semantic_hash": "9df589f2ed2cd2d2496a564ee8b5683b"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/theme.dart": {
+    "mtime": 1780254155.643552,
+    "ast_hash": "b66dd8787bc60c81d70a4ea410297a32",
+    "semantic_hash": "b66dd8787bc60c81d70a4ea410297a32"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/today_skeleton.dart": {
+    "mtime": 1780645352.4385703,
+    "ast_hash": "bc939a6da1f83788ad4b57dba7db3d1f",
+    "semantic_hash": "bc939a6da1f83788ad4b57dba7db3d1f"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/theme/world_skeleton.dart": {
+    "mtime": 1780254155.644029,
+    "ast_hash": "63260f0f88ba95cefb7579e8641798f2",
+    "semantic_hash": "63260f0f88ba95cefb7579e8641798f2"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/widgets/guild_avatar.dart": {
+    "mtime": 1781509736.8887372,
+    "ast_hash": "a47825ba2f1dbc4d1c8ae00b5ad0a40a",
+    "semantic_hash": "a47825ba2f1dbc4d1c8ae00b5ad0a40a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/widgets/sr_bottom_sheet.dart": {
+    "mtime": 1781425864.9052691,
+    "ast_hash": "37d5a3f2d2cc7c06425e9a3afe6ddecb",
+    "semantic_hash": "37d5a3f2d2cc7c06425e9a3afe6ddecb"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/common/widgets/sr_slider_card.dart": {
+    "mtime": 1781425864.9056962,
+    "ast_hash": "26804cbcd6ae3419730a3b4848beb1da",
+    "semantic_hash": "26804cbcd6ae3419730a3b4848beb1da"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/firebase_options.dart": {
+    "mtime": 1780056496.2048533,
+    "ast_hash": "20f069d1e653f94bd49e55b5027d645f",
+    "semantic_hash": "20f069d1e653f94bd49e55b5027d645f"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/l10n/app_localizations.dart": {
+    "mtime": 1782163752.137322,
+    "ast_hash": "96ab4629c9d6a00b2c4970b0323827c9",
+    "semantic_hash": "96ab4629c9d6a00b2c4970b0323827c9"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/l10n/app_localizations_en.dart": {
+    "mtime": 1782163752.1057277,
+    "ast_hash": "1c0d37c7ff229d74d15aba2807312836",
+    "semantic_hash": "1c0d37c7ff229d74d15aba2807312836"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/main.dart": {
+    "mtime": 1782161747.8502853,
+    "ast_hash": "adffe6bff283d77b481d221d3bff0020",
+    "semantic_hash": "adffe6bff283d77b481d221d3bff0020"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/challenge_models.dart": {
+    "mtime": 1782078886.5774014,
+    "ast_hash": "2bd11cf1086ca633974d5b174127db89",
+    "semantic_hash": "2bd11cf1086ca633974d5b174127db89"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/challenge_models.g.dart": {
+    "mtime": 1782078886.577752,
+    "ast_hash": "da62878c3ea175936cfde4bfeffa3620",
+    "semantic_hash": "da62878c3ea175936cfde4bfeffa3620"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/guild_models.dart": {
+    "mtime": 1782164645.0042686,
+    "ast_hash": "310f95942d785e739fe84094cc2de28c",
+    "semantic_hash": "310f95942d785e739fe84094cc2de28c"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/guild_models.g.dart": {
+    "mtime": 1782164655.0227559,
+    "ast_hash": "81c4c381b1f32e28214f32da05e8b31d",
+    "semantic_hash": "81c4c381b1f32e28214f32da05e8b31d"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/habits_data.dart": {
+    "mtime": 1780583753.2557058,
+    "ast_hash": "5df1ec0132a000631a65acb6b7513c69",
+    "semantic_hash": "5df1ec0132a000631a65acb6b7513c69"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/habits_data.g.dart": {
+    "mtime": 1780583752.861931,
+    "ast_hash": "0898527e7eaef5b287369c0a9a1574e1",
+    "semantic_hash": "0898527e7eaef5b287369c0a9a1574e1"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/health_targets.dart": {
+    "mtime": 1780753871.391582,
+    "ast_hash": "cd0c5b3cb574e760b581892f9965ca0c",
+    "semantic_hash": "cd0c5b3cb574e760b581892f9965ca0c"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/health_targets.g.dart": {
+    "mtime": 1780753874.5825713,
+    "ast_hash": "6c46c95016d75d036512c2e38b967a38",
+    "semantic_hash": "6c46c95016d75d036512c2e38b967a38"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/leaderboard_entry.dart": {
+    "mtime": 1780469709.4218404,
+    "ast_hash": "97b6637a9826793287846cb18c1c4f21",
+    "semantic_hash": "97b6637a9826793287846cb18c1c4f21"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/models/score_breakdown.dart": {
+    "mtime": 1781509736.8899157,
+    "ast_hash": "db485735b10587aeca793906c3063ac0",
+    "semantic_hash": "db485735b10587aeca793906c3063ac0"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/routing/router.dart": {
+    "mtime": 1780056496.2052712,
+    "ast_hash": "adb2ff48ef72e32af80d91fd676b9325",
+    "semantic_hash": "adb2ff48ef72e32af80d91fd676b9325"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/challenge_page.dart": {
+    "mtime": 1782161735.1254694,
+    "ast_hash": "8bb238f4a49c52f3bb2cf975cd2cf8a2",
+    "semantic_hash": "8bb238f4a49c52f3bb2cf975cd2cf8a2"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/cubit/challenge_cubit.dart": {
+    "mtime": 1782078886.5784113,
+    "ast_hash": "54ae0b8bc61d594e62b83e356e179e74",
+    "semantic_hash": "54ae0b8bc61d594e62b83e356e179e74"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/cubit/challenge_state.dart": {
+    "mtime": 1782078886.5787246,
+    "ast_hash": "2f3ae05b9956957461e192aa5bf5be08",
+    "semantic_hash": "2f3ae05b9956957461e192aa5bf5be08"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/cubit/composer_cubit.dart": {
+    "mtime": 1782078886.578958,
+    "ast_hash": "fe3005eb733e28623bbb5b5d1bbaa071",
+    "semantic_hash": "fe3005eb733e28623bbb5b5d1bbaa071"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/cubit/composer_state.dart": {
+    "mtime": 1782078886.5792003,
+    "ast_hash": "8810115ed9766bc0c5ccf1173905d5e4",
+    "semantic_hash": "8810115ed9766bc0c5ccf1173905d5e4"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/cubit/invite_cubit.dart": {
+    "mtime": 1780300995.070452,
+    "ast_hash": "00c413676098cd0288946fa9565ec3d4",
+    "semantic_hash": "00c413676098cd0288946fa9565ec3d4"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/cubit/result_cubit.dart": {
+    "mtime": 1780308502.7593174,
+    "ast_hash": "873e51d26c1a77ec5d0f96849c2befb5",
+    "semantic_hash": "873e51d26c1a77ec5d0f96849c2befb5"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/sheets/composer_sheet.dart": {
+    "mtime": 1782078886.5794718,
+    "ast_hash": "c160e87774ba5e7bd893016c1396d8ab",
+    "semantic_hash": "c160e87774ba5e7bd893016c1396d8ab"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/sheets/invite_sheet.dart": {
+    "mtime": 1781425864.9072337,
+    "ast_hash": "1c950f8519903d28ecd04dc8081f60e7",
+    "semantic_hash": "1c950f8519903d28ecd04dc8081f60e7"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/sheets/result_sheet.dart": {
+    "mtime": 1782078886.57979,
+    "ast_hash": "737e4bcb22ffa6bb99a3e11e7db1fd3e",
+    "semantic_hash": "737e4bcb22ffa6bb99a3e11e7db1fd3e"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/challenge/workout_format.dart": {
+    "mtime": 1782078886.5799334,
+    "ast_hash": "6e15392f3194077b30bdc56b92c7181f",
+    "semantic_hash": "6e15392f3194077b30bdc56b92c7181f"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/guild/cubit/guild_cubit.dart": {
+    "mtime": 1782163661.4015136,
+    "ast_hash": "2c370d0d2750c47e0fe9e40dc8489b03",
+    "semantic_hash": "2c370d0d2750c47e0fe9e40dc8489b03"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/guild/cubit/guild_state.dart": {
+    "mtime": 1782163630.1818652,
+    "ast_hash": "b3b8d31ab9b864772322430720876768",
+    "semantic_hash": "b3b8d31ab9b864772322430720876768"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/guild/guild_page.dart": {
+    "mtime": 1782165262.4922178,
+    "ast_hash": "041e9354f3c427902a810db2e3780dc3",
+    "semantic_hash": "041e9354f3c427902a810db2e3780dc3"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/guild/widgets/create_guild_sheet.dart": {
+    "mtime": 1781509736.892542,
+    "ast_hash": "1eaa68e9d57314615c643e2f2f13a364",
+    "semantic_hash": "1eaa68e9d57314615c643e2f2f13a364"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/guild/widgets/join_guild_sheet.dart": {
+    "mtime": 1781509736.89284,
+    "ast_hash": "bbca287e5945cc7f71fc46a31529adb1",
+    "semantic_hash": "bbca287e5945cc7f71fc46a31529adb1"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/home/home_page.dart": {
+    "mtime": 1782162001.3463125,
+    "ast_hash": "c74b4c46e8df3939dce54a569ba8cdc6",
+    "semantic_hash": "c74b4c46e8df3939dce54a569ba8cdc6"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/cubit/map_cubit.dart": {
+    "mtime": 1782165907.8506746,
+    "ast_hash": "e2d5ce5c7c5fd5e14044712784b4585b",
+    "semantic_hash": "e2d5ce5c7c5fd5e14044712784b4585b"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/cubit/map_state.dart": {
+    "mtime": 1782165898.218973,
+    "ast_hash": "f80ef4a8c9856997ee425e0b681f7723",
+    "semantic_hash": "f80ef4a8c9856997ee425e0b681f7723"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/cubit/territory_members_cubit.dart": {
+    "mtime": 1781509736.8937907,
+    "ast_hash": "047889c6effafc96fc5458ee4d337e8a",
+    "semantic_hash": "047889c6effafc96fc5458ee4d337e8a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/game/ambiance_layer.dart": {
+    "mtime": 1781624705.3361642,
+    "ast_hash": "e410948771b4b68dc41e49d29b871e1a",
+    "semantic_hash": "e410948771b4b68dc41e49d29b871e1a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/game/attack_fx.dart": {
+    "mtime": 1782164676.586639,
+    "ast_hash": "960a59ece47d08540376135e79feb619",
+    "semantic_hash": "960a59ece47d08540376135e79feb619"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/game/hex_geometry.dart": {
+    "mtime": 1781624705.336374,
+    "ast_hash": "1e9a4439a5920ed40ba14ba4e257fe40",
+    "semantic_hash": "1e9a4439a5920ed40ba14ba4e257fe40"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/game/hex_tile.dart": {
+    "mtime": 1781624705.3365245,
+    "ast_hash": "bdf6027face54a0786006fbef182f8ba",
+    "semantic_hash": "bdf6027face54a0786006fbef182f8ba"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/game/map_game.dart": {
+    "mtime": 1782164680.8375874,
+    "ast_hash": "93bee17e261e294c5b891f8b8ea93e60",
+    "semantic_hash": "93bee17e261e294c5b891f8b8ea93e60"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/map_page.dart": {
+    "mtime": 1782166041.0020094,
+    "ast_hash": "cd9512f1d1ccfc1bd93936e57e63d777",
+    "semantic_hash": "cd9512f1d1ccfc1bd93936e57e63d777"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/widgets/attack_sheet.dart": {
+    "mtime": 1782166031.4749553,
+    "ast_hash": "08f663568b22b6aaa43723e2281e6937",
+    "semantic_hash": "08f663568b22b6aaa43723e2281e6937"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/widgets/battle_sheet.dart": {
+    "mtime": 1781624705.3374019,
+    "ast_hash": "bf0d49b48a6b4b0ff6e76bc3bdefc41b",
+    "semantic_hash": "bf0d49b48a6b4b0ff6e76bc3bdefc41b"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/widgets/rules_sheet.dart": {
+    "mtime": 1781509736.8948636,
+    "ast_hash": "ab7d4bd218e5ca83df9e289205d2886a",
+    "semantic_hash": "ab7d4bd218e5ca83df9e289205d2886a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/map/widgets/territory_info_sheet.dart": {
+    "mtime": 1781509736.8950806,
+    "ast_hash": "ddc2cd748781b93bf90375950ff1c248",
+    "semantic_hash": "ddc2cd748781b93bf90375950ff1c248"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/cubit/onboarding_cubit.dart": {
+    "mtime": 1781009734.5483778,
+    "ast_hash": "d1be5afd3c4032f751bd9b4a0bc3303e",
+    "semantic_hash": "d1be5afd3c4032f751bd9b4a0bc3303e"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/cubit/onboarding_state.dart": {
+    "mtime": 1781009737.642861,
+    "ast_hash": "ceb2ab712454a8b7c5bfd9d04c5ad4c5",
+    "semantic_hash": "ceb2ab712454a8b7c5bfd9d04c5ad4c5"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/onboarding_page.dart": {
+    "mtime": 1781009740.9849448,
+    "ast_hash": "6b34b971e7f8e1d214102ab09dc66957",
+    "semantic_hash": "6b34b971e7f8e1d214102ab09dc66957"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/sheets/email_auth_sheet.dart": {
+    "mtime": 1780139901.25889,
+    "ast_hash": "6b21ba980a316cb52abfef820dab5761",
+    "semantic_hash": "6b21ba980a316cb52abfef820dab5761"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/sheets/login_sheet.dart": {
+    "mtime": 1780254155.6448798,
+    "ast_hash": "628d4746966dcc75430ff3d4bcfd611d",
+    "semantic_hash": "628d4746966dcc75430ff3d4bcfd611d"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/age_step.dart": {
+    "mtime": 1780501106.8843718,
+    "ast_hash": "6341618eb5de566f0a54ca50bed1f84d",
+    "semantic_hash": "6341618eb5de566f0a54ca50bed1f84d"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/alcohol_step.dart": {
+    "mtime": 1781425864.9092174,
+    "ast_hash": "a3186b4f156bde605304d2771d28445a",
+    "semantic_hash": "a3186b4f156bde605304d2771d28445a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/auth_step.dart": {
+    "mtime": 1780501107.7480521,
+    "ast_hash": "39c319b2dfa5079c1019455d644aaedc",
+    "semantic_hash": "39c319b2dfa5079c1019455d644aaedc"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/bmi_step.dart": {
+    "mtime": 1781425864.90965,
+    "ast_hash": "4d3418f3d27adf73377ae60bbbf5a018",
+    "semantic_hash": "4d3418f3d27adf73377ae60bbbf5a018"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/country_step.dart": {
+    "mtime": 1781624705.3376203,
+    "ast_hash": "516f0be7a8bb8638b39426b9721d4aa0",
+    "semantic_hash": "516f0be7a8bb8638b39426b9721d4aa0"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/done_step.dart": {
+    "mtime": 1780489473.8432155,
+    "ast_hash": "7dcc842bce6ebb8b1b98ef4377fc5285",
+    "semantic_hash": "7dcc842bce6ebb8b1b98ef4377fc5285"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/first_challenge_step.dart": {
+    "mtime": 1780254566.6558313,
+    "ast_hash": "4683194598a2433d865d7132432813a0",
+    "semantic_hash": "4683194598a2433d865d7132432813a0"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/friends_step.dart": {
+    "mtime": 1780254461.0864768,
+    "ast_hash": "c435b28bd0a6905397db50719e8220bd",
+    "semantic_hash": "c435b28bd0a6905397db50719e8220bd"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/name_step.dart": {
+    "mtime": 1780501108.5356855,
+    "ast_hash": "57f759b715a0ceb5a812ec360ab9fd6f",
+    "semantic_hash": "57f759b715a0ceb5a812ec360ab9fd6f"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/notifications_step.dart": {
+    "mtime": 1780298341.5788462,
+    "ast_hash": "98efac20d6ad63bad8392eb3cc88b9ff",
+    "semantic_hash": "98efac20d6ad63bad8392eb3cc88b9ff"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/permission_step.dart": {
+    "mtime": 1781624705.3378105,
+    "ast_hash": "635a0b0c7600d602935081683325e192",
+    "semantic_hash": "635a0b0c7600d602935081683325e192"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/rank_reveal_step.dart": {
+    "mtime": 1780488840.70496,
+    "ast_hash": "f8a1b39414bc0ec47e364535220e897d",
+    "semantic_hash": "f8a1b39414bc0ec47e364535220e897d"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/score_reveal_step.dart": {
+    "mtime": 1780501109.3762326,
+    "ast_hash": "9939dee22d4b750e305e4e07568ae7ee",
+    "semantic_hash": "9939dee22d4b750e305e4e07568ae7ee"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/smoking_step.dart": {
+    "mtime": 1781425864.9099667,
+    "ast_hash": "e7d898eb63015d2a0271e79d9569897e",
+    "semantic_hash": "e7d898eb63015d2a0271e79d9569897e"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/sync_step.dart": {
+    "mtime": 1780500459.3323903,
+    "ast_hash": "762ad14ccc3eb076cdacd40ccb43d018",
+    "semantic_hash": "762ad14ccc3eb076cdacd40ccb43d018"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/target_step.dart": {
+    "mtime": 1781425864.9102793,
+    "ast_hash": "300442f431142df665fce321faaf381b",
+    "semantic_hash": "300442f431142df665fce321faaf381b"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/steps/welcome_step.dart": {
+    "mtime": 1781624705.3380404,
+    "ast_hash": "d820fb02706053c6964e89f6dc081f43",
+    "semantic_hash": "d820fb02706053c6964e89f6dc081f43"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/arena_button.dart": {
+    "mtime": 1781009744.446333,
+    "ast_hash": "488d8c3c43bf32a1ef8a13044620210a",
+    "semantic_hash": "488d8c3c43bf32a1ef8a13044620210a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/dot_field.dart": {
+    "mtime": 1780254155.647556,
+    "ast_hash": "29bdc4acc0c953af86bb54c855764c4f",
+    "semantic_hash": "29bdc4acc0c953af86bb54c855764c4f"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/habit_choice_card.dart": {
+    "mtime": 1781425864.9106655,
+    "ast_hash": "6466610273b3bad3f37bf0e90c465e30",
+    "semantic_hash": "6466610273b3bad3f37bf0e90c465e30"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/onboarding_text.dart": {
+    "mtime": 1780254155.6477025,
+    "ast_hash": "94df817a9ef96d3f6ae4b568cce676a8",
+    "semantic_hash": "94df817a9ef96d3f6ae4b568cce676a8"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/sr_selectable_card.dart": {
+    "mtime": 1780254155.647875,
+    "ast_hash": "b56188fb0677240c19359320904f1cb2",
+    "semantic_hash": "b56188fb0677240c19359320904f1cb2"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/sr_text_field.dart": {
+    "mtime": 1780254155.6480482,
+    "ast_hash": "e190576dcf925e66433baaed055cd783",
+    "semantic_hash": "e190576dcf925e66433baaed055cd783"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/onboarding/widgets/step_shell.dart": {
+    "mtime": 1780254155.6481867,
+    "ast_hash": "9a3cef5989bc482cacfd2d9e278ec6b6",
+    "semantic_hash": "9a3cef5989bc482cacfd2d9e278ec6b6"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/cubit/profile_cubit.dart": {
+    "mtime": 1781009749.1964893,
+    "ast_hash": "548a6aa17b179a39bcf1d9b3d669c658",
+    "semantic_hash": "548a6aa17b179a39bcf1d9b3d669c658"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/cubit/profile_state.dart": {
+    "mtime": 1782161991.1772833,
+    "ast_hash": "62f355d85fa0ea8a0398b125e9a04f2a",
+    "semantic_hash": "62f355d85fa0ea8a0398b125e9a04f2a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/profile_page.dart": {
+    "mtime": 1782161994.3401852,
+    "ast_hash": "1a2fb256804b63a0260a36eec7b79265",
+    "semantic_hash": "1a2fb256804b63a0260a36eec7b79265"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/widgets/body_sheet.dart": {
+    "mtime": 1781425864.9114995,
+    "ast_hash": "83f8c9a7915262c69856ff54a0c988d1",
+    "semantic_hash": "83f8c9a7915262c69856ff54a0c988d1"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/widgets/habits_sheet.dart": {
+    "mtime": 1781425864.9117393,
+    "ast_hash": "ac88cc4928d245ed430bcf289d0a27a7",
+    "semantic_hash": "ac88cc4928d245ed430bcf289d0a27a7"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/widgets/profile_sheet.dart": {
+    "mtime": 1781425864.9121115,
+    "ast_hash": "acf1b912a2ac822c87df13f87a84cddd",
+    "semantic_hash": "acf1b912a2ac822c87df13f87a84cddd"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/profile/widgets/targets_sheet.dart": {
+    "mtime": 1780756034.485666,
+    "ast_hash": "243f4a5dfd2b8f3b6754019616b2eaf0",
+    "semantic_hash": "243f4a5dfd2b8f3b6754019616b2eaf0"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/cubit/today_cubit.dart": {
+    "mtime": 1782147897.7106612,
+    "ast_hash": "cf130ace74e19ea2feb00c0d94f0b163",
+    "semantic_hash": "cf130ace74e19ea2feb00c0d94f0b163"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/cubit/today_state.dart": {
+    "mtime": 1782147897.710927,
+    "ast_hash": "7de28a4c92e735ee1ff05659b733a611",
+    "semantic_hash": "7de28a4c92e735ee1ff05659b733a611"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/today_page.dart": {
+    "mtime": 1782165262.4933875,
+    "ast_hash": "e9381861e5c078be09f4fc123c51a81a",
+    "semantic_hash": "e9381861e5c078be09f4fc123c51a81a"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/widgets/harvest_hero.dart": {
+    "mtime": 1782147897.711678,
+    "ast_hash": "405c145c309b690484cedb729b604c69",
+    "semantic_hash": "405c145c309b690484cedb729b604c69"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/widgets/sapie_coin.dart": {
+    "mtime": 1782165262.4928622,
+    "ast_hash": "35774e4b1c88bed7f0469612a631b7f6",
+    "semantic_hash": "35774e4b1c88bed7f0469612a631b7f6"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/widgets/score_ring.dart": {
+    "mtime": 1782161363.0767627,
+    "ast_hash": "028770470603f97799c4b94958beb29b",
+    "semantic_hash": "028770470603f97799c4b94958beb29b"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/today/widgets/sparkline_chart.dart": {
+    "mtime": 1779964676.1614947,
+    "ast_hash": "099abed078dcb9daccf8226e1db074a1",
+    "semantic_hash": "099abed078dcb9daccf8226e1db074a1"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/update/update_cubit.dart": {
+    "mtime": 1779964676.146407,
+    "ast_hash": "3b3a431c096f7be1bc4a83be4de35dfb",
+    "semantic_hash": "3b3a431c096f7be1bc4a83be4de35dfb"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/update/update_page.dart": {
+    "mtime": 1779964676.1486433,
+    "ast_hash": "891dfd777b514b4c7a0fd69e0fcd7335",
+    "semantic_hash": "891dfd777b514b4c7a0fd69e0fcd7335"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/world/cubit/world_cubit.dart": {
+    "mtime": 1780862752.6761672,
+    "ast_hash": "1df0277289467061ac2259992c4a1b37",
+    "semantic_hash": "1df0277289467061ac2259992c4a1b37"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/world/cubit/world_state.dart": {
+    "mtime": 1780862769.715481,
+    "ast_hash": "1986a11de5300e2951ed04b74026cefb",
+    "semantic_hash": "1986a11de5300e2951ed04b74026cefb"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/screens/world/world_page.dart": {
+    "mtime": 1782162148.2060866,
+    "ast_hash": "5ec8ff267463a03e9a6249c6cf453c06",
+    "semantic_hash": "5ec8ff267463a03e9a6249c6cf453c06"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/auth_service.dart": {
+    "mtime": 1780138686.3732662,
+    "ast_hash": "036a625df627c24b822c96d7764b4c32",
+    "semantic_hash": "036a625df627c24b822c96d7764b4c32"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/challenge_service.dart": {
+    "mtime": 1782078886.5802057,
+    "ast_hash": "1c9ecabfaf0db44f216164463b02fe54",
+    "semantic_hash": "1c9ecabfaf0db44f216164463b02fe54"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/guild_service.dart": {
+    "mtime": 1781509736.895951,
+    "ast_hash": "acb1075e3ae98a859861bb2e280e53d4",
+    "semantic_hash": "acb1075e3ae98a859861bb2e280e53d4"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/habits_service.dart": {
+    "mtime": 1781009751.3177824,
+    "ast_hash": "0ae4019abb0c38c5dbaa9f2ee79d0027",
+    "semantic_hash": "0ae4019abb0c38c5dbaa9f2ee79d0027"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/health_service.dart": {
+    "mtime": 1782078886.580465,
+    "ast_hash": "79e56929bea968633c2f35cc9d8895b8",
+    "semantic_hash": "79e56929bea968633c2f35cc9d8895b8"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/map_service.dart": {
+    "mtime": 1782165884.977679,
+    "ast_hash": "20e7cea9f210bea2fab86bc9027ecab6",
+    "semantic_hash": "20e7cea9f210bea2fab86bc9027ecab6"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/messaging_service.dart": {
+    "mtime": 1781509736.8963702,
+    "ast_hash": "fc82a3ccae545f034f7c5751bc70a326",
+    "semantic_hash": "fc82a3ccae545f034f7c5751bc70a326"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/notification_service.dart": {
+    "mtime": 1780298163.6626952,
+    "ast_hash": "3c4a550bf43fdeb501403b906db73b7e",
+    "semantic_hash": "3c4a550bf43fdeb501403b906db73b7e"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/profile_service.dart": {
+    "mtime": 1781009753.9309633,
+    "ast_hash": "e776c2e19f61abd2f65858c279f9f6f5",
+    "semantic_hash": "e776c2e19f61abd2f65858c279f9f6f5"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/sapies_service.dart": {
+    "mtime": 1782147897.7130852,
+    "ast_hash": "db8d6f35dd4862e8a599241db7c84db8",
+    "semantic_hash": "db8d6f35dd4862e8a599241db7c84db8"
+  },
+  "/Users/clem/apps/sapiens_rank/lib/services/score_service.dart": {
+    "mtime": 1782078886.5808237,
+    "ast_hash": "baa6b7e3ae9910ff442e8402f0a527b9",
+    "semantic_hash": "baa6b7e3ae9910ff442e8402f0a527b9"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/.temp/linked-project.json": {
+    "mtime": 1779376455.7074623,
+    "ast_hash": "4cbe38f43a543284e73a8bd5dc0c82fc",
+    "semantic_hash": "4cbe38f43a543284e73a8bd5dc0c82fc"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/functions/_utils/supabase.ts": {
+    "mtime": 1780056496.2077637,
+    "ast_hash": "088c75cd45320f0dfd2f1f1ed1401fbe",
+    "semantic_hash": "088c75cd45320f0dfd2f1f1ed1401fbe"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/functions/push/deno.json": {
+    "mtime": 1780056496.207967,
+    "ast_hash": "af84e44d5c8e2c89ab58060848ce672d",
+    "semantic_hash": "af84e44d5c8e2c89ab58060848ce672d"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/functions/push/index.ts": {
+    "mtime": 1780296589.351282,
+    "ast_hash": "4594486d27839ff773fcda4876c30d1d",
+    "semantic_hash": "4594486d27839ff773fcda4876c30d1d"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260526150634_create_profiles.sql": {
+    "mtime": 1779953650.1770122,
+    "ast_hash": "83e3788f5612b705bb228a6a4fae75ed",
+    "semantic_hash": "83e3788f5612b705bb228a6a4fae75ed"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260528095810_create_scores_and_leaderboard.sql": {
+    "mtime": 1779963913.1498692,
+    "ast_hash": "d4a3fcc1a91342815514c6b77f55e393",
+    "semantic_hash": "d4a3fcc1a91342815514c6b77f55e393"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260528150000_notifications.sql": {
+    "mtime": 1780056496.2083514,
+    "ast_hash": "598782f1f15d70c1778d127b231a286e",
+    "semantic_hash": "598782f1f15d70c1778d127b231a286e"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260529120000_challenges.sql": {
+    "mtime": 1780135692.841105,
+    "ast_hash": "5faec4bd913b737c1de048e3dbe41bdd",
+    "semantic_hash": "5faec4bd913b737c1de048e3dbe41bdd"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260529130000_fix_challenge_rls.sql": {
+    "mtime": 1780135692.8412187,
+    "ast_hash": "8d4df4981873999203b213189132e3d4",
+    "semantic_hash": "8d4df4981873999203b213189132e3d4"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260529140000_seed_fake_users.sql": {
+    "mtime": 1780135692.8413208,
+    "ast_hash": "e07b32b152cb29878ded12b9e2a15ca0",
+    "semantic_hash": "e07b32b152cb29878ded12b9e2a15ca0"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260531100000_challenge_invite_notification.sql": {
+    "mtime": 1780257298.3874314,
+    "ast_hash": "e900b25a2c22c3ac1e2c62dc11aef83c",
+    "semantic_hash": "e900b25a2c22c3ac1e2c62dc11aef83c"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260601120000_challenge_done_notification.sql": {
+    "mtime": 1780308502.7600296,
+    "ast_hash": "dfb2dcfc386f18ba46e33420a739af90",
+    "semantic_hash": "dfb2dcfc386f18ba46e33420a739af90"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260601130000_cron_jobs.sql": {
+    "mtime": 1780308502.7601388,
+    "ast_hash": "ff42f7d8460d9a0b6cb8d0b6296a5d52",
+    "semantic_hash": "ff42f7d8460d9a0b6cb8d0b6296a5d52"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260601140000_fix_close_expired_challenges.sql": {
+    "mtime": 1780308502.7602496,
+    "ast_hash": "ca2c1e0b5c840117517712a80a44b54d",
+    "semantic_hash": "ca2c1e0b5c840117517712a80a44b54d"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260602130000_daily_metrics.sql": {
+    "mtime": 1780426619.3926218,
+    "ast_hash": "d61530701e81674988fbba6059e8543e",
+    "semantic_hash": "d61530701e81674988fbba6059e8543e"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260602140000_profile_targets.sql": {
+    "mtime": 1780427316.422777,
+    "ast_hash": "046c6d001a70bec8806a574a520da80f",
+    "semantic_hash": "046c6d001a70bec8806a574a520da80f"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260602150000_profile_targets_defaults.sql": {
+    "mtime": 1780431107.1634915,
+    "ast_hash": "bbc47a91f6ae8ad730186cd95a1133cf",
+    "semantic_hash": "bbc47a91f6ae8ad730186cd95a1133cf"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260602160000_daily_metrics_personal_score.sql": {
+    "mtime": 1780467621.8221493,
+    "ast_hash": "7c5a7ea1cd0fe030ef0b87643c959955",
+    "semantic_hash": "7c5a7ea1cd0fe030ef0b87643c959955"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260602170000_challenge_standings_personal_score.sql": {
+    "mtime": 1780467623.302275,
+    "ast_hash": "66f9bc98ff21d5496138eb4624aa7e0b",
+    "semantic_hash": "66f9bc98ff21d5496138eb4624aa7e0b"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260603120000_leaderboard_trigger.sql": {
+    "mtime": 1780511251.3976026,
+    "ast_hash": "77e587bd27122ff59601875a65b0ef44",
+    "semantic_hash": "77e587bd27122ff59601875a65b0ef44"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260606120000_workout_exercise.sql": {
+    "mtime": 1780753360.1259315,
+    "ast_hash": "3af790c3b1a03269f8eeb1ef40c7c0cf",
+    "semantic_hash": "3af790c3b1a03269f8eeb1ef40c7c0cf"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260606140000_profile_habits.sql": {
+    "mtime": 1780754560.8308208,
+    "ast_hash": "0cce9f5bee48580584809676139d347c",
+    "semantic_hash": "0cce9f5bee48580584809676139d347c"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260609120000_delete_habits_profile.sql": {
+    "mtime": 1781004318.7962253,
+    "ast_hash": "8edaf327b2a242d560067a4ec2e93cf6",
+    "semantic_hash": "8edaf327b2a242d560067a4ec2e93cf6"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260610140000_guild_map.sql": {
+    "mtime": 1781509736.896904,
+    "ast_hash": "cfe209fd7eb923468faafefc7f982103",
+    "semantic_hash": "cfe209fd7eb923468faafefc7f982103"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260611133559_fix_refresh_leaderboard_name.sql": {
+    "mtime": 1781509736.8971348,
+    "ast_hash": "8151eb19f4d1cf660423813a653bd36f",
+    "semantic_hash": "8151eb19f4d1cf660423813a653bd36f"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260611142839_leaderboard_decay_and_tiebreaker.sql": {
+    "mtime": 1781509736.8973806,
+    "ast_hash": "13cf018c938bddb8459f3b7733562414",
+    "semantic_hash": "13cf018c938bddb8459f3b7733562414"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260612100000_shrink_map.sql": {
+    "mtime": 1781509736.897621,
+    "ast_hash": "b3822856cb317e1c9c400970f39bc203",
+    "semantic_hash": "b3822856cb317e1c9c400970f39bc203"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260613100000_live_attack_scores.sql": {
+    "mtime": 1781509736.8978426,
+    "ast_hash": "88bdb314c3c3b1f4141ed0bb0535aab0",
+    "semantic_hash": "88bdb314c3c3b1f4141ed0bb0535aab0"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260613110000_challenge_ending_soon_notification.sql": {
+    "mtime": 1781509736.898163,
+    "ast_hash": "aac44df16871dd27ff408b5d5c498665",
+    "semantic_hash": "aac44df16871dd27ff408b5d5c498665"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260613120000_guild_notifications.sql": {
+    "mtime": 1781509736.8983548,
+    "ast_hash": "d8ae616df55c383c89d747942e1f4610",
+    "semantic_hash": "d8ae616df55c383c89d747942e1f4610"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260613130000_evening_score_notification.sql": {
+    "mtime": 1781509736.8985791,
+    "ast_hash": "ebd3341bcb7ce965d60de69a3057ea87",
+    "semantic_hash": "ebd3341bcb7ce965d60de69a3057ea87"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260613140000_notify_defender_under_attack.sql": {
+    "mtime": 1781509736.8987336,
+    "ast_hash": "069fdc6cb3a67aea55e84dfb4e602c68",
+    "semantic_hash": "069fdc6cb3a67aea55e84dfb4e602c68"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260614093548_uncap_ranking_score.sql": {
+    "mtime": 1781509736.898922,
+    "ast_hash": "8f708ceb4f50b566440efd1005968514",
+    "semantic_hash": "8f708ceb4f50b566440efd1005968514"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260614120000_leaderboard_daily_rank_snapshot.sql": {
+    "mtime": 1781509736.8990338,
+    "ast_hash": "a7b5de4b91dfe8056a5fb1c5667d329c",
+    "semantic_hash": "a7b5de4b91dfe8056a5fb1c5667d329c"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260616120000_drop_hrv_attack_metric.sql": {
+    "mtime": 1781624705.338535,
+    "ast_hash": "d5dedda62a1b92f655f6aa5a77753a4d",
+    "semantic_hash": "d5dedda62a1b92f655f6aa5a77753a4d"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260621100000_workout_challenges.sql": {
+    "mtime": 1782078886.581121,
+    "ast_hash": "8c6f3eeb9ca29eb11d291f36a39f8809",
+    "semantic_hash": "8c6f3eeb9ca29eb11d291f36a39f8809"
+  },
+  "/Users/clem/apps/sapiens_rank/supabase/migrations/20260622120000_sapies_wallet.sql": {
+    "mtime": 1782147897.713283,
+    "ast_hash": "86e30a717333c813c57b716e08646fc1",
+    "semantic_hash": "86e30a717333c813c57b716e08646fc1"
+  },
+  "/Users/clem/apps/sapiens_rank/CLAUDE.md": {
+    "mtime": 1781624705.3347893,
+    "ast_hash": "4a22b473bbd71d7f34d75a6bd90ba188",
+    "semantic_hash": "4a22b473bbd71d7f34d75a6bd90ba188"
+  },
+  "/Users/clem/apps/sapiens_rank/README.md": {
+    "mtime": 1779306954.1596606,
+    "ast_hash": "5004bd5d7e9d9223a0da8fea344d1038",
+    "semantic_hash": "5004bd5d7e9d9223a0da8fea344d1038"
+  },
+  "/Users/clem/apps/sapiens_rank/analysis_options.yaml": {
+    "mtime": 1779306954.1608415,
+    "ast_hash": "66d03d7647c8e438164feaf5b922d44a",
+    "semantic_hash": "66d03d7647c8e438164feaf5b922d44a"
+  },
+  "/Users/clem/apps/sapiens_rank/devtools_options.yaml": {
+    "mtime": 1779953650.1681316,
+    "ast_hash": "d1ff5187b1b67653e7357395895e8449",
+    "semantic_hash": "d1ff5187b1b67653e7357395895e8449"
+  },
+  "/Users/clem/apps/sapiens_rank/l10n.yaml": {
+    "mtime": 1779377990.3492327,
+    "ast_hash": "f2dc477fe76e155b033f8bd60703b413",
+    "semantic_hash": "f2dc477fe76e155b033f8bd60703b413"
+  },
+  "/Users/clem/apps/sapiens_rank/pubspec.yaml": {
+    "mtime": 1781624705.3384118,
+    "ast_hash": "ff0fca19f520fc6898c4592d897d0d20",
+    "semantic_hash": "ff0fca19f520fc6898c4592d897d0d20"
+  }
+}

@@ -17,7 +17,6 @@ import 'package:sapiens_rank/screens/map/widgets/rules_sheet.dart';
 import 'package:sapiens_rank/screens/map/widgets/territory_info_sheet.dart';
 import 'package:sapiens_rank/screens/today/widgets/sapie_coin.dart';
 import 'package:sapiens_rank/screens/today/widgets/sapies_info_sheet.dart';
-import 'package:sapiens_rank/services/sapies_service.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -40,18 +39,6 @@ class _MapView extends StatefulWidget {
 
 class _MapViewState extends State<_MapView> {
   MapGame? _game;
-  int _sapiesBalance = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadBalance();
-  }
-
-  Future<void> _loadBalance() async {
-    final wallet = await SapiesService.instance.load();
-    if (mounted) setState(() => _sapiesBalance = wallet.balance);
-  }
 
   @override
   void didChangeDependencies() {
@@ -110,15 +97,13 @@ class _MapViewState extends State<_MapView> {
       context,
       territory: territory,
       onConfirm: ({required metric, required endsAt, booster}) =>
-          cubit
-              .launchAttack(
-                territoryId: territory.id,
-                defenderGuildId: territory.ownerGuildId,
-                metric: metric,
-                endsAt: endsAt,
-                booster: booster,
-              )
-              .then((_) => _loadBalance()),
+          cubit.launchAttack(
+            territoryId: territory.id,
+            defenderGuildId: territory.ownerGuildId,
+            metric: metric,
+            endsAt: endsAt,
+            booster: booster,
+          ),
     );
   }
 
@@ -146,7 +131,7 @@ class _MapViewState extends State<_MapView> {
               success: (data) => _MapStack(
                 game: game,
                 data: data,
-                sapiesBalance: _sapiesBalance,
+                sapiesBalance: data.sapiesBalance,
                 onRecenter: () {
                   HapticFeedback.lightImpact();
                   game.focusOnMine(data.ownTerritories);

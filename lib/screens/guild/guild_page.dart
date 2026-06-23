@@ -6,6 +6,7 @@ import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_cubit.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_state.dart';
 import 'package:sapiens_rank/common/widgets/sr_app_bar.dart';
+import 'package:sapiens_rank/common/widgets/sr_pill.dart';
 import 'package:sapiens_rank/screens/guild/widgets/create_guild_sheet.dart';
 import 'package:sapiens_rank/screens/guild/widgets/join_guild_sheet.dart';
 
@@ -280,13 +281,15 @@ class _GuildHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    _StatChip(
+                    SrPill(
+                      size: SrPillSize.small,
                       icon: Icons.grid_on,
                       label: '${data.territoryCount} territories',
                       color: context.srLimeText,
                     ),
                     const SizedBox(width: 8),
-                    _StatChip(
+                    SrPill(
+                      size: SrPillSize.small,
                       icon: Icons.group,
                       label: '${data.memberCount}/${data.maxMembers}',
                       color: context.srTextMuted,
@@ -298,29 +301,6 @@ class _GuildHeader extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _StatChip extends StatelessWidget {
-  const _StatChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 12, color: color),
-        const SizedBox(width: 4),
-        Text(label, style: TextStyle(color: color, fontSize: 12)),
-      ],
     );
   }
 }
@@ -410,21 +390,10 @@ class _MemberRow extends StatelessWidget {
             ),
           ),
           if (member.isLeader)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: context.srAmber.withAlpha(25),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: context.srAmber.withAlpha(80)),
-              ),
-              child: Text(
-                'Leader',
-                style: TextStyle(
-                  color: context.srAmber,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            SrPill(
+              size: SrPillSize.small,
+              label: 'Leader',
+              color: context.srAmber,
             ),
         ],
       ),
@@ -525,21 +494,10 @@ class _AttackRow extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: statusColor.withAlpha(25),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: statusColor.withAlpha(80)),
-            ),
-            child: Text(
-              statusLabel,
-              style: TextStyle(
-                color: statusColor,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+          SrPill(
+            size: SrPillSize.small,
+            label: statusLabel,
+            color: statusColor,
           ),
         ],
       ),

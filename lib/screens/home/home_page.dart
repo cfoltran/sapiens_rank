@@ -74,7 +74,10 @@ class _HomePageState extends State<HomePage> {
       body: IndexedStack(
         index: _tab,
         children: [
-          TodayPage(onNavigateToWorld: () => _switchTab(1)),
+          TodayPage(
+            onNavigateToWorld: () => _switchTab(1),
+            onNavigateToBattle: () => _switchTab(3),
+          ),
           const WorldPage(),
           ChallengePage(key: _challengeKey),
           const MapPage(),

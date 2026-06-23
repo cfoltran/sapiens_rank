@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/common/widgets/sr_pill.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/guild_page.dart';
 import 'package:sapiens_rank/screens/map/cubit/map_cubit.dart';
@@ -14,6 +15,8 @@ import 'package:sapiens_rank/screens/map/widgets/attack_sheet.dart';
 import 'package:sapiens_rank/screens/map/widgets/battle_sheet.dart';
 import 'package:sapiens_rank/screens/map/widgets/rules_sheet.dart';
 import 'package:sapiens_rank/screens/map/widgets/territory_info_sheet.dart';
+import 'package:sapiens_rank/screens/today/widgets/sapie_coin.dart';
+import 'package:sapiens_rank/screens/today/widgets/sapies_info_sheet.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -93,12 +96,14 @@ class _MapViewState extends State<_MapView> {
     AttackSheet.show(
       context,
       territory: territory,
-      onConfirm: ({required metric, required endsAt}) => cubit.launchAttack(
-        territoryId: territory.id,
-        defenderGuildId: territory.ownerGuildId,
-        metric: metric,
-        endsAt: endsAt,
-      ),
+      onConfirm: ({required metric, required endsAt, booster}) =>
+          cubit.launchAttack(
+            territoryId: territory.id,
+            defenderGuildId: territory.ownerGuildId,
+            metric: metric,
+            endsAt: endsAt,
+            booster: booster,
+          ),
     );
   }
 
@@ -126,6 +131,7 @@ class _MapViewState extends State<_MapView> {
               success: (data) => _MapStack(
                 game: game,
                 data: data,
+                sapiesBalance: data.sapiesBalance,
                 onRecenter: () {
                   HapticFeedback.lightImpact();
                   game.focusOnMine(data.ownTerritories);
@@ -162,6 +168,7 @@ class _MapStack extends StatelessWidget {
   const _MapStack({
     required this.game,
     required this.data,
+    required this.sapiesBalance,
     required this.onRecenter,
     required this.onOpenRules,
     required this.onOpenGuild,
@@ -169,17 +176,27 @@ class _MapStack extends StatelessWidget {
 
   final MapGame game;
   final MapData data;
+  final int sapiesBalance;
   final VoidCallback onRecenter;
   final VoidCallback onOpenRules;
   final VoidCallback onOpenGuild;
 
   @override
   Widget build(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top + 12;
     return Stack(
       children: [
         Positioned.fill(child: GameWidget(game: game)),
         Positioned(
-          top: MediaQuery.of(context).padding.top + 12,
+          top: topPad,
+          left: 14,
+          child: WalletPill(
+            balance: sapiesBalance,
+            onTap: () => SapiesInfoSheet.show(context),
+          ),
+        ),
+        Positioned(
+          top: topPad,
           right: 14,
           child: Row(
             children: [
@@ -213,23 +230,7 @@ class _RoundButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: context.srBgElev.withAlpha(220),
-          shape: BoxShape.circle,
-          border: Border.all(color: context.srLine),
-          boxShadow: [
-            BoxShadow(
-              color: context.srShadow,
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Icon(icon, size: 18, color: context.srTextMuted),
-      ),
+      child: SrPill(icon: icon, floating: true),
     );
   }
 }
@@ -257,59 +258,25 @@ class _GuildBadge extends StatelessWidget {
       }
     }
 
+    final hasGuild = guild != null;
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: context.srBgElev.withAlpha(220),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: context.srLine),
-          boxShadow: [
-            BoxShadow(
-              color: context.srShadow,
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (guild != null) ...[
-              Container(
-                width: 18,
-                height: 18,
+      child: SrPill(
+        floating: true,
+        leading: hasGuild
+            ? Container(
+                width: 16,
+                height: 16,
                 decoration: BoxDecoration(
                   color: guildColorFromHex(guild.color),
                   shape: BoxShape.circle,
                 ),
-              ),
-              const SizedBox(width: 7),
-              Text(
-                guild.name,
-                style: TextStyle(
-                  color: context.srText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ] else ...[
-              Icon(Icons.group_add, size: 16, color: context.srLimeText),
-              const SizedBox(width: 6),
-              Text(
-                'Guild',
-                style: TextStyle(
-                  color: context.srLimeText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-            const SizedBox(width: 4),
-            Icon(Icons.chevron_right, size: 16, color: context.srTextDim),
-          ],
-        ),
+              )
+            : null,
+        icon: hasGuild ? null : Icons.group_add,
+        label: hasGuild ? guild.name : 'Guild',
+        textColor: hasGuild ? context.srText : context.srLimeText,
+        trailing: Icon(Icons.chevron_right, size: 16, color: context.srTextDim),
       ),
     );
   }

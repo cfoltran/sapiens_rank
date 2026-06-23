@@ -160,6 +160,7 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
         startsAt: attack.startsAt,
         endsAt: attack.endsAt,
         metric: attack.metric,
+        boosted: attack.booster != null,
       );
       _sieges[territoryId] = ring;
       world.add(ring);

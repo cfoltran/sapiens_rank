@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sapiens_rank/models/booster.dart';
 
 part 'guild_models.g.dart';
 
@@ -166,6 +167,7 @@ class Attack {
     this.attackerScore,
     this.defenderScore,
     this.winnerGuildId,
+    this.boosterRaw,
   });
 
   final String id;
@@ -197,6 +199,16 @@ class Attack {
 
   @JsonKey(name: 'winner_guild_id')
   final String? winnerGuildId;
+
+  @JsonKey(name: 'booster')
+  final String? boosterRaw;
+
+  BoosterType? get booster => switch (boosterRaw) {
+    'boost' => BoosterType.boost,
+    'surge' => BoosterType.surge,
+    'blitz' => BoosterType.blitz,
+    _ => null,
+  };
 
   bool get isActive => status == AttackStatus.active;
 

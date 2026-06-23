@@ -6,11 +6,13 @@ class MapData extends Equatable {
     required this.territories,
     required this.activeAttacks,
     this.myGuildId,
+    this.sapiesBalance = 0,
   });
 
   final List<Territory> territories;
   final List<Attack> activeAttacks;
   final String? myGuildId;
+  final int sapiesBalance;
 
   bool get myGuildHasActiveAttack =>
       myGuildId != null &&
@@ -62,5 +64,10 @@ class MapData extends Equatable {
   }
 
   @override
-  List<Object?> get props => [territories, activeAttacks, myGuildId];
+  List<Object?> get props => [
+    territories,
+    activeAttacks,
+    myGuildId,
+    sapiesBalance,
+  ];
 }

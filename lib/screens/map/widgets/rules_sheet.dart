@@ -22,17 +22,22 @@ class RulesSheet extends StatelessWidget {
     (
       '⚔️',
       'Attacking',
-      'You can attack any territory adjacent to one you already own. Pick a metric (steps, sleep…) and a duration (24h, 48h, 72h). Only one attack at a time per guild.',
+      'You can attack any territory adjacent to one you already own. The metric is drawn at random — a slot machine spins when you launch. Attacks last 24 hours. Only one attack at a time per guild.',
     ),
     (
       '📊',
       'How winners are decided',
-      'During the attack window, each guild\'s members sync their health data. The guild with the highest total wins, every member counts, even small contributions.',
+      'During the attack window, each guild\'s members sync their health data. The guild with the highest total on the drawn metric wins. Every member counts, even small contributions.',
     ),
     (
       '🤝',
       'Tie rule',
       'Equal totals? The defender keeps the territory. Attackers must outperform to conquer.',
+    ),
+    (
+      '⚡',
+      'Boosters',
+      'Before launching, you can spend Sapies on a booster: Boost (+5%, 300α), Surge (+15%, 500α), or Blitz (+20%, 900α). The multiplier applies to your guild\'s total for that attack.',
     ),
     (
       '👥',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/common/widgets/sr_pill.dart';
 
 /// A single Sapie coin — a gold piece struck with the logo α.
 class SapieCoin extends StatelessWidget {
@@ -56,38 +57,30 @@ class SapieCoin extends StatelessWidget {
 
 /// Header pill showing the user's Sapie balance. Bumps on collect.
 class WalletPill extends StatelessWidget {
-  const WalletPill({super.key, required this.balance, this.bump = false});
+  const WalletPill({
+    super.key,
+    required this.balance,
+    this.bump = false,
+    this.onTap,
+  });
 
   final int balance;
   final bool bump;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedScale(
-      scale: bump ? 1.18 : 1.0,
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOutBack,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: SrColors.coin.withAlpha(0x1f),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: SrColors.coin.withAlpha(0x55)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SapieCoin(size: 18),
-            const SizedBox(width: 6),
-            Text(
-              _formatBalance(balance),
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: context.isDark ? SrColors.coinLight : SrColors.coinDeep,
-              ),
-            ),
-          ],
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedScale(
+        scale: bump ? 1.18 : 1.0,
+        duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOutBack,
+        child: SrPill(
+          label: _formatBalance(balance),
+          color: SrColors.coin,
+          textColor: context.isDark ? SrColors.coinLight : SrColors.coinDeep,
+          leading: const SapieCoin(size: 18),
         ),
       ),
     );

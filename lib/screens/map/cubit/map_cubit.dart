@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/models/booster.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/services/guild_service.dart';
 import 'package:sapiens_rank/services/map_service.dart';
@@ -10,6 +11,7 @@ class MapCubit extends Cubit<DataState<MapData>> {
 
   final _mapService = MapService.instance;
   final _guildService = GuildService.instance;
+
   Future<void> load() async {
     emit(const DataState.loading());
     try {
@@ -42,16 +44,16 @@ class MapCubit extends Cubit<DataState<MapData>> {
     required String? defenderGuildId,
     required AttackMetric metric,
     required DateTime endsAt,
+    BoosterType? booster,
   }) async {
-    final current = state.data;
-    if (current?.myGuildId == null) return;
+    if (state.data?.myGuildId == null) return;
 
     await _mapService.createAttack(
-      attackerGuildId: current!.myGuildId!,
       territoryId: territoryId,
       defenderGuildId: defenderGuildId,
       metric: metric,
       endsAt: endsAt,
+      booster: booster,
     );
     load();
   }

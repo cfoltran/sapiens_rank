@@ -39,12 +39,14 @@ class GuildCubit extends Cubit<DataState<GuildData>> {
         _guildService.fetchMembers(guild.id),
         _guildService.fetchMaxMembers(guild.id),
         _mapService.fetchGuildAttacks(guild.id),
+        _mapService.fetchTerritories(),
       ]);
 
-      final territories = await MapService.instance.fetchTerritories();
-      final territoryCount = territories
-          .where((t) => t.ownerGuildId == guild.id)
-          .length;
+      final territoryCount =
+          (results[3] as dynamic)
+                  .where((t) => t.ownerGuildId == guild.id)
+                  .length
+              as int;
 
       emit(
         DataState.success(

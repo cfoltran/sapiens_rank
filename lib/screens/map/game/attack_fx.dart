@@ -17,6 +17,7 @@ class SiegeRing extends PositionComponent {
     required this.startsAt,
     required this.endsAt,
     required this.metric,
+    this.boosted = false,
   }) : super(
          position: center,
          size: Vector2.all(hexSize * 2),
@@ -27,6 +28,7 @@ class SiegeRing extends PositionComponent {
   final DateTime startsAt;
   final DateTime endsAt;
   final AttackMetric metric;
+  final bool boosted;
   double _t = 0;
 
   @override
@@ -81,6 +83,18 @@ class SiegeRing extends PositionComponent {
       textDirection: TextDirection.ltr,
     )..layout();
     tp.paint(canvas, c - Offset(tp.width / 2, tp.height / 2));
+
+    if (boosted) {
+      final badgeCenter = c + Offset(hexSize * 0.52, -hexSize * 0.52);
+      final badge = TextPainter(
+        text: const TextSpan(text: '⚡️', style: TextStyle(fontSize: 11)),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      badge.paint(
+        canvas,
+        badgeCenter - Offset(badge.width - 4, badge.height - 14),
+      );
+    }
   }
 }
 

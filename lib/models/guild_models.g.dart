@@ -103,6 +103,7 @@ Attack _$AttackFromJson(Map<String, dynamic> json) => Attack(
   attackerScore: (json['attacker_score'] as num?)?.toDouble(),
   defenderScore: (json['defender_score'] as num?)?.toDouble(),
   winnerGuildId: json['winner_guild_id'] as String?,
+  boosterRaw: json['booster'] as String?,
 );
 
 Map<String, dynamic> _$AttackToJson(Attack instance) => <String, dynamic>{
@@ -117,6 +118,7 @@ Map<String, dynamic> _$AttackToJson(Attack instance) => <String, dynamic>{
   'attacker_score': instance.attackerScore,
   'defender_score': instance.defenderScore,
   'winner_guild_id': instance.winnerGuildId,
+  'booster': instance.boosterRaw,
 };
 
 const _$AttackMetricEnumMap = {

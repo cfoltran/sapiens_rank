@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/world_skeleton.dart';
@@ -46,7 +47,7 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Could not load leaderboard',
+              AppLocalizations.of(context).world_error,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
                 color: context.srTextMuted,
@@ -56,7 +57,7 @@ class _ErrorBody extends StatelessWidget {
             GestureDetector(
               onTap: onRetry,
               child: Text(
-                'Retry',
+                AppLocalizations.of(context).retry,
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -123,7 +124,7 @@ class _LoadedBody extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'RANK',
+                                AppLocalizations.of(context).world_rank_col,
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 10,
                                   color: context.srTextDim,
@@ -131,7 +132,7 @@ class _LoadedBody extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'TREND',
+                                AppLocalizations.of(context).world_trend_col,
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 10,
                                   color: context.srTextDim,
@@ -182,7 +183,7 @@ class _Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'LEADERBOARD · LIVE',
+          AppLocalizations.of(context).world_title,
           style: GoogleFonts.jetBrainsMono(
             fontSize: 11,
             color: context.srTextDim,
@@ -191,7 +192,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'World',
+          AppLocalizations.of(context).nav_world,
           style: GoogleFonts.spaceGrotesk(
             fontSize: 30,
             fontWeight: FontWeight.w700,
@@ -488,7 +489,7 @@ class _GapIndicator extends StatelessWidget {
           Expanded(child: Divider(color: context.srLineStrong, thickness: 1)),
           const SizedBox(width: 10),
           Text(
-            '· · · $gapCount sapiens · · ·',
+            AppLocalizations.of(context).world_gap(gapCount),
             style: GoogleFonts.jetBrainsMono(
               fontSize: 10,
               color: context.srTextDim,
@@ -543,7 +544,7 @@ class _YouCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'You',
+                          AppLocalizations.of(context).you,
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -552,7 +553,7 @@ class _YouCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '${data.myStreak}d streak',
+                          AppLocalizations.of(context).world_streak(data.myStreak),
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
                             color: context.srTextMuted,

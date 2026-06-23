@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/habit_choice_card.dart';
@@ -72,18 +73,18 @@ class _AlcoholStepState extends State<AlcoholStep> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ArenaButton(
-            label: 'Continue →',
+            label: AppLocalizations.of(context).onboarding_age_cta,
             onTap: () => widget.onSubmit(_current),
           ),
           const SizedBox(height: 4),
-          ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+          ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: widget.onBack),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'HABITS',
+            AppLocalizations.of(context).profile_habits,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 10,
               color: context.srLimeText,
@@ -102,9 +103,9 @@ class _AlcoholStepState extends State<AlcoholStep> {
                 height: 1.1,
               ),
               children: [
-                const TextSpan(text: 'Do you '),
+                TextSpan(text: '${AppLocalizations.of(context).onboarding_habits_do_you} '),
                 TextSpan(
-                  text: 'drink?',
+                  text: AppLocalizations.of(context).onboarding_drinking_verb,
                   style: TextStyle(
                     color: context.srLimeText,
                     fontStyle: FontStyle.italic,
@@ -115,7 +116,7 @@ class _AlcoholStepState extends State<AlcoholStep> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Affects your personal Sapiens Score.',
+            AppLocalizations.of(context).onboarding_habits_score_hint,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium!.copyWith(color: context.srTextMuted),
@@ -124,22 +125,22 @@ class _AlcoholStepState extends State<AlcoholStep> {
           HabitChoiceCard(
             selected: _choice == _AlcoholChoice.no,
             icon: '🚫',
-            title: "No, I don't drink",
-            subtitle: 'No impact on score',
+            title: AppLocalizations.of(context).onboarding_drinking_no,
+            subtitle: AppLocalizations.of(context).onboarding_habits_no_impact,
             onTap: () => setState(() => _choice = _AlcoholChoice.no),
           ),
           const SizedBox(height: 10),
           HabitChoiceCard(
             selected: _choice == _AlcoholChoice.yes,
             icon: '🍷',
-            title: 'Yes',
-            subtitle: 'Affects score based on quantity',
+            title: AppLocalizations.of(context).onboarding_habits_yes,
+            subtitle: AppLocalizations.of(context).onboarding_habits_quantity_impact,
             onTap: () => setState(() => _choice = _AlcoholChoice.yes),
           ),
           if (_choice == _AlcoholChoice.yes) ...[
             const SizedBox(height: 12),
             HabitQuantitySlider(
-              label: 'Drinks per week',
+              label: AppLocalizations.of(context).onboarding_drinking_count,
               value: _drinks,
               min: 1,
               max: 30,
@@ -153,8 +154,8 @@ class _AlcoholStepState extends State<AlcoholStep> {
           HabitChoiceCard(
             selected: _choice == _AlcoholChoice.decline,
             icon: '🔒',
-            title: 'I prefer not to say',
-            subtitle: 'Still affects score',
+            title: AppLocalizations.of(context).onboarding_habits_decline,
+            subtitle: AppLocalizations.of(context).onboarding_habits_still_affects,
             onTap: () => setState(() => _choice = _AlcoholChoice.decline),
           ),
         ],

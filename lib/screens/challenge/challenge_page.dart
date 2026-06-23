@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/challenge_skeleton.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
@@ -104,7 +105,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
                         child: GestureDetector(
                           onTap: cubit.load,
                           child: Text(
-                            'Retry',
+                            AppLocalizations.of(context).retry,
                             style: GoogleFonts.spaceGrotesk(
                               color: SrColors.lime,
                               fontWeight: FontWeight.w600,
@@ -132,7 +133,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
                                 ),
                               ),
                               if (data?.live.isEmpty ?? true)
-                                const _EmptyState(label: 'No live challenges'),
+                                _EmptyState(label: AppLocalizations.of(context).challenge_empty_live),
                             ],
                             if (_tab == _ChallengeTab.pending) ...[
                               ...?data?.pending.map(
@@ -149,7 +150,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
                                 ),
                               ),
                               if (data?.pending.isEmpty ?? true)
-                                const _EmptyState(label: 'No pending invites'),
+                                _EmptyState(label: AppLocalizations.of(context).challenge_empty_pending),
                             ],
                             if (_tab == _ChallengeTab.history) ...[
                               ...?data?.history.map(
@@ -159,7 +160,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
                                 ),
                               ),
                               if (data?.history.isEmpty ?? true)
-                                const _EmptyState(label: 'No challenges yet'),
+                                _EmptyState(label: AppLocalizations.of(context).challenge_empty_history),
                             ],
                           ],
                         ),
@@ -199,7 +200,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'New challenge',
+                          AppLocalizations.of(context).challenge_new,
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -231,7 +232,7 @@ class _Header extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'CHALLENGES · $liveCount LIVE',
+              AppLocalizations.of(context).challenge_title_live(liveCount),
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
                 color: context.srTextDim,
@@ -240,7 +241,7 @@ class _Header extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              'Challenge',
+              AppLocalizations.of(context).nav_challenge,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 30,
                 fontWeight: FontWeight.w600,
@@ -268,10 +269,11 @@ class _TabSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final tabs = [
-      (_ChallengeTab.live, 'Live'),
-      (_ChallengeTab.pending, 'Pending · $pendingCount'),
-      (_ChallengeTab.history, 'History'),
+      (_ChallengeTab.live, l.challenge_tab_live),
+      (_ChallengeTab.pending, l.challenge_tab_pending(pendingCount)),
+      (_ChallengeTab.history, l.challenge_tab_history),
     ];
     return Container(
       padding: const EdgeInsets.all(4),
@@ -337,7 +339,7 @@ class _DuelCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _StatusStrip(label: '1v1 LIVE', endsIn: fight.endsInFormatted),
+            _StatusStrip(label: AppLocalizations.of(context).challenge_score_label, endsIn: fight.endsInFormatted),
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 18, 14, 12),
               child: Row(
@@ -348,7 +350,7 @@ class _DuelCard extends StatelessWidget {
                         _Avatar(player: me, size: 52, ring: meWinning),
                         const SizedBox(height: 6),
                         Text(
-                          'You',
+                          AppLocalizations.of(context).you,
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -482,7 +484,7 @@ class _DuelCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'SAPIENS SCORE',
+                        AppLocalizations.of(context).challenge_score_label,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
                           color: context.srTextDim,
@@ -535,7 +537,7 @@ class _RoyaleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _StatusStrip(
-              label: '1 v ${fight.opponents.length} · SAPIENS SCORE',
+              label: AppLocalizations.of(context).challenge_score_label,
               endsIn: fight.endsInFormatted,
             ),
             Padding(
@@ -588,7 +590,7 @@ class _RoyaleCard extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      p.isMe ? 'You' : p.firstName,
+                                      p.isMe ? AppLocalizations.of(context).you : p.firstName,
                                       style: GoogleFonts.spaceGrotesk(
                                         fontSize: 13,
                                         fontWeight: p.isMe
@@ -728,7 +730,7 @@ class _WorkoutCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  p.isMe ? 'You' : p.firstName,
+                                  p.isMe ? AppLocalizations.of(context).you : p.firstName,
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 13,
                                     fontWeight: p.isMe
@@ -755,7 +757,7 @@ class _WorkoutCard extends StatelessWidget {
                           Text(
                             p.completed
                                 ? WorkoutFormat.time(p.durationSeconds)
-                                : 'DNF',
+                                : AppLocalizations.of(context).challenge_dnf,
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -817,8 +819,8 @@ class _PendingCard extends StatelessWidget {
                 children: [
                   Text(
                     fight.iAmCreator
-                        ? 'WAITING FOR ACCEPT'
-                        : 'CHALLENGE RECEIVED',
+                        ? AppLocalizations.of(context).challenge_waiting
+                        : AppLocalizations.of(context).challenge_received,
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 9,
                       color: SrColors.amber,
@@ -828,8 +830,8 @@ class _PendingCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     fight.iAmCreator
-                        ? 'You challenged ${fight.opponent.firstName}'
-                        : '${fight.opponent.firstName} challenged you',
+                        ? AppLocalizations.of(context).challenge_you_challenged(fight.opponent.firstName)
+                        : AppLocalizations.of(context).challenge_opponent_challenged_you(fight.opponent.firstName),
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -897,7 +899,7 @@ class _PendingCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Accept',
+                        AppLocalizations.of(context).challenge_accept,
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -940,7 +942,7 @@ class _HistoryRow extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'vs ${fight.opponent.firstName}',
+                      AppLocalizations.of(context).challenge_vs(fight.opponent.firstName),
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -962,7 +964,7 @@ class _HistoryRow extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        won == null ? 'DRAW' : (won ? 'WON' : 'LOST'),
+                        won == null ? AppLocalizations.of(context).challenge_draw : (won ? AppLocalizations.of(context).challenge_won : AppLocalizations.of(context).challenge_lost),
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -1101,7 +1103,7 @@ class _StakeBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'WINNER TAKES',
+                  AppLocalizations.of(context).challenge_winner_takes,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 9,
                     color: context.srTextDim,

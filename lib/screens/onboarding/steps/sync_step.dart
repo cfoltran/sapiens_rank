@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/services/health_service.dart';
 
@@ -81,7 +82,7 @@ class _SyncStepState extends State<SyncStep>
                     Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: context.srTextMuted),
                     const SizedBox(width: 4),
                     Text(
-                      'Back',
+                      AppLocalizations.of(context).back,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: context.srTextMuted,
                       ),
@@ -108,7 +109,7 @@ class _SyncStepState extends State<SyncStep>
                 child: IgnorePointer(
                   ignoring: !_done,
                   child: ArenaButton(
-                    label: 'See my score →',
+                    label: AppLocalizations.of(context).onboarding_sync_cta,
                     onTap: widget.onNext,
                   ),
                 ),
@@ -181,11 +182,12 @@ class _LoadingHeadline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'READING YOUR DATA',
+          l.onboarding_sync_loading_label,
           style: tt.labelSmall!.copyWith(
             color: SrColors.cyan,
             letterSpacing: 1.4,
@@ -193,7 +195,7 @@ class _LoadingHeadline extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Pulling your\nhealth history.',
+          l.onboarding_sync_loading_body,
           style: tt.headlineLarge!.copyWith(
             fontSize: 36,
             height: 1.05,
@@ -211,11 +213,12 @@ class _DoneHeadline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'ALL SYSTEMS GO',
+          l.onboarding_sync_done_label,
           style: tt.labelSmall!.copyWith(
             color: context.srLimeText,
             letterSpacing: 1.4,
@@ -230,9 +233,9 @@ class _DoneHeadline extends StatelessWidget {
               color: context.srText,
             ),
             children: [
-              const TextSpan(text: 'Data locked\nin. '),
+              TextSpan(text: '${l.onboarding_sync_done_body} '),
               TextSpan(
-                text: "Let's rank.",
+                text: l.onboarding_sync_done_cta,
                 style: TextStyle(color: context.srLimeText),
               ),
             ],

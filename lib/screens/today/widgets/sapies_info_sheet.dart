@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/today/widgets/sapie_coin.dart';
 
 class SapiesInfoSheet extends StatelessWidget {
@@ -18,18 +19,13 @@ class SapiesInfoSheet extends StatelessWidget {
     );
   }
 
-  static const _items = [
-    (
-      '📅',
-      'Earn every day',
-      'Each day you sync your health data you earn Sapies. A perfect score gives you 100α.',
-    ),
-    (
-      '⚡',
-      'Power up attacks',
-      'Spend Sapies on a booster when launching a guild attack:\nBoost +5% (300α)  •  Surge +15% (500α)  •  Blitz +20% (900α)',
-    ),
-  ];
+  List<(String, String, String)> _buildItems(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return [
+      ('📅', l.sapies_earn_title, l.sapies_earn_body),
+      ('⚡', l.sapies_spend_title, l.sapies_spend_body),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +38,7 @@ class SapiesInfoSheet extends StatelessWidget {
             const SapieCoin(size: 28),
             const SizedBox(width: 10),
             Text(
-              'Sapies',
+              AppLocalizations.of(context).sapies_title,
               style: TextStyle(
                 color: context.srText,
                 fontSize: 20,
@@ -53,11 +49,11 @@ class SapiesInfoSheet extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Your in-game currency: earn it, spend it wisely.',
+          AppLocalizations.of(context).sapies_subtitle,
           style: TextStyle(color: context.srTextMuted, fontSize: 13),
         ),
         const SizedBox(height: 24),
-        for (final (icon, title, body) in _items)
+        for (final (icon, title, body) in _buildItems(context))
           _InfoRow(icon: icon, title: title, body: body),
         if (onNavigateToBattle != null) ...[
           const SizedBox(height: 24),
@@ -76,9 +72,9 @@ class SapiesInfoSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Spend your Sapies  →',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              child: Text(
+                AppLocalizations.of(context).sapies_cta,
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
               ),
             ),
           ),

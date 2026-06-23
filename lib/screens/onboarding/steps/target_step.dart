@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_slider_card.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -67,18 +68,18 @@ class _TargetStepState extends State<TargetStep> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ArenaButton(
-            label: 'Lock my targets →',
+            label: AppLocalizations.of(context).onboarding_targets_cta,
             onTap: () => widget.onSubmit(_current),
           ),
           const SizedBox(height: 4),
-          ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+          ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: widget.onBack),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'SET THE BAR',
+            AppLocalizations.of(context).onboarding_targets_eyebrow,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 10,
               color: context.srLimeText,
@@ -97,22 +98,22 @@ class _TargetStepState extends State<TargetStep> {
                 height: 1.1,
               ),
               children: [
-                const TextSpan(text: 'Pick the numbers '),
+                TextSpan(text: '${AppLocalizations.of(context).onboarding_targets_headline} '),
                 TextSpan(
-                  text: "you'll defend",
+                  text: AppLocalizations.of(context).onboarding_targets_subheadline,
                   style: TextStyle(
                     color: context.srLimeText,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                const TextSpan(text: ' daily.'),
+                TextSpan(text: ' ${AppLocalizations.of(context).onboarding_targets_daily}'),
               ],
             ),
           ),
           const SizedBox(height: 24),
           SrSliderCard(
             icon: '👟',
-            label: 'Steps',
+            label: AppLocalizations.of(context).profile_steps,
             unit: 'steps / day',
             value: _steps,
             min: 3000,
@@ -132,7 +133,7 @@ class _TargetStepState extends State<TargetStep> {
           const SizedBox(height: 10),
           SrSliderCard(
             icon: '🔥',
-            label: 'Active energy',
+            label: AppLocalizations.of(context).onboarding_targets_energy,
             unit: 'kcal / day',
             value: _kcal,
             min: 100,
@@ -146,7 +147,7 @@ class _TargetStepState extends State<TargetStep> {
           const SizedBox(height: 10),
           SrSliderCard(
             icon: '😴',
-            label: 'Sleep',
+            label: AppLocalizations.of(context).profile_sleep,
             unit: 'per night',
             value: _sleep,
             min: 5,
@@ -164,7 +165,7 @@ class _TargetStepState extends State<TargetStep> {
           const SizedBox(height: 10),
           SrSliderCard(
             icon: '🧍',
-            label: 'Stand hours',
+            label: AppLocalizations.of(context).profile_stand,
             unit: 'on your feet',
             value: _stand,
             min: 4,
@@ -178,7 +179,7 @@ class _TargetStepState extends State<TargetStep> {
           const SizedBox(height: 10),
           SrSliderCard(
             icon: '🏃',
-            label: 'Exercise',
+            label: AppLocalizations.of(context).profile_exercise,
             unit: 'min / day',
             value: _exercise,
             min: 10,

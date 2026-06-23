@@ -1,7 +1,543 @@
 {
   "@@locale": "en",
+
   "appName": "Sapiens Rank",
-  "@appName": {
-    "description": "The name of the application"
-  }
+
+  "nav_score": "Score",
+  "nav_world": "World",
+  "nav_challenge": "Challenge",
+  "nav_battle": "Battle",
+  "nav_guild": "Guild",
+  "nav_map": "Map",
+
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "back": "Back",
+  "close": "Close",
+  "ok": "OK",
+  "you": "You",
+  "vs": "VS",
+
+  "today_error": "Could not load health data",
+  "today_ranking_soon": "ranking soon...",
+  "today_world_rank": "WORLD RANK",
+  "today_vs_yesterday": "VS YESTERDAY",
+  "today_maxed": "maxed",
+  "today_on_track": "on track",
+  "today_push": "push",
+  "today_activity": "Today's Activity",
+  "today_min": "min today",
+  "today_workout": "workout",
+  "today_workouts": "workouts",
+  "today_sapies_harvested": "+{amount} Sapies harvested",
+  "@today_sapies_harvested": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+
+  "sapies_title": "Sapies",
+  "sapies_subtitle": "Your in-game currency: earn it, spend it wisely.",
+  "sapies_earn_title": "Earn every day",
+  "sapies_earn_body": "Each day you sync your health data you earn Sapies. A perfect score gives you 100α.",
+  "sapies_spend_title": "Power up attacks",
+  "sapies_spend_body": "Spend Sapies on a booster when launching a guild attack:\nBoost +5% (300α)  •  Surge +15% (500α)  •  Blitz +20% (900α)",
+  "sapies_cta": "Spend your Sapies  →",
+
+  "world_title": "LEADERBOARD · LIVE",
+  "world_error": "Could not load leaderboard",
+  "world_rank_col": "RANK",
+  "world_trend_col": "TREND",
+  "world_gap": "· · · {count} sapiens · · ·",
+  "@world_gap": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "world_streak": "{days}d streak",
+  "@world_streak": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "world_ends_in": "ends in",
+
+  "profile_title": "PROFILE",
+  "profile_error": "Could not load profile",
+  "profile_lifetime_avg": "LIFETIME AVG",
+  "profile_wl": "W / L",
+  "profile_streak": "STREAK",
+  "profile_streak_days": "{days}d",
+  "@profile_streak_days": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "profile_trend": "30-DAY TREND",
+  "profile_points": "POINTS",
+  "profile_targets": "MY TARGETS",
+  "profile_edit": "Edit →",
+  "profile_steps": "Steps",
+  "profile_calories": "Active kcal",
+  "profile_sleep": "Sleep",
+  "profile_stand": "Stand hours",
+  "profile_exercise": "Exercise",
+  "profile_habits": "HABITS",
+  "profile_smoking": "Smoking",
+  "profile_alcohol": "Alcohol",
+  "profile_not_set": "Not set",
+  "profile_non_smoker": "Non-smoker",
+  "profile_smoker": "Smoker",
+  "profile_cigarettes_per_day": "{n}/day",
+  "@profile_cigarettes_per_day": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "profile_non_drinker": "Non-drinker",
+  "profile_drinker": "Drinker",
+  "profile_drinks_per_week": "{n}/wk",
+  "@profile_drinks_per_week": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "profile_body": "BODY",
+  "profile_height": "Height",
+  "profile_weight": "Weight",
+  "profile_bmi": "BMI",
+  "profile_bmi_underweight": "Underweight",
+  "profile_bmi_healthy": "Healthy",
+  "profile_bmi_overweight": "Overweight",
+  "profile_bmi_obese": "Obese",
+  "profile_theme_light": "Light",
+  "profile_theme_system": "System",
+  "profile_theme_dark": "Dark",
+  "profile_contact": "Contact us",
+  "profile_privacy": "Privacy Policy",
+  "profile_terms": "Terms & Conditions",
+  "profile_delete_account": "Delete account",
+  "profile_delete_confirm_title": "Delete your account?",
+  "profile_delete_confirm_body": "All your data will be permanently deleted. This action cannot be undone.",
+  "profile_delete_button": "Delete",
+  "profile_signout": "Sign out",
+  "profile_signout_confirm": "Sign out?",
+
+  "challenge_title_live": "CHALLENGES · {count} LIVE",
+  "@challenge_title_live": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "challenge_tab_live": "Live",
+  "challenge_tab_pending": "Pending · {count}",
+  "@challenge_tab_pending": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "challenge_tab_history": "History",
+  "challenge_new": "New challenge",
+  "challenge_empty_live": "No live challenges",
+  "challenge_empty_pending": "No pending invites",
+  "challenge_empty_history": "No challenges yet",
+  "challenge_score_label": "SAPIENS SCORE",
+  "challenge_waiting": "WAITING FOR ACCEPT",
+  "challenge_received": "CHALLENGE RECEIVED",
+  "challenge_you_challenged": "You challenged {name}",
+  "@challenge_you_challenged": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "challenge_opponent_challenged_you": "{name} challenged you",
+  "@challenge_opponent_challenged_you": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "challenge_accept": "Accept",
+  "challenge_vs": "vs {name}",
+  "@challenge_vs": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "challenge_draw": "DRAW",
+  "challenge_won": "WON",
+  "challenge_lost": "LOST",
+  "challenge_winner_takes": "WINNER TAKES",
+  "challenge_dnf": "DNF",
+
+  "composer_pick_opponent": "Pick opponent",
+  "composer_set_rules": "Set the rules",
+  "composer_stake_reward": "Stake a reward",
+  "composer_players": "PLAYERS · {count}",
+  "@composer_players": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "composer_score_label": "SCORE",
+  "composer_challenge_type": "CHALLENGE TYPE",
+  "composer_type_score": "Sapiens Score",
+  "composer_type_workout": "Workout",
+  "composer_sport": "SPORT",
+  "composer_distance": "DISTANCE",
+  "composer_duration": "DURATION",
+  "composer_duration_hint_workout": "Time window to log your effort",
+  "composer_duration_hint_score": "How long the score battle runs",
+  "composer_24h": "24h",
+  "composer_3d": "3 days",
+  "composer_1w": "1 week",
+  "composer_30d": "30 days",
+  "composer_custom_distance": "+ Custom",
+  "composer_distance_hint": "e.g. 8",
+  "composer_stake_restaurant": "If you win, I take you out",
+  "composer_stake_cinema": "If you win, cinema on me",
+  "composer_stake_money": "Money bet",
+  "composer_stake_custom": "Custom stake",
+  "composer_stake_tap_amount": "Tap to set amount",
+  "composer_stake_tap_write": "Tap to write",
+  "composer_stake_hint_loser": "e.g. loser buys drinks",
+  "composer_continue": "Continue",
+  "composer_send": "Send challenge ⚔️",
+  "composer_sent_title": "Challenge sent",
+  "composer_sent_subtitle": "{name} will be notified",
+  "@composer_sent_subtitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "invite_title": "Challenge Invite",
+  "invite_not_found": "Challenge not found",
+  "invite_challenged_you": "{name} challenged you!",
+  "@invite_challenged_you": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "invite_if_accept": "IF YOU ACCEPT AND WIN",
+  "invite_decline": "Decline",
+  "invite_accept": "Accept challenge ⚔️",
+  "invite_duration_day": "1 day",
+  "invite_duration_week": "1 week",
+  "invite_duration_month": "1 month",
+  "invite_duration_days": "{days} days",
+  "@invite_duration_days": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
+  "result_won": "CHALLENGE WON",
+  "result_ended": "CHALLENGE ENDED",
+  "result_victory": "Victory.",
+  "result_draw": "Draw.",
+  "result_defeated": "Defeated.",
+  "result_you_beat": "You beat {name}",
+  "@result_you_beat": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "result_opponent_won": "{name} won",
+  "@result_opponent_won": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "result_perfectly_matched": "You and {name} are perfectly matched.",
+  "@result_perfectly_matched": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "result_avg_score": "avg score",
+  "result_points": "{n} point",
+  "@result_points": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "result_points_plural": "{n} points",
+  "@result_points_plural": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "result_split": "SPLIT",
+  "result_you_take": "YOU TAKE",
+  "result_they_take": "THEY TAKE",
+  "result_reward_claimed": "✓ REWARD CLAIMED",
+  "result_claim_reward": "Claim reward →",
+  "result_wallet_sent": "Sent to your wallet · code ",
+  "result_rematch": "Rematch ⚔️",
+  "result_not_found": "Result not found",
+  "result_me": "ME",
+
+  "map_no_guild": "Join a guild to attack territories",
+  "map_error": "Failed to load map",
+
+  "territory_members": "MEMBERS",
+  "territory_no_members": "No members found.",
+  "territory_load_error": "Could not load members.",
+  "territory_unknown": "Unknown",
+  "territory_just_claimed": "just claimed",
+  "territory_held_years": "for {n}y",
+  "@territory_held_years": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "territory_held_months": "for {n}mo",
+  "@territory_held_months": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "territory_held_days": "for {n}d",
+  "@territory_held_days": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "territory_held_hours": "for {n}h",
+  "@territory_held_hours": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+
+  "attack_claim_title": "Claim neutral territory",
+  "attack_guild_title": "Attack {guild}",
+  "@attack_guild_title": {
+    "placeholders": {
+      "guild": { "type": "String" }
+    }
+  },
+  "attack_rolling": "Rolling your metric…",
+  "attack_neutral_hint": "No defender, territory is yours in 24h.",
+  "attack_guild_hint": "Your guild's total beats their guild's total.",
+  "attack_boost_section": "BOOST YOUR ATTACK (OPTIONAL)",
+  "attack_none": "None",
+  "attack_claim_btn": "Claim",
+  "attack_launch_btn": "Launch attack",
+
+  "battle_title": "⚔️  Battle in progress",
+  "battle_subtitle": "Most {metric} logged wins this territory.",
+  "@battle_subtitle": {
+    "placeholders": {
+      "metric": { "type": "String" }
+    }
+  },
+  "battle_ending": "Ending…",
+  "battle_attacking_banner": "🗡️ Your guild is attacking, every {metric} counts!",
+  "@battle_attacking_banner": {
+    "placeholders": {
+      "metric": { "type": "String" }
+    }
+  },
+  "battle_defending_banner": "🛡️ Your guild is defending, hold the line!",
+  "battle_waiting": "Waiting for the first score…",
+  "battle_attacker_leading": "{name} is leading the assault",
+  "@battle_attacker_leading": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "battle_defender_holding": "{name} is holding strong",
+  "@battle_defender_holding": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "battle_attacker_fallback": "Attacker",
+  "battle_unclaimed": "Unclaimed",
+
+  "rules_title": "How it works",
+  "rules_territories_title": "Territories",
+  "rules_territories_body": "The map is a grid of neutral territories. When you create a guild, you automatically claim one. Your guild's color marks everything you own.",
+  "rules_attacking_title": "Attacking",
+  "rules_attacking_body": "You can attack any territory adjacent to one you already own. The metric is drawn at random — a slot machine spins when you launch. Attacks last 24 hours. Only one attack at a time per guild.",
+  "rules_winners_title": "How winners are decided",
+  "rules_winners_body": "During the attack window, each guild's members sync their health data. The guild with the highest total on the drawn metric wins. Every member counts, even small contributions.",
+  "rules_tie_title": "Tie rule",
+  "rules_tie_body": "Equal totals? The defender keeps the territory. Attackers must outperform to conquer.",
+  "rules_boosters_title": "Boosters",
+  "rules_boosters_body": "Before launching, you can spend Sapies on a booster: Boost (+5%, 300α), Surge (+15%, 500α), or Blitz (+20%, 900α). The multiplier applies to your guild's total for that attack.",
+  "rules_slots_title": "Guild slots",
+  "rules_slots_body": "A new guild can hold 5 members. Each territory you conquer unlocks one more slot. Grow your territory to grow your team.",
+  "rules_solo_title": "Solo players",
+  "rules_solo_body": "You can claim neutral territories alone, but you can't attack guilds without joining one first. Solo players are \"guilds of 1\".",
+
+  "guild_title": "GUILD",
+  "guild_error": "Retry",
+  "guild_lone_wolf": "You're a lone wolf",
+  "guild_lone_wolf_body": "Join or create a guild to conquer territories and fight other guilds together.",
+  "guild_create_cta": "Create a guild",
+  "guild_create_hint": "You become leader, claim your first territory.",
+  "guild_join_cta": "Join a guild",
+  "guild_join_hint": "Find an existing guild and contribute immediately.",
+  "guild_members": "MEMBERS",
+  "guild_leader": "Leader",
+  "guild_attacks": "RECENT ATTACKS",
+  "guild_attack_active": "Active",
+  "guild_attack_tie": "Tie",
+  "guild_attack_won": "Won",
+  "guild_attack_lost": "Lost",
+  "guild_leave_title": "Leave guild?",
+  "guild_leave_body": "You will leave {name}. Your guild's territories remain.",
+  "@guild_leave_body": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "guild_leave_btn": "Leave",
+  "guild_leave_error": "Could not leave guild. Try again.",
+
+  "create_guild_title": "Create a guild",
+  "create_guild_name_hint": "Guild name",
+  "create_guild_color": "COLOR",
+  "create_guild_btn": "Create",
+
+  "join_guild_title": "Join a guild",
+  "join_guild_search_hint": "Search by name",
+  "join_guild_not_found": "No guilds found",
+  "join_guild_btn": "Join",
+
+  "update_title": "Outdated Version",
+  "update_btn": "Update",
+
+  "onboarding_welcome_headline": "Improve together.",
+  "onboarding_welcome_subheadline": "Become a best Sapiens.",
+  "onboarding_welcome_leaderboard": "LIVE · WORLD LEADERBOARD",
+  "onboarding_welcome_body": "We read your Health data and help you to progress.\nTakes 30 seconds.",
+  "onboarding_welcome_cta": "Find my rank →",
+  "onboarding_welcome_login": "I already have an account",
+
+  "onboarding_name_eyebrow": "Identity check",
+  "onboarding_name_headline": "What should the\nworld call you?",
+  "onboarding_name_hint_body": "You can change it later. The leaderboard doesn't care, but your friends will.",
+  "onboarding_name_field_hint": "First & last name",
+  "onboarding_name_cta": "That's me →",
+
+  "onboarding_age_eyebrow": "Calibration",
+  "onboarding_age_headline": "How old are you?",
+  "onboarding_age_body": "We'll baseline you against your cohort, not against 18-year-old triathletes.",
+  "onboarding_age_label": "AGE",
+  "onboarding_age_cta": "Continue →",
+
+  "onboarding_country_headline": "Where do you challenge?",
+  "onboarding_country_subheadline": "Plant your flag.",
+  "onboarding_country_body": "You'll compete on both the global and country leaderboards.",
+  "onboarding_country_search": "Search country...",
+
+  "onboarding_body_eyebrow": "BODY",
+  "onboarding_body_headline": "Body",
+  "onboarding_body_subheadline": "composition.",
+  "onboarding_body_hint": "Used to refine your personal score.",
+  "onboarding_body_cta": "Continue →",
+
+  "onboarding_targets_eyebrow": "SET THE BAR",
+  "onboarding_targets_headline": "Pick the numbers",
+  "onboarding_targets_subheadline": "you'll defend",
+  "onboarding_targets_daily": "daily.",
+  "onboarding_targets_cta": "Lock my targets →",
+
+  "onboarding_permission_headline": "One permission. Worth it.",
+  "onboarding_permission_subheadline": "Your Device knows\neverything.",
+  "onboarding_permission_body": "We just do the math.",
+  "onboarding_permission_cta": "Allow health access →",
+  "onboarding_permission_settings": "Open Settings →",
+  "onboarding_permission_denied_body": "Health access is required to compute your score. Open",
+  "onboarding_permission_denied_path": "Settings → Health → Data Access",
+  "onboarding_permission_denied_enable": "and enable all SapiensRank categories.",
+  "onboarding_permission_heart_rate": "Heart Rate",
+  "onboarding_permission_heart_rate_sub": "Resting + HRV",
+  "onboarding_permission_activity": "Activity",
+  "onboarding_permission_activity_sub": "Steps, distance, kcal",
+  "onboarding_permission_sleep": "Sleep Analysis",
+  "onboarding_permission_sleep_sub": "Stages, duration, score",
+  "onboarding_permission_stand": "Stand Hours",
+  "onboarding_permission_stand_sub": "Hours moved per day",
+
+  "onboarding_score_headline": "Your first Sapiens Score.",
+  "onboarding_score_cta": "See my rank? →",
+
+  "onboarding_auth_headline": "Almost there.",
+  "onboarding_auth_subheadline": "discover your ranking.",
+  "onboarding_auth_body": "Create an account to discover your global ranking and keep your score.",
+
+  "onboarding_done_eyebrow": "You're in.",
+  "onboarding_done_headline": "Welcome to\nthe ranks,",
+  "onboarding_done_body": "One leaderboard.\nToday is your chance to climb.",
+  "onboarding_done_cta": "Enter the app →",
+
+  "onboarding_notif_headline": "Last thing.",
+  "onboarding_notif_body": "Daily score updates. Challenge invites. When a friend passes you, you'll know.",
+  "onboarding_notif_yes": "Yes, keep me in the loop 🔔",
+  "onboarding_notif_skip": "Not now",
+  "onboarding_notif_authorizing": "Authorizing…",
+  "onboarding_notif_headline_prefix": "Stay in the",
+  "onboarding_notif_headline_accent": "challenge.",
+  "onboarding_notif_granted": "Welcome to the ranks, Sapien. ✓",
+
+  "onboarding_auth_email": "Continue with email",
+  "onboarding_auth_or": "or",
+
+  "onboarding_score_not_bad": "Not bad.",
+  "onboarding_score_above_avg": "You're above average. But the world is bigger than average.",
+
+  "onboarding_sync_cta": "See my score →",
+  "onboarding_sync_loading_label": "READING YOUR DATA",
+  "onboarding_sync_loading_body": "Pulling your\nhealth history.",
+  "onboarding_sync_done_label": "ALL SYSTEMS GO",
+  "onboarding_sync_done_body": "Data locked\nin.",
+  "onboarding_sync_done_cta": "Let's rank.",
+
+  "onboarding_rank_live": "World rank · live",
+  "onboarding_rank_calculating": "Calculating world rank",
+  "onboarding_rank_in_world": "in the world",
+  "onboarding_rank_you_are": "{firstName}, you are",
+  "@onboarding_rank_you_are": {
+    "placeholders": {
+      "firstName": { "type": "String" }
+    }
+  },
+  "onboarding_rank_higher_prefix": "Higher than",
+  "onboarding_rank_higher_suffix": "of Sapiens",
+  "onboarding_rank_out_of": "Out of {count} ranked today",
+  "@onboarding_rank_out_of": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "onboarding_rank_join": "Join the leaderboard →",
+  "onboarding_rank_share": "Share my rank",
+
+  "onboarding_bmi_frequency_question": "How often do you want to update your weight?",
+
+  "onboarding_habits_do_you": "Do you",
+  "onboarding_habits_score_hint": "Affects your personal Sapiens Score.",
+  "onboarding_habits_no_impact": "No impact on score",
+  "onboarding_habits_yes": "Yes",
+  "onboarding_habits_quantity_impact": "Affects score based on quantity",
+  "onboarding_habits_decline": "I prefer not to say",
+  "onboarding_habits_still_affects": "Still affects score",
+
+  "onboarding_smoking_verb": "smoke?",
+  "onboarding_smoking_no": "No, I don't smoke",
+  "onboarding_smoking_count": "Cigarettes per day",
+
+  "onboarding_drinking_verb": "drink?",
+  "onboarding_drinking_no": "No, I don't drink",
+  "onboarding_drinking_count": "Drinks per week",
+
+  "onboarding_targets_energy": "Active energy",
+
+  "onboarding_privacy_body": "Your data never leaves your phone. Only your",
+  "onboarding_privacy_accent": "score and rank",
+  "onboarding_privacy_suffix": "are uploaded — never the raw numbers."
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_slider.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -41,25 +42,25 @@ class _AgeStepState extends State<AgeStep> {
       total: widget.total,
       footer: Column(
         children: [
-          ArenaButton(label: 'Continue →', onTap: () => widget.onSubmit(_age)),
+          ArenaButton(label: AppLocalizations.of(context).onboarding_age_cta, onTap: () => widget.onSubmit(_age)),
           const SizedBox(height: 8),
-          ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+          ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: widget.onBack),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow('Calibration'),
+          OnboardingEyebrow(AppLocalizations.of(context).onboarding_age_eyebrow),
           const SizedBox(height: 14),
           Text(
-            'How old are you?',
+            AppLocalizations.of(context).onboarding_age_headline,
             style: Theme.of(
               context,
             ).textTheme.displayMedium!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 10),
-          const OnboardingLede(
-            "We'll baseline you against your cohort, not against 18-year-old triathletes.",
+          OnboardingLede(
+            AppLocalizations.of(context).onboarding_age_body,
           ),
           const SizedBox(height: 48),
           _AgeSlider(age: _age, onChanged: (v) => setState(() => _age = v)),
@@ -86,7 +87,7 @@ class _AgeSlider extends StatelessWidget {
           textBaseline: TextBaseline.alphabetic,
           children: [
             Text(
-              'AGE',
+              AppLocalizations.of(context).onboarding_age_label,
               style: tt.labelSmall!.copyWith(
                 color: context.srTextDim,
                 letterSpacing: 1.2,

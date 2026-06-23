@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/widgets/sr_pill.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/guild_page.dart';
@@ -85,7 +86,7 @@ class _MapViewState extends State<_MapView> {
         TerritoryInfoSheet.show(context, territory: territory);
       } else if (data.myGuildId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Join a guild to attack territories')),
+          SnackBar(content: Text(AppLocalizations.of(context).map_no_guild)),
         );
       }
       return;
@@ -145,13 +146,13 @@ class _MapViewState extends State<_MapView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Failed to load map',
+                      AppLocalizations.of(context).map_error,
                       style: TextStyle(color: context.srTextMuted),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () => context.read<MapCubit>().load(),
-                      child: const Text('Retry'),
+                      child: Text(AppLocalizations.of(context).retry),
                     ),
                   ],
                 ),
@@ -274,7 +275,7 @@ class _GuildBadge extends StatelessWidget {
               )
             : null,
         icon: hasGuild ? null : Icons.group_add,
-        label: hasGuild ? guild.name : 'Guild',
+        label: hasGuild ? guild.name : AppLocalizations.of(context).nav_guild,
         textColor: hasGuild ? context.srText : context.srLimeText,
         trailing: Icon(Icons.chevron_right, size: 16, color: context.srTextDim),
       ),

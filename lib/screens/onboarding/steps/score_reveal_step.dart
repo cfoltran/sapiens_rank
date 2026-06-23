@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -77,9 +78,9 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ArenaButton(label: 'See my rank? →', onTap: widget.onNext),
+              ArenaButton(label: AppLocalizations.of(context).onboarding_score_cta, onTap: widget.onNext),
               const SizedBox(height: 4),
-              ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+              ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: widget.onBack),
             ],
           ),
         ),
@@ -89,7 +90,7 @@ class _ScoreRevealStepState extends State<ScoreRevealStep>
           OnboardingEyebrow(_eyebrow),
           const SizedBox(height: 14),
           Text(
-            'Your first Sapiens Score.',
+            AppLocalizations.of(context).onboarding_score_headline,
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
@@ -157,7 +158,7 @@ class _BigRing extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'SAPIENS SCORE',
+                AppLocalizations.of(context).challenge_score_label,
                 style: tt.labelMedium!.copyWith(
                   fontWeight: FontWeight.normal,
                   letterSpacing: 2.2,
@@ -268,15 +269,16 @@ class _DoneText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Column(
       children: [
         Text(
-          'Not bad.',
+          l.onboarding_score_not_bad,
           style: tt.titleLarge!.copyWith(color: context.srLimeText),
         ),
         const SizedBox(height: 6),
         Text(
-          "You're above average. But the world is bigger than average.",
+          l.onboarding_score_above_avg,
           textAlign: TextAlign.center,
           style: tt.labelMedium!.copyWith(
             fontSize: 12,

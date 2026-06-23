@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/widgets/guild_avatar.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
@@ -68,8 +69,8 @@ class _BattleSheetState extends State<BattleSheet> {
     return null;
   }
 
-  String _formatRemaining(Duration d) {
-    if (d.isNegative) return 'Ending…';
+  String _formatRemaining(BuildContext context, Duration d) {
+    if (d.isNegative) return AppLocalizations.of(context).battle_ending;
     final h = d.inHours;
     final m = d.inMinutes % 60;
     return h > 0 ? '${h}h ${m}m' : '${m}m';
@@ -109,7 +110,7 @@ class _BattleSheetState extends State<BattleSheet> {
         _MetricHeader(
           emoji: attack.metric.emoji,
           metricLabel: metricLabel,
-          remaining: _formatRemaining(remaining),
+          remaining: _formatRemaining(context, remaining),
         ),
         if (isMyAttack || isMyDefense) ...[
           const SizedBox(height: 14),
@@ -117,11 +118,11 @@ class _BattleSheetState extends State<BattleSheet> {
         ],
         const SizedBox(height: 24),
         _FaceOff(
-          attackerName: attacker?.name ?? 'Attacker',
+          attackerName: attacker?.name ?? AppLocalizations.of(context).battle_attacker_fallback,
           attackerColor: attackerColor,
           attackerScore: a,
           attackerLeads: lead > 0,
-          defenderName: defender?.name ?? 'Unclaimed',
+          defenderName: defender?.name ?? AppLocalizations.of(context).battle_unclaimed,
           defenderColor: defenderColor,
           defenderScore: d,
           defenderLeads: lead < 0,
@@ -136,8 +137,8 @@ class _BattleSheetState extends State<BattleSheet> {
         const SizedBox(height: 14),
         _LeadCaption(
           lead: lead,
-          attackerName: attacker?.name ?? 'Attacker',
-          defenderName: defender?.name ?? 'the defender',
+          attackerName: attacker?.name ?? AppLocalizations.of(context).battle_attacker_fallback,
+          defenderName: defender?.name ?? AppLocalizations.of(context).battle_unclaimed,
           attackerColor: attackerColor,
           defenderColor: defenderColor,
         ),
@@ -166,7 +167,7 @@ class _MetricHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '⚔️  Battle in progress',
+                AppLocalizations.of(context).battle_title,
                 style: TextStyle(
                   color: context.srText,
                   fontSize: 18,
@@ -175,7 +176,7 @@ class _MetricHeader extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Most $metricLabel logged wins this territory.',
+                AppLocalizations.of(context).battle_subtitle(metricLabel),
                 style: TextStyle(color: context.srTextMuted, fontSize: 13),
               ),
             ],
@@ -237,8 +238,8 @@ class _MyGuildBanner extends StatelessWidget {
       ),
       child: Text(
         isAttacking
-            ? '🗡️ Your guild is attacking, every $metricLabel counts!'
-            : '🛡️ Your guild is defending, hold the line!',
+            ? AppLocalizations.of(context).battle_attacking_banner(metricLabel)
+            : AppLocalizations.of(context).battle_defending_banner,
         style: TextStyle(
           color: context.srLimeText,
           fontSize: 13,
@@ -508,13 +509,13 @@ class _LeadCaption extends StatelessWidget {
     final String text;
     final Color color;
     if (lead == 0) {
-      text = 'Waiting for the first score…';
+      text = AppLocalizations.of(context).battle_waiting;
       color = context.srTextMuted;
     } else if (lead > 0) {
-      text = '$attackerName is leading the assault';
+      text = AppLocalizations.of(context).battle_attacker_leading(attackerName);
       color = attackerColor;
     } else {
-      text = '$defenderName is holding strong';
+      text = AppLocalizations.of(context).battle_defender_holding(defenderName);
       color = defenderColor;
     }
     return Text(

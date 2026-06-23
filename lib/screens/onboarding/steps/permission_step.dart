@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -32,20 +33,20 @@ class PermissionStep extends StatelessWidget {
       footer: Column(
         children: [
           ArenaButton(
-            label: denied ? 'Open Settings →' : 'Allow health access →',
+            label: denied ? AppLocalizations.of(context).onboarding_permission_settings : AppLocalizations.of(context).onboarding_permission_cta,
             isLoading: isLoading,
             onTap: denied
                 ? () => launchUrl(Uri.parse('app-settings:'))
                 : onNext,
           ),
           const SizedBox(height: 8),
-          ArenaSecondaryButton(label: 'Back', onTap: onBack),
+          ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: onBack),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow('One permission. Worth it.'),
+          OnboardingEyebrow(AppLocalizations.of(context).onboarding_permission_headline),
           const SizedBox(height: 14),
           _Headline(),
           const SizedBox(height: 28),
@@ -67,11 +68,11 @@ class _Headline extends StatelessWidget {
         style: Theme.of(
           context,
         ).textTheme.displayMedium!.copyWith(color: context.srText),
-        children: const [
-          TextSpan(text: 'Your Device knows\neverything. '),
+        children: [
+          TextSpan(text: '${AppLocalizations.of(context).onboarding_permission_subheadline} '),
           TextSpan(
-            text: 'We just do the math.',
-            style: TextStyle(color: SrColors.cyan),
+            text: AppLocalizations.of(context).onboarding_permission_body,
+            style: const TextStyle(color: SrColors.cyan),
           ),
         ],
       ),
@@ -102,19 +103,18 @@ class _DeniedBanner extends StatelessWidget {
                   color: context.srText,
                   height: 1.5,
                 ),
-                children: const [
+                children: [
                   TextSpan(
-                    text:
-                        'Health access is required to compute your score. Open ',
+                    text: '${AppLocalizations.of(context).onboarding_permission_denied_body} ',
                   ),
                   TextSpan(
-                    text: 'Settings → Health → Data Access',
-                    style: TextStyle(
+                    text: AppLocalizations.of(context).onboarding_permission_denied_path,
+                    style: const TextStyle(
                       color: SrColors.rose,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  TextSpan(text: ' and enable all SapiensRank categories.'),
+                  TextSpan(text: ' ${AppLocalizations.of(context).onboarding_permission_denied_enable}'),
                 ],
               ),
             ),
@@ -128,20 +128,20 @@ class _DeniedBanner extends StatelessWidget {
 class _HealthKitCards extends StatelessWidget {
   const _HealthKitCards();
 
-  static const _items = [
-    (icon: '❤️', label: 'Heart Rate', desc: 'Resting + HRV'),
-    (icon: '🦶', label: 'Activity', desc: 'Steps, distance, kcal'),
-    (icon: '😴', label: 'Sleep Analysis', desc: 'Stages, duration, score'),
-    (icon: '🧍', label: 'Stand Hours', desc: 'Hours moved per day'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final items = [
+      (icon: '❤️', label: l.onboarding_permission_heart_rate, desc: l.onboarding_permission_heart_rate_sub),
+      (icon: '🦶', label: l.onboarding_permission_activity, desc: l.onboarding_permission_activity_sub),
+      (icon: '😴', label: l.onboarding_permission_sleep, desc: l.onboarding_permission_sleep_sub),
+      (icon: '🧍', label: l.onboarding_permission_stand, desc: l.onboarding_permission_stand_sub),
+    ];
     return Column(
       children: [
-        for (var i = 0; i < _items.length; i++) ...[
+        for (var i = 0; i < items.length; i++) ...[
           if (i > 0) const SizedBox(height: 10),
-          _HealthKitCard(item: _items[i]),
+          _HealthKitCard(item: items[i]),
         ],
       ],
     );
@@ -232,15 +232,15 @@ class _PrivacyNote extends StatelessWidget {
                   color: context.srText,
                   height: 1.5,
                 ),
-                children: const [
+                children: [
                   TextSpan(
-                    text: 'Your data never leaves your phone. Only your ',
+                    text: '${AppLocalizations.of(context).onboarding_privacy_body} ',
                   ),
                   TextSpan(
-                    text: 'score and rank',
-                    style: TextStyle(color: SrColors.cyan),
+                    text: AppLocalizations.of(context).onboarding_privacy_accent,
+                    style: const TextStyle(color: SrColors.cyan),
                   ),
-                  TextSpan(text: ' are uploaded — never the raw numbers.'),
+                  TextSpan(text: ' ${AppLocalizations.of(context).onboarding_privacy_suffix}'),
                 ],
               ),
             ),

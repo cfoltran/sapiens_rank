@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/services/guild_service.dart';
 
@@ -69,7 +70,7 @@ class _JoinGuildSheetState extends State<JoinGuildSheet> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Join a guild',
+            AppLocalizations.of(context).join_guild_title,
             style: TextStyle(
               color: context.srText,
               fontSize: 18,
@@ -82,7 +83,7 @@ class _JoinGuildSheetState extends State<JoinGuildSheet> {
             style: TextStyle(color: context.srText),
             onChanged: (v) => _search(v),
             decoration: InputDecoration(
-              hintText: 'Search by name',
+              hintText: AppLocalizations.of(context).join_guild_search_hint,
               hintStyle: TextStyle(color: context.srTextDim),
               prefixIcon: Icon(Icons.search, color: context.srTextDim, size: 20),
               filled: true,
@@ -112,7 +113,7 @@ class _JoinGuildSheetState extends State<JoinGuildSheet> {
                 : _results.isEmpty
                     ? Center(
                         child: Text(
-                          'No guilds found',
+                          AppLocalizations.of(context).join_guild_not_found,
                           style: TextStyle(color: context.srTextMuted),
                         ),
                       )
@@ -165,7 +166,7 @@ class _JoinGuildSheetState extends State<JoinGuildSheet> {
                                   border: Border.all(color: context.srLime),
                                 ),
                                 child: Text(
-                                  'Join',
+                                  AppLocalizations.of(context).join_guild_btn,
                                   style: TextStyle(
                                     color: context.srLimeText,
                                     fontSize: 13,

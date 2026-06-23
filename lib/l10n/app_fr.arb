@@ -1,0 +1,482 @@
+{
+  "@@locale": "fr",
+
+  "appName": "Sapiens Rank",
+
+  "nav_score": "Score",
+  "nav_world": "Monde",
+  "nav_challenge": "Défis",
+  "nav_battle": "Combat",
+  "nav_guild": "Guilde",
+  "nav_map": "Carte",
+
+  "retry": "Réessayer",
+  "cancel": "Annuler",
+  "back": "Retour",
+  "close": "Fermer",
+  "ok": "OK",
+  "you": "Toi",
+  "vs": "VS",
+
+  "today_error": "Impossible de charger les données de santé",
+  "today_ranking_soon": "classement bientôt...",
+  "today_world_rank": "RANG MONDIAL",
+  "today_vs_yesterday": "VS HIER",
+  "today_maxed": "maxé",
+  "today_on_track": "en bonne voie",
+  "today_push": "pousse",
+  "today_activity": "Activité du jour",
+  "today_min": "min aujourd'hui",
+  "today_workout": "séance",
+  "today_workouts": "séances",
+  "today_sapies_harvested": "+{amount} Sapies récoltés",
+  "@today_sapies_harvested": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+
+  "sapies_title": "Sapies",
+  "sapies_subtitle": "Ta monnaie de jeu : gagne-la, dépense-la avec soin.",
+  "sapies_earn_title": "Gagne chaque jour",
+  "sapies_earn_body": "Chaque jour où tu synchronises tes données de santé, tu gagnes des Sapies. Un score parfait te rapporte 100α.",
+  "sapies_spend_title": "Booste tes attaques",
+  "sapies_spend_body": "Dépense des Sapies sur un booster avant de lancer une attaque de guilde :\nBoost +5% (300α)  •  Surge +15% (500α)  •  Blitz +20% (900α)",
+  "sapies_cta": "Dépenser mes Sapies  →",
+
+  "world_title": "CLASSEMENT · EN DIRECT",
+  "world_error": "Impossible de charger le classement",
+  "world_rank_col": "RANG",
+  "world_trend_col": "TENDANCE",
+  "world_gap": "· · · {count} sapiens · · ·",
+  "@world_gap": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "world_streak": "{days}j de suite",
+  "@world_streak": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "world_ends_in": "se termine dans",
+
+  "profile_title": "PROFIL",
+  "profile_error": "Impossible de charger le profil",
+  "profile_lifetime_avg": "MOY. TOTALE",
+  "profile_wl": "V / D",
+  "profile_streak": "SÉRIE",
+  "profile_streak_days": "{days}j",
+  "@profile_streak_days": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "profile_trend": "TENDANCE 30 JOURS",
+  "profile_points": "POINTS",
+  "profile_targets": "MES OBJECTIFS",
+  "profile_edit": "Modifier →",
+  "profile_steps": "Pas",
+  "profile_calories": "Kcal actives",
+  "profile_sleep": "Sommeil",
+  "profile_stand": "Heures debout",
+  "profile_exercise": "Exercice",
+  "profile_habits": "HABITUDES",
+  "profile_smoking": "Tabac",
+  "profile_alcohol": "Alcool",
+  "profile_not_set": "Non renseigné",
+  "profile_non_smoker": "Non-fumeur",
+  "profile_smoker": "Fumeur",
+  "profile_cigarettes_per_day": "{n}/jour",
+  "@profile_cigarettes_per_day": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "profile_non_drinker": "Non-buveur",
+  "profile_drinker": "Buveur",
+  "profile_drinks_per_week": "{n}/sem.",
+  "@profile_drinks_per_week": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "profile_body": "CORPS",
+  "profile_height": "Taille",
+  "profile_weight": "Poids",
+  "profile_bmi": "IMC",
+  "profile_bmi_underweight": "Insuffisance pondérale",
+  "profile_bmi_healthy": "Poids normal",
+  "profile_bmi_overweight": "Surpoids",
+  "profile_bmi_obese": "Obèse",
+  "profile_theme_light": "Clair",
+  "profile_theme_system": "Système",
+  "profile_theme_dark": "Sombre",
+  "profile_contact": "Nous contacter",
+  "profile_privacy": "Politique de confidentialité",
+  "profile_terms": "Conditions d'utilisation",
+  "profile_delete_account": "Supprimer le compte",
+  "profile_delete_confirm_title": "Supprimer votre compte ?",
+  "profile_delete_confirm_body": "Toutes vos données seront définitivement supprimées. Cette action est irréversible.",
+  "profile_delete_button": "Supprimer",
+  "profile_signout": "Se déconnecter",
+  "profile_signout_confirm": "Se déconnecter ?",
+
+  "challenge_title_live": "DÉFIS · {count} EN COURS",
+  "@challenge_title_live": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "challenge_tab_live": "En cours",
+  "challenge_tab_pending": "En attente · {count}",
+  "@challenge_tab_pending": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "challenge_tab_history": "Historique",
+  "challenge_new": "Nouveau défi",
+  "challenge_empty_live": "Aucun défi en cours",
+  "challenge_empty_pending": "Aucune invitation en attente",
+  "challenge_empty_history": "Aucun défi pour l'instant",
+  "challenge_score_label": "SCORE SAPIENS",
+  "challenge_waiting": "EN ATTENTE D'ACCEPTATION",
+  "challenge_received": "DÉFI REÇU",
+  "challenge_you_challenged": "Tu as défié {name}",
+  "@challenge_you_challenged": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "challenge_opponent_challenged_you": "{name} t'a défié",
+  "@challenge_opponent_challenged_you": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "challenge_accept": "Accepter",
+  "challenge_vs": "vs {name}",
+  "@challenge_vs": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "challenge_draw": "ÉGALITÉ",
+  "challenge_won": "GAGNÉ",
+  "challenge_lost": "PERDU",
+  "challenge_winner_takes": "LE GAGNANT PREND",
+  "challenge_dnf": "ABANDON",
+
+  "composer_pick_opponent": "Choisir l'adversaire",
+  "composer_set_rules": "Définir les règles",
+  "composer_stake_reward": "Miser une récompense",
+  "composer_players": "JOUEURS · {count}",
+  "@composer_players": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "composer_score_label": "SCORE",
+  "composer_challenge_type": "TYPE DE DÉFI",
+  "composer_type_score": "Score Sapiens",
+  "composer_type_workout": "Entraînement",
+  "composer_sport": "SPORT",
+  "composer_distance": "DISTANCE",
+  "composer_duration": "DURÉE",
+  "composer_duration_hint_workout": "Fenêtre de temps pour enregistrer ton effort",
+  "composer_duration_hint_score": "Durée de la bataille de score",
+  "composer_24h": "24h",
+  "composer_3d": "3 jours",
+  "composer_1w": "1 semaine",
+  "composer_30d": "30 jours",
+  "composer_custom_distance": "+ Personnalisé",
+  "composer_distance_hint": "ex. 8",
+  "composer_stake_restaurant": "Si tu gagnes, je t'invite au resto",
+  "composer_stake_cinema": "Si tu gagnes, ciné à mes frais",
+  "composer_stake_money": "Pari en argent",
+  "composer_stake_custom": "Mise personnalisée",
+  "composer_stake_tap_amount": "Appuyer pour définir le montant",
+  "composer_stake_tap_write": "Appuyer pour écrire",
+  "composer_stake_hint_loser": "ex. le perdant offre les boissons",
+  "composer_continue": "Continuer",
+  "composer_send": "Envoyer le défi ⚔️",
+  "composer_sent_title": "Défi envoyé",
+  "composer_sent_subtitle": "{name} sera notifié",
+  "@composer_sent_subtitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "invite_title": "Invitation au défi",
+  "invite_not_found": "Défi introuvable",
+  "invite_challenged_you": "{name} t'a défié !",
+  "@invite_challenged_you": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "invite_if_accept": "SI TU ACCEPTES ET GAGNES",
+  "invite_decline": "Refuser",
+  "invite_accept": "Accepter le défi ⚔️",
+  "invite_duration_day": "1 jour",
+  "invite_duration_week": "1 semaine",
+  "invite_duration_month": "1 mois",
+  "invite_duration_days": "{days} jours",
+  "@invite_duration_days": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
+  "result_won": "DÉFI REMPORTÉ",
+  "result_ended": "DÉFI TERMINÉ",
+  "result_victory": "Victoire.",
+  "result_draw": "Égalité.",
+  "result_defeated": "Défaite.",
+  "result_you_beat": "Tu as battu {name}",
+  "@result_you_beat": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "result_opponent_won": "{name} a gagné",
+  "@result_opponent_won": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "result_perfectly_matched": "Toi et {name} êtes parfaitement équilibrés.",
+  "@result_perfectly_matched": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "result_avg_score": "score moy.",
+  "result_points": "{n} point",
+  "@result_points": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "result_points_plural": "{n} points",
+  "@result_points_plural": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "result_split": "PARTAGÉ",
+  "result_you_take": "TU PRENDS",
+  "result_they_take": "IL PREND",
+  "result_reward_claimed": "✓ RÉCOMPENSE RÉCLAMÉE",
+  "result_claim_reward": "Réclamer la récompense →",
+  "result_wallet_sent": "Envoyé dans ton portefeuille · code ",
+  "result_rematch": "Revanche ⚔️",
+  "result_not_found": "Résultat introuvable",
+  "result_me": "MOI",
+
+  "map_no_guild": "Rejoins une guilde pour attaquer des territoires",
+  "map_error": "Impossible de charger la carte",
+
+  "territory_members": "MEMBRES",
+  "territory_no_members": "Aucun membre trouvé.",
+  "territory_load_error": "Impossible de charger les membres.",
+  "territory_unknown": "Inconnu",
+  "territory_just_claimed": "vient d'être conquis",
+  "territory_held_years": "depuis {n}a",
+  "@territory_held_years": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "territory_held_months": "depuis {n}mo",
+  "@territory_held_months": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "territory_held_days": "depuis {n}j",
+  "@territory_held_days": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "territory_held_hours": "depuis {n}h",
+  "@territory_held_hours": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+
+  "attack_claim_title": "Revendiquer le territoire neutre",
+  "attack_guild_title": "Attaquer {guild}",
+  "@attack_guild_title": {
+    "placeholders": {
+      "guild": { "type": "String" }
+    }
+  },
+  "attack_rolling": "Tirage de ta métrique…",
+  "attack_neutral_hint": "Pas de défenseur, le territoire est à toi dans 24h.",
+  "attack_guild_hint": "Le total de ta guilde doit battre celui de leur guilde.",
+  "attack_boost_section": "BOOSTER TON ATTAQUE (OPTIONNEL)",
+  "attack_none": "Aucun",
+  "attack_claim_btn": "Revendiquer",
+  "attack_launch_btn": "Lancer l'attaque",
+
+  "battle_title": "⚔️  Bataille en cours",
+  "battle_subtitle": "Le plus grand total de {metric} remporte ce territoire.",
+  "@battle_subtitle": {
+    "placeholders": {
+      "metric": { "type": "String" }
+    }
+  },
+  "battle_ending": "Fin imminente…",
+  "battle_attacking_banner": "🗡️ Ta guilde attaque, chaque {metric} compte !",
+  "@battle_attacking_banner": {
+    "placeholders": {
+      "metric": { "type": "String" }
+    }
+  },
+  "battle_defending_banner": "🛡️ Ta guilde défend, tiens la ligne !",
+  "battle_waiting": "En attente du premier score…",
+  "battle_attacker_leading": "{name} mène l'assaut",
+  "@battle_attacker_leading": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "battle_defender_holding": "{name} résiste",
+  "@battle_defender_holding": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "battle_attacker_fallback": "Attaquant",
+  "battle_unclaimed": "Neutre",
+
+  "rules_title": "Comment ça marche",
+  "rules_territories_title": "Territoires",
+  "rules_territories_body": "La carte est une grille de territoires neutres. En créant une guilde, tu en revendiques automatiquement un. La couleur de ta guilde marque tout ce que vous possédez.",
+  "rules_attacking_title": "Attaquer",
+  "rules_attacking_body": "Tu peux attaquer n'importe quel territoire adjacent à l'un des tiens. La métrique est tirée au sort — une machine à sous tourne au lancement. Les attaques durent 24 heures. Une seule attaque à la fois par guilde.",
+  "rules_winners_title": "Comment les vainqueurs sont désignés",
+  "rules_winners_body": "Pendant la fenêtre d'attaque, les membres de chaque guilde synchronisent leurs données de santé. La guilde avec le total le plus élevé sur la métrique tirée gagne. Chaque membre compte, même les petites contributions.",
+  "rules_tie_title": "Règle d'égalité",
+  "rules_tie_body": "Totaux identiques ? Le défenseur conserve le territoire. Les attaquants doivent surpasser pour conquérir.",
+  "rules_boosters_title": "Boosters",
+  "rules_boosters_body": "Avant de lancer, tu peux dépenser des Sapies sur un booster : Boost (+5%, 300α), Surge (+15%, 500α) ou Blitz (+20%, 900α). Le multiplicateur s'applique au total de ta guilde pour cette attaque.",
+  "rules_slots_title": "Places dans la guilde",
+  "rules_slots_body": "Une nouvelle guilde peut accueillir 5 membres. Chaque territoire conquis débloque une place supplémentaire. Agrandis ton territoire pour agrandir ton équipe.",
+  "rules_solo_title": "Joueurs solo",
+  "rules_solo_body": "Tu peux revendiquer des territoires neutres seul, mais tu ne peux pas attaquer des guildes sans en rejoindre une d'abord. Les joueurs solo sont des « guildes de 1 ».",
+
+  "guild_title": "GUILDE",
+  "guild_error": "Réessayer",
+  "guild_lone_wolf": "Tu es un loup solitaire",
+  "guild_lone_wolf_body": "Rejoins ou crée une guilde pour conquérir des territoires et combattre d'autres guildes ensemble.",
+  "guild_create_cta": "Créer une guilde",
+  "guild_create_hint": "Tu deviens chef et revendiques ton premier territoire.",
+  "guild_join_cta": "Rejoindre une guilde",
+  "guild_join_hint": "Trouve une guilde existante et contribue immédiatement.",
+  "guild_members": "MEMBRES",
+  "guild_leader": "Chef",
+  "guild_attacks": "ATTAQUES RÉCENTES",
+  "guild_attack_active": "En cours",
+  "guild_attack_tie": "Égalité",
+  "guild_attack_won": "Gagnée",
+  "guild_attack_lost": "Perdue",
+  "guild_leave_title": "Quitter la guilde ?",
+  "guild_leave_body": "Tu vas quitter {name}. Les territoires de ta guilde restent.",
+  "@guild_leave_body": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "guild_leave_btn": "Quitter",
+  "guild_leave_error": "Impossible de quitter la guilde. Réessaie.",
+
+  "create_guild_title": "Créer une guilde",
+  "create_guild_name_hint": "Nom de la guilde",
+  "create_guild_color": "COULEUR",
+  "create_guild_btn": "Créer",
+
+  "join_guild_title": "Rejoindre une guilde",
+  "join_guild_search_hint": "Rechercher par nom",
+  "join_guild_not_found": "Aucune guilde trouvée",
+  "join_guild_btn": "Rejoindre",
+
+  "update_title": "Version obsolète",
+  "update_btn": "Mettre à jour",
+
+  "onboarding_welcome_headline": "Progressez ensemble.",
+  "onboarding_welcome_subheadline": "Devenez un meilleur Sapiens.",
+  "onboarding_welcome_leaderboard": "EN DIRECT · CLASSEMENT MONDIAL",
+  "onboarding_welcome_body": "On transforme tes données de santé en un jeu motivant",
+  "onboarding_welcome_cta": "Trouver mon rang →",
+  "onboarding_welcome_login": "J'ai déjà un compte",
+
+  "onboarding_name_eyebrow": "Vérification d'identité",
+  "onboarding_name_headline": "Comment le\nmonde doit t'appeler ?",
+  "onboarding_name_hint_body": "Tu pourras le changer plus tard. Le classement s'en fiche, mais tes amis non.",
+  "onboarding_name_field_hint": "Prénom & nom",
+  "onboarding_name_cta": "C'est moi →",
+
+  "onboarding_age_eyebrow": "Calibration",
+  "onboarding_age_headline": "Quel âge as-tu ?",
+  "onboarding_age_body": "On te positionnera par rapport à ta tranche d'âge, pas face à des triathlètes de 18 ans.",
+  "onboarding_age_label": "ÂGE",
+  "onboarding_age_cta": "Continuer →",
+
+  "onboarding_country_headline": "Où tu relèves le défi ?",
+  "onboarding_country_subheadline": "Plante ton drapeau.",
+  "onboarding_country_body": "Tu concourras sur les classements mondial et national.",
+  "onboarding_country_search": "Rechercher un pays...",
+
+  "onboarding_body_eyebrow": "CORPS",
+  "onboarding_body_headline": "Composition",
+  "onboarding_body_subheadline": "corporelle.",
+  "onboarding_body_hint": "Utilisé pour affiner ton score personnel.",
+  "onboarding_body_cta": "Continuer →",
+
+  "onboarding_targets_eyebrow": "FIXE LA BARRE",
+  "onboarding_targets_headline": "Choisis les chiffres",
+  "onboarding_targets_subheadline": "que tu défendras",
+  "onboarding_targets_daily": "chaque jour.",
+  "onboarding_targets_cta": "Verrouiller mes objectifs →",
+
+  "onboarding_permission_headline": "Une autorisation. Ça vaut le coup.",
+  "onboarding_permission_subheadline": "Ton appareil sait\ntout.",
+  "onboarding_permission_body": "On fait juste les calculs.",
+  "onboarding_permission_cta": "Autoriser l'accès santé →",
+  "onboarding_permission_settings": "Ouvrir les réglages →",
+  "onboarding_permission_denied_body": "L'accès à la santé est requis pour calculer ton score. Ouvre",
+  "onboarding_permission_denied_path": "Réglages → Santé → Accès aux données",
+  "onboarding_permission_denied_enable": "et active toutes les catégories SapiensRank.",
+  "onboarding_permission_heart_rate": "Fréquence cardiaque",
+  "onboarding_permission_heart_rate_sub": "Repos + VFC",
+  "onboarding_permission_activity": "Activité",
+  "onboarding_permission_activity_sub": "Pas, distance, kcal",
+  "onboarding_permission_sleep": "Analyse du sommeil",
+  "onboarding_permission_sleep_sub": "Phases, durée, score",
+  "onboarding_permission_stand": "Heures debout",
+  "onboarding_permission_stand_sub": "Heures bougées par jour",
+
+  "onboarding_score_headline": "Ton premier score Sapiens.",
+  "onboarding_score_cta": "Voir mon rang ? →",
+
+  "onboarding_auth_headline": "Presque là.",
+  "onboarding_auth_subheadline": "découvre ton classement.",
+  "onboarding_auth_body": "Crée un compte pour découvrir ton classement mondial et conserver ton score.",
+
+  "onboarding_done_eyebrow": "T'es dans la place.",
+  "onboarding_done_headline": "Bienvenue dans\nles rangs,",
+  "onboarding_done_body": "Un seul classement.\nAujourd'hui c'est ta chance de grimper.",
+  "onboarding_done_cta": "Entrer dans l'app →",
+
+  "onboarding_notif_headline": "Dernière chose.",
+  "onboarding_notif_body": "Mises à jour quotidiennes du score. Invitations aux défis. Quand un ami te dépasse, tu le sauras.",
+  "onboarding_notif_yes": "Oui, tiens-moi au courant 🔔",
+  "onboarding_notif_skip": "Pas maintenant"
+}

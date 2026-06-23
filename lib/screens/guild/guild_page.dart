@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/guild_skeleton.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_cubit.dart';
 import 'package:sapiens_rank/screens/guild/cubit/guild_state.dart';
@@ -35,7 +36,7 @@ class _GuildView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.srBg,
-      appBar: const SrAppBar(title: 'GUILD'),
+      appBar: SrAppBar(title: AppLocalizations.of(context).guild_title),
       body: BlocBuilder<GuildCubit, DataState<GuildData>>(
         builder: (context, state) => state.when(
           success: (data) => data.isInGuild
@@ -45,7 +46,7 @@ class _GuildView extends StatelessWidget {
           error: (_) => Center(
             child: TextButton(
               onPressed: () => context.read<GuildCubit>().load(),
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ),
         ),
@@ -92,7 +93,7 @@ class _NoGuildBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'You\'re a lone wolf',
+              AppLocalizations.of(context).guild_lone_wolf,
               style: TextStyle(
                 color: context.srText,
                 fontSize: 22,
@@ -101,7 +102,7 @@ class _NoGuildBody extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Join or create a guild to conquer territories and fight other guilds together.',
+              AppLocalizations.of(context).guild_lone_wolf_body,
               style: TextStyle(
                 color: context.srTextMuted,
                 fontSize: 14,
@@ -111,15 +112,15 @@ class _NoGuildBody extends StatelessWidget {
             const SizedBox(height: 32),
             _ActionCard(
               icon: Icons.add,
-              title: 'Create a guild',
-              subtitle: 'You become leader, claim your first territory.',
+              title: AppLocalizations.of(context).guild_create_cta,
+              subtitle: AppLocalizations.of(context).guild_create_hint,
               onTap: () => _openCreate(context),
             ),
             const SizedBox(height: 12),
             _ActionCard(
               icon: Icons.group_add,
-              title: 'Join a guild',
-              subtitle: 'Find an existing guild and contribute immediately.',
+              title: AppLocalizations.of(context).guild_join_cta,
+              subtitle: AppLocalizations.of(context).guild_join_hint,
               onTap: () => _openJoin(context),
             ),
           ],
@@ -319,7 +320,7 @@ class _MembersCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'MEMBERS',
+            AppLocalizations.of(context).guild_members,
             style: TextStyle(
               color: context.srTextDim,
               fontSize: 11,
@@ -388,7 +389,7 @@ class _MemberRow extends StatelessWidget {
           if (member.isLeader)
             SrPill(
               size: SrPillSize.small,
-              label: 'Leader',
+              label: AppLocalizations.of(context).guild_leader,
               color: context.srAmber,
             ),
         ],
@@ -414,7 +415,7 @@ class _AttackHistoryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'RECENT ATTACKS',
+            AppLocalizations.of(context).guild_attacks,
             style: TextStyle(
               color: context.srTextDim,
               fontSize: 11,
@@ -451,16 +452,16 @@ class _AttackRow extends StatelessWidget {
     String statusLabel;
     if (isActive) {
       statusColor = context.srAmber;
-      statusLabel = 'Active';
+      statusLabel = AppLocalizations.of(context).guild_attack_active;
     } else if (attack.winnerGuildId == null) {
       statusColor = context.srTextMuted;
-      statusLabel = 'Tie';
+      statusLabel = AppLocalizations.of(context).guild_attack_tie;
     } else if (won) {
       statusColor = context.srLimeText;
-      statusLabel = 'Won';
+      statusLabel = AppLocalizations.of(context).guild_attack_won;
     } else {
       statusColor = context.srRose;
-      statusLabel = 'Lost';
+      statusLabel = AppLocalizations.of(context).guild_attack_lost;
     }
 
     return Padding(
@@ -515,24 +516,24 @@ class _LeaveButton extends StatelessWidget {
           builder: (dialogContext) => AlertDialog(
             backgroundColor: context.srBgElev,
             title: Text(
-              'Leave guild?',
+              AppLocalizations.of(context).guild_leave_title,
               style: TextStyle(color: context.srText),
             ),
             content: Text(
-              'You will leave $guildName. Your guild\'s territories remain.',
+              AppLocalizations.of(context).guild_leave_body(guildName),
               style: TextStyle(color: context.srTextMuted),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
                 child: Text(
-                  'Cancel',
+                  AppLocalizations.of(context).cancel,
                   style: TextStyle(color: context.srTextMuted),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
-                child: Text('Leave', style: TextStyle(color: context.srRose)),
+                child: Text(AppLocalizations.of(context).guild_leave_btn, style: TextStyle(color: context.srRose)),
               ),
             ],
           ),
@@ -543,8 +544,8 @@ class _LeaveButton extends StatelessWidget {
         } catch (_) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Could not leave guild. Try again.'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context).guild_leave_error),
               ),
             );
           }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/data/countries.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_selectable_card.dart';
@@ -68,24 +69,23 @@ class SrCountryStepState extends State<CountryStep> {
             onTap: () => widget.onSubmit(_selected),
           ),
           const SizedBox(height: 8),
-          ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+          ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: widget.onBack),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow('Where do you challenge?'),
+          OnboardingEyebrow(AppLocalizations.of(context).onboarding_country_headline),
           const SizedBox(height: 14),
           Text(
-            'Plant your flag.',
+            AppLocalizations.of(context).onboarding_country_subheadline,
             style: Theme.of(
               context,
             ).textTheme.displayMedium!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 10),
-          const OnboardingLede(
-            "You'll compete on both the global and country leaderboards. "
-            "Pick wisely, you can only switch once a quarter.",
+          OnboardingLede(
+            AppLocalizations.of(context).onboarding_country_body,
           ),
           const SizedBox(height: 24),
           _SearchInput(controller: _searchCtrl),
@@ -111,7 +111,7 @@ class _SearchInput extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     return SrTextField(
       controller: controller,
-      hintText: 'Search country...',
+      hintText: AppLocalizations.of(context).onboarding_country_search,
       style: tt.bodyMedium,
       borderRadius: 14,
       borderColor: context.srLineStrong,

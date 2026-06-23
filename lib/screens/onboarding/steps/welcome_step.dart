@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 
 class WelcomeStep extends StatefulWidget {
@@ -78,7 +79,7 @@ class _WelcomeStepState extends State<WelcomeStep>
                       ),
                       const SizedBox(width: 7),
                       Text(
-                        'LIVE · WORLD LEADERBOARD',
+                        AppLocalizations.of(context).onboarding_welcome_leaderboard,
                         style: tt.labelSmall!.copyWith(
                           color: context.srLimeText,
                           letterSpacing: 1.8,
@@ -156,9 +157,9 @@ class _WelcomeStepState extends State<WelcomeStep>
                         color: context.srText,
                       ),
                       children: [
-                        const TextSpan(text: 'Improve together.\n'),
+                        TextSpan(text: '${AppLocalizations.of(context).onboarding_welcome_headline}\n'),
                         TextSpan(
-                          text: 'Become the best Homo Sapiens.',
+                          text: AppLocalizations.of(context).onboarding_welcome_subheadline,
                           style: TextStyle(color: context.srLimeText),
                         ),
                       ],
@@ -166,7 +167,7 @@ class _WelcomeStepState extends State<WelcomeStep>
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'We read your Health data and slot you in.\nTakes 30 seconds.',
+                    AppLocalizations.of(context).onboarding_welcome_body,
                     style: tt.bodySmall!.copyWith(
                       color: context.srTextMuted,
                       height: 1.4,
@@ -175,12 +176,12 @@ class _WelcomeStepState extends State<WelcomeStep>
                   const SizedBox(height: 22),
                   RepaintBoundary(
                     child: ArenaButton(
-                      label: 'Find my rank →',
+                      label: AppLocalizations.of(context).onboarding_welcome_cta,
                       onTap: widget.onNext,
                     ),
                   ),
                   ArenaSecondaryButton(
-                    label: 'I already have an account',
+                    label: AppLocalizations.of(context).onboarding_welcome_login,
                     onTap: widget.onLogin,
                   ),
                 ],

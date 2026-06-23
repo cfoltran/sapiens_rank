@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/result_cubit.dart';
 import 'package:sapiens_rank/screens/challenge/workout_format.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -158,13 +159,13 @@ class _ResultViewState extends State<_ResultView>
                 myStanding?.durationSeconds,
                 challenge.targetDistanceKm,
               )
-            : 'avg score';
+            : AppLocalizations.of(context).result_avg_score;
         final oppSub = isWorkout
             ? WorkoutFormat.pace(
                 oppStanding?.durationSeconds,
                 challenge.targetDistanceKm,
               )
-            : 'avg score';
+            : AppLocalizations.of(context).result_avg_score;
 
         final bool showMargin;
         final String marginLabel;
@@ -180,7 +181,10 @@ class _ResultViewState extends State<_ResultView>
           }
         } else {
           showMargin = margin.abs() > 0;
-          marginLabel = '${margin.abs()} point${margin.abs() != 1 ? 's' : ''}';
+          final n = margin.abs();
+          marginLabel = n == 1
+              ? AppLocalizations.of(context).result_points(n)
+              : AppLocalizations.of(context).result_points_plural(n);
         }
 
         final accent = isDraw
@@ -359,7 +363,7 @@ class _ResultViewState extends State<_ResultView>
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Result not found',
+            AppLocalizations.of(context).result_not_found,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 12,
               color: context.srTextDim,
@@ -369,7 +373,7 @@ class _ResultViewState extends State<_ResultView>
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Text(
-              'Close',
+              AppLocalizations.of(context).close,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -511,19 +515,16 @@ class _TitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eyebrow = isWin
-        ? 'CHALLENGE WON'
-        : isDraw
-        ? 'CHALLENGE ENDED'
-        : 'CHALLENGE ENDED';
+    final l = AppLocalizations.of(context);
+    final eyebrow = isWin ? l.result_won : l.result_ended;
     final headline = isWin
-        ? 'Victory.'
+        ? l.result_victory
         : isDraw
-        ? 'Draw.'
-        : 'Defeated.';
-    final winLead = isWin ? 'You beat $oppName' : '$oppName won';
+        ? l.result_draw
+        : l.result_defeated;
+    final winLead = isWin ? l.result_you_beat(oppName) : l.result_opponent_won(oppName);
     final sub = isDraw
-        ? 'You and $oppName are perfectly matched.'
+        ? l.result_perfectly_matched(oppName)
         : showMargin
         ? '$winLead by '
         : '$winLead.';
@@ -633,14 +634,14 @@ class _ScoreFaceoff extends StatelessWidget {
         children: [
           Expanded(
             child: _PlayerColumn(
-              label: 'You',
+              label: AppLocalizations.of(context).you,
               value: myValue,
               subLabel: mySub,
               isWinner: isWin || isDraw,
               showCrown: isWin,
               accentText: accentText,
               avatarColor: context.srLime.withAlpha(0x44),
-              avatarInitials: 'ME',
+              avatarInitials: AppLocalizations.of(context).result_me,
               opacity: 1.0,
             ),
           ),
@@ -796,11 +797,12 @@ class _StakeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final statusLabel = isDraw
-        ? 'SPLIT'
+        ? l.result_split
         : isWin
-        ? 'YOU TAKE'
-        : 'THEY TAKE';
+        ? l.result_you_take
+        : l.result_they_take;
     final borderColor = claimed
         ? context.srLime.withAlpha(0x66)
         : isWin
@@ -842,7 +844,7 @@ class _StakeSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        claimed ? '✓ REWARD CLAIMED' : statusLabel,
+                        claimed ? AppLocalizations.of(context).result_reward_claimed : statusLabel,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -886,7 +888,7 @@ class _StakeSection extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Claim reward →',
+                    AppLocalizations.of(context).result_claim_reward,
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -912,7 +914,7 @@ class _StakeSection extends StatelessWidget {
                       letterSpacing: 11 * 0.05,
                     ),
                     children: [
-                      const TextSpan(text: 'Sent to your wallet · code '),
+                      TextSpan(text: AppLocalizations.of(context).result_wallet_sent),
                       TextSpan(
                         text: 'SAP-9F2K',
                         style: TextStyle(color: context.srLimeText),
@@ -963,7 +965,7 @@ class _Footer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(100),
               ),
               child: Text(
-                'Close',
+                AppLocalizations.of(context).close,
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -991,11 +993,9 @@ class _Footer extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    isWin
-                        ? 'Rematch ⚔️'
-                        : isDraw
-                        ? 'Rematch ⚔️'
-                        : 'OK',
+                    isWin || isDraw
+                        ? AppLocalizations.of(context).result_rematch
+                        : AppLocalizations.of(context).ok,
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,

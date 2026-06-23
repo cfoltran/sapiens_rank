@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/data/countries.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/leaderboard_entry.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
@@ -139,8 +140,8 @@ class _RankRevealStepState extends State<RankRevealStep>
                         const SizedBox(height: 24),
                         OnboardingEyebrow(
                           landed
-                              ? 'World rank · live'
-                              : 'Calculating world rank',
+                              ? AppLocalizations.of(context).onboarding_rank_live
+                              : AppLocalizations.of(context).onboarding_rank_calculating,
                           color: SrColors.magenta,
                         ),
                         if (landed) ...[
@@ -159,7 +160,7 @@ class _RankRevealStepState extends State<RankRevealStep>
                           ),
                         ),
                         Text(
-                          'in the world',
+                          AppLocalizations.of(context).onboarding_rank_in_world,
                           style: tt.labelMedium!.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
@@ -193,13 +194,13 @@ class _RankRevealStepState extends State<RankRevealStep>
                       child: Column(
                         children: [
                           ArenaButton(
-                            label: 'Join the leaderboard →',
+                            label: AppLocalizations.of(context).onboarding_rank_join,
                             onTap: widget.onNext,
                             color: SrColors.magenta,
                           ),
                           const SizedBox(height: 8),
                           ArenaSecondaryButton(
-                            label: 'Share my rank',
+                            label: AppLocalizations.of(context).onboarding_rank_share,
                             onTap: () {},
                           ),
                         ],
@@ -223,7 +224,7 @@ class _IntroText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '$firstName, you are',
+      AppLocalizations.of(context).onboarding_rank_you_are(firstName),
       style: Theme.of(context).textTheme.titleLarge!.copyWith(
         fontWeight: FontWeight.w500,
         color: context.srTextMuted,
@@ -316,18 +317,18 @@ class _StatsCard extends StatelessWidget {
                       color: context.srText,
                     ),
                     children: [
-                      const TextSpan(text: 'Higher than '),
+                      TextSpan(text: '${AppLocalizations.of(context).onboarding_rank_higher_prefix} '),
                       TextSpan(
                         text: '$pct%',
                         style: const TextStyle(color: SrColors.magenta),
                       ),
-                      const TextSpan(text: ' of Sapiens'),
+                      TextSpan(text: ' ${AppLocalizations.of(context).onboarding_rank_higher_suffix}'),
                     ],
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Out of ${_formatCount(totalUsers)} ranked today',
+                  AppLocalizations.of(context).onboarding_rank_out_of(_formatCount(totalUsers)),
                   style: tt.labelSmall!.copyWith(
                     fontWeight: FontWeight.normal,
                     color: context.srTextMuted,

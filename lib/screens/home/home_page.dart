@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/challenge/challenge_page.dart';
@@ -125,22 +126,26 @@ class _SrTabBar extends StatelessWidget {
   final int selected;
   final ValueChanged<int> onTap;
 
-  static const _tabs = [
-    _TabItem(label: 'Score', icon: Icons.auto_awesome),
-    _TabItem(label: 'World', icon: Icons.public),
-    _TabItem(label: 'Challenge', icon: Icons.flash_on),
-    _TabItem(label: 'Battle', icon: Icons.fort),
-  ];
+  List<_TabItem> _buildTabs(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return [
+      _TabItem(label: l.nav_score, icon: Icons.auto_awesome),
+      _TabItem(label: l.nav_world, icon: Icons.public),
+      _TabItem(label: l.nav_challenge, icon: Icons.flash_on),
+      _TabItem(label: l.nav_battle, icon: Icons.fort),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final tabs = _buildTabs(context);
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Padding(
       padding: EdgeInsets.fromLTRB(14, 0, 14, bottomPad),
       child: LayoutBuilder(
         builder: (_, constraints) {
           final totalW = constraints.maxWidth;
-          final tabW = (totalW - 12) / _tabs.length;
+          final tabW = (totalW - 12) / tabs.length;
 
           return SizedBox(
             height: 68,
@@ -196,7 +201,7 @@ class _SrTabBar extends StatelessWidget {
                       ),
                       Row(
                         children: List.generate(
-                          _tabs.length,
+                          tabs.length,
                           (i) => Expanded(
                             child: GestureDetector(
                               onTap: () => onTap(i),
@@ -205,7 +210,7 @@ class _SrTabBar extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    _tabs[i].icon,
+                                    tabs[i].icon,
                                     size: 20,
                                     color: i == selected
                                         ? context.srLimeText
@@ -213,7 +218,7 @@ class _SrTabBar extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 3),
                                   Text(
-                                    _tabs[i].label,
+                                    tabs[i].label,
                                     style: GoogleFonts.spaceGrotesk(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,

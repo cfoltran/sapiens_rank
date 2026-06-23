@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -39,12 +40,12 @@ class _NotificationsStepState extends State<NotificationsStep> {
       footer: Column(
         children: [
           ArenaButton(
-            label: _loading ? 'Authorizing…' : 'Yes, keep me in the loop 🔔',
+            label: _loading ? AppLocalizations.of(context).onboarding_notif_authorizing : AppLocalizations.of(context).onboarding_notif_yes,
             onTap: _loading ? null : _requestPermission,
           ),
           const SizedBox(height: 8),
           ArenaSecondaryButton(
-            label: 'Not now',
+            label: AppLocalizations.of(context).onboarding_notif_skip,
             onTap: _loading ? () {} : widget.onNext,
           ),
         ],
@@ -52,13 +53,11 @@ class _NotificationsStepState extends State<NotificationsStep> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow('Last thing.'),
+          OnboardingEyebrow(AppLocalizations.of(context).onboarding_notif_headline),
           const SizedBox(height: 14),
           _Headline(),
           const SizedBox(height: 10),
-          const OnboardingLede(
-            'Daily score updates. Challenge invites. When a friend passes you, you\'ll know.',
-          ),
+          OnboardingLede(AppLocalizations.of(context).onboarding_notif_body),
           const SizedBox(height: 28),
           _NotifPreview(
             icon: '⚔️',
@@ -88,7 +87,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
               duration: const Duration(milliseconds: 400),
               child: Center(
                 child: Text(
-                  'Welcome to the ranks, Sapien. ✓',
+                  AppLocalizations.of(context).onboarding_notif_granted,
                   style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     fontStyle: FontStyle.italic,
                     color: context.srLimeText,
@@ -106,6 +105,7 @@ class _NotificationsStepState extends State<NotificationsStep> {
 class _Headline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return RichText(
       text: TextSpan(
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
@@ -113,9 +113,9 @@ class _Headline extends StatelessWidget {
           color: context.srText,
         ),
         children: [
-          const TextSpan(text: 'Stay in the '),
+          TextSpan(text: '${l.onboarding_notif_headline_prefix} '),
           TextSpan(
-            text: 'challenge.',
+            text: l.onboarding_notif_headline_accent,
             style: TextStyle(
               fontStyle: FontStyle.italic,
               color: context.srLimeText,

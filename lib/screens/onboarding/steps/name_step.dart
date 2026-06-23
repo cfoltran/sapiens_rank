@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/sr_text_field.dart';
@@ -57,27 +58,27 @@ class _NameStepState extends State<NameStep> {
       footer: Column(
         children: [
           ArenaButton(
-            label: "That's me →",
+            label: AppLocalizations.of(context).onboarding_name_cta,
             onTap: _canSubmit ? () => widget.onSubmit(_ctrl.text.trim()) : null,
           ),
           const SizedBox(height: 8),
-          ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+          ArenaSecondaryButton(label: AppLocalizations.of(context).back, onTap: widget.onBack),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const OnboardingEyebrow('Identity check'),
+          OnboardingEyebrow(AppLocalizations.of(context).onboarding_name_eyebrow),
           const SizedBox(height: 14),
           Text(
-            'What should the\nworld call you?',
+            AppLocalizations.of(context).onboarding_name_headline,
             style: Theme.of(
               context,
             ).textTheme.displayMedium!.copyWith(color: context.srText),
           ),
           const SizedBox(height: 10),
-          const OnboardingLede(
-            "You can change it later. The leaderboard doesn't care, but your friends will.",
+          OnboardingLede(
+            AppLocalizations.of(context).onboarding_name_hint_body,
           ),
           const SizedBox(height: 40),
           Text(
@@ -109,7 +110,7 @@ class _NameInput extends StatelessWidget {
 
     return SrTextField(
       controller: controller,
-      hintText: 'First & last name',
+      hintText: AppLocalizations.of(context).onboarding_name_field_hint,
       style: tt.titleSmall!.copyWith(fontWeight: FontWeight.w500),
       autofocus: true,
       textCapitalization: TextCapitalization.words,

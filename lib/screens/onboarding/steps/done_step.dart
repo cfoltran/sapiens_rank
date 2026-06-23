@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 
@@ -65,13 +66,13 @@ class _DoneStepState extends State<DoneStep>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const OnboardingEyebrow(
-                        "You're in.",
+                      OnboardingEyebrow(
+                        AppLocalizations.of(context).onboarding_done_eyebrow,
                         color: SrColors.magenta,
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'Welcome to\nthe ranks,',
+                        AppLocalizations.of(context).onboarding_done_headline,
                         textAlign: TextAlign.center,
                         style: tt.displayLarge!.copyWith(color: context.srText),
                       ),
@@ -84,7 +85,7 @@ class _DoneStepState extends State<DoneStep>
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'One leaderboard.\nToday is your chance to climb.',
+                        AppLocalizations.of(context).onboarding_done_body,
                         textAlign: TextAlign.center,
                         style: tt.bodyLarge!.copyWith(
                           color: context.srTextMuted,
@@ -96,7 +97,7 @@ class _DoneStepState extends State<DoneStep>
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22, 0, 22, 36),
                   child: ArenaButton(
-                    label: 'Enter the app →',
+                    label: AppLocalizations.of(context).onboarding_done_cta,
                     onTap: widget.onEnter,
                   ),
                 ),

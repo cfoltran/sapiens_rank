@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_slider.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
@@ -45,12 +46,13 @@ class _BmiStepState extends State<BmiStep> {
     return _weight / (h * h);
   }
 
-  String get _bmiCategory {
+  String _bmiCategoryLabel(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final b = _bmi;
-    if (b < 18.5) return 'Underweight';
-    if (b < 25) return 'Healthy';
-    if (b < 30) return 'Overweight';
-    return 'Obese';
+    if (b < 18.5) return l.profile_bmi_underweight;
+    if (b < 25) return l.profile_bmi_healthy;
+    if (b < 30) return l.profile_bmi_overweight;
+    return l.profile_bmi_obese;
   }
 
   Color _bmiColor(BuildContext context) {
@@ -88,18 +90,21 @@ class _BmiStepState extends State<BmiStep> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ArenaButton(
-            label: 'Continue →',
+            label: AppLocalizations.of(context).onboarding_body_cta,
             onTap: () => widget.onSubmit(_current),
           ),
           const SizedBox(height: 4),
-          ArenaSecondaryButton(label: 'Back', onTap: widget.onBack),
+          ArenaSecondaryButton(
+            label: AppLocalizations.of(context).back,
+            onTap: widget.onBack,
+          ),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'BODY',
+            AppLocalizations.of(context).onboarding_body_eyebrow,
             style: GoogleFonts.jetBrainsMono(
               fontSize: 10,
               color: context.srLimeText,
@@ -118,9 +123,14 @@ class _BmiStepState extends State<BmiStep> {
                 height: 1.1,
               ),
               children: [
-                const TextSpan(text: 'Body '),
                 TextSpan(
-                  text: 'composition.',
+                  text:
+                      '${AppLocalizations.of(context).onboarding_body_headline} ',
+                ),
+                TextSpan(
+                  text: AppLocalizations.of(
+                    context,
+                  ).onboarding_body_subheadline,
                   style: TextStyle(
                     color: context.srLimeText,
                     fontStyle: FontStyle.italic,
@@ -131,7 +141,7 @@ class _BmiStepState extends State<BmiStep> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Used to refine your personal score.',
+            AppLocalizations.of(context).onboarding_body_hint,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium!.copyWith(color: context.srTextMuted),
@@ -139,14 +149,14 @@ class _BmiStepState extends State<BmiStep> {
           const SizedBox(height: 24),
           _BmiDisplay(
             bmi: _bmi,
-            category: _bmiCategory,
+            category: _bmiCategoryLabel(context),
             color: _bmiColor(context),
             textColor: _bmiTextColor(context),
           ),
           const SizedBox(height: 16),
           _MetricSlider(
             icon: '📏',
-            label: 'Height',
+            label: AppLocalizations.of(context).profile_height,
             value: _height,
             min: 140,
             max: 220,
@@ -159,7 +169,7 @@ class _BmiStepState extends State<BmiStep> {
           const SizedBox(height: 10),
           _MetricSlider(
             icon: '⚖️',
-            label: 'Weight',
+            label: AppLocalizations.of(context).profile_weight,
             value: _weight,
             min: 40,
             max: 150,
@@ -170,7 +180,7 @@ class _BmiStepState extends State<BmiStep> {
           ),
           const SizedBox(height: 20),
           Text(
-            'How often do you want to update your weight?',
+            AppLocalizations.of(context).onboarding_bmi_frequency_question,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: context.srTextDim,
               fontWeight: FontWeight.w500,

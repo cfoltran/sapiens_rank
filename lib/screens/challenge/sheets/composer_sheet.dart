@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/challenge_state.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/composer_cubit.dart';
@@ -142,7 +143,7 @@ class _ComposerView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(100),
                             ),
                             child: Text(
-                              'Back',
+                              AppLocalizations.of(context).back,
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -187,8 +188,8 @@ class _ComposerView extends StatelessWidget {
                                     )
                                   : Text(
                                       state.step < 3
-                                          ? 'Continue'
-                                          : 'Send challenge ⚔️',
+                                          ? AppLocalizations.of(context).composer_continue
+                                          : AppLocalizations.of(context).composer_send,
                                       style: GoogleFonts.spaceGrotesk(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
@@ -217,9 +218,18 @@ class _ComposerHeader extends StatelessWidget {
   const _ComposerHeader({required this.step});
   final int step;
 
+  List<String> _titles(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return [
+      l.composer_pick_opponent,
+      l.composer_set_rules,
+      l.composer_stake_reward,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    const titles = ['Pick opponent', 'Set the rules', 'Stake a reward'];
+    final titles = _titles(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -277,7 +287,7 @@ class _StepPickOpponent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'PLAYERS · ${users.length}',
+          AppLocalizations.of(context).composer_players(users.length),
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
             color: context.srTextDim,
@@ -332,7 +342,7 @@ class _StepPickOpponent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'SCORE',
+                        AppLocalizations.of(context).composer_score_label,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 9,
                           color: context.srTextDim,
@@ -464,13 +474,13 @@ class _StepSetRulesState extends State<_StepSetRules> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionLabel('CHALLENGE TYPE'),
+        _SectionLabel(AppLocalizations.of(context).composer_challenge_type),
         const SizedBox(height: 10),
         Row(
           children:
               [
-                (ChallengeType.score, 'Sapiens Score', '📊'),
-                (ChallengeType.workout, 'Workout', '🏃'),
+                (ChallengeType.score, AppLocalizations.of(context).composer_type_score, '📊'),
+                (ChallengeType.workout, AppLocalizations.of(context).composer_type_workout, '🏃'),
               ].map((t) {
                 final (id, label, icon) = t;
                 final active = widget.challengeType == id;
@@ -514,7 +524,7 @@ class _StepSetRulesState extends State<_StepSetRules> {
         ),
         const SizedBox(height: 18),
         if (widget.challengeType == ChallengeType.workout) ...[
-          _SectionLabel('SPORT'),
+          _SectionLabel(AppLocalizations.of(context).composer_sport),
           const SizedBox(height: 10),
           GridView.count(
             shrinkWrap: true,
@@ -565,7 +575,7 @@ class _StepSetRulesState extends State<_StepSetRules> {
           ),
           if (widget.workoutType != null) ...[
             const SizedBox(height: 18),
-            _SectionLabel('DISTANCE'),
+            _SectionLabel(AppLocalizations.of(context).composer_distance),
             const SizedBox(height: 10),
             _DistancePicker(
               presets: sportById(widget.workoutType)!.presets,
@@ -595,12 +605,12 @@ class _StepSetRulesState extends State<_StepSetRules> {
           ],
           const SizedBox(height: 18),
         ],
-        _SectionLabel('DURATION'),
+        _SectionLabel(AppLocalizations.of(context).composer_duration),
         const SizedBox(height: 4),
         Text(
           widget.challengeType == ChallengeType.workout
-              ? 'Time window to log your effort'
-              : 'How long the score battle runs',
+              ? AppLocalizations.of(context).composer_duration_hint_workout
+              : AppLocalizations.of(context).composer_duration_hint_score,
           style: GoogleFonts.jetBrainsMono(
             fontSize: 10,
             color: context.srTextDim,
@@ -609,11 +619,11 @@ class _StepSetRulesState extends State<_StepSetRules> {
         const SizedBox(height: 10),
         Row(
           children:
-              const [
-                ('1d', '24h'),
-                ('3d', '3 days'),
-                ('7d', '1 week'),
-                ('30d', '30 days'),
+              [
+                ('1d', AppLocalizations.of(context).composer_24h),
+                ('3d', AppLocalizations.of(context).composer_3d),
+                ('7d', AppLocalizations.of(context).composer_1w),
+                ('30d', AppLocalizations.of(context).composer_30d),
               ].map((d) {
                 final (id, label) = d;
                 final active = widget.duration == id;
@@ -705,7 +715,7 @@ class _DistancePicker extends StatelessWidget {
                 onTap: () => onPreset(km),
               );
             }),
-            _Chip(label: '+ Custom', active: customOpen, onTap: onToggleCustom),
+            _Chip(label: AppLocalizations.of(context).composer_custom_distance, active: customOpen, onTap: onToggleCustom),
           ],
         ),
         if (customOpen) ...[
@@ -726,7 +736,7 @@ class _DistancePicker extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: context.srLimeText,
               ),
-              hintText: 'e.g. 8',
+              hintText: AppLocalizations.of(context).composer_distance_hint,
               hintStyle: GoogleFonts.jetBrainsMono(
                 fontSize: 13,
                 color: context.srTextDim,
@@ -848,10 +858,11 @@ class _StepPickRewardState extends State<_StepPickReward> {
         final showField = fieldOpen && isFieldType;
 
         String title() {
-          if (r.id == 'restaurant') return 'If you win, I take you out';
-          if (r.id == 'cinema') return 'If you win, cinema on me';
-          if (isCash) return 'Money bet';
-          return 'Custom stake';
+          final l = AppLocalizations.of(context);
+          if (r.id == 'restaurant') return l.composer_stake_restaurant;
+          if (r.id == 'cinema') return l.composer_stake_cinema;
+          if (isCash) return l.composer_stake_money;
+          return l.composer_stake_custom;
         }
 
         return GestureDetector(
@@ -910,9 +921,9 @@ class _StepPickRewardState extends State<_StepPickReward> {
                           if (!showField)
                             Text(
                               isCash
-                                  ? 'Tap to set amount'
+                                  ? AppLocalizations.of(context).composer_stake_tap_amount
                                   : isCustom
-                                  ? 'Tap to write'
+                                  ? AppLocalizations.of(context).composer_stake_tap_write
                                   : r.desc,
                               style: GoogleFonts.jetBrainsMono(
                                 fontSize: 10,
@@ -944,7 +955,7 @@ class _StepPickRewardState extends State<_StepPickReward> {
                         fontWeight: FontWeight.w600,
                         color: context.srLimeText,
                       ),
-                      hintText: isCash ? '20' : 'e.g. loser buys drinks',
+                      hintText: isCash ? '20' : AppLocalizations.of(context).composer_stake_hint_loser,
                       hintStyle: GoogleFonts.jetBrainsMono(
                         fontSize: 13,
                         color: context.srTextDim,
@@ -993,7 +1004,7 @@ class _SentConfirmation extends StatelessWidget {
           const Text('⚔️', style: TextStyle(fontSize: 48)),
           const SizedBox(height: 12),
           Text(
-            'Challenge sent',
+            AppLocalizations.of(context).composer_sent_title,
             style: GoogleFonts.spaceGrotesk(
               fontSize: 22,
               fontWeight: FontWeight.w600,
@@ -1003,7 +1014,7 @@ class _SentConfirmation extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '$opponentName will be notified',
+            AppLocalizations.of(context).composer_sent_subtitle(opponentName),
             style: GoogleFonts.jetBrainsMono(
               fontSize: 12,
               color: context.srTextMuted,

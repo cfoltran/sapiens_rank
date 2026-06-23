@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 
 class RulesSheet extends StatelessWidget {
   const RulesSheet({super.key});
@@ -8,48 +9,23 @@ class RulesSheet extends StatelessWidget {
   static Future<void> show(BuildContext context) {
     return SrBottomSheet.show(
       context: context,
-      title: 'How it works',
+      title: AppLocalizations.of(context).rules_title,
       child: const RulesSheet(),
     );
   }
 
-  static const _rules = [
-    (
-      '🏰',
-      'Territories',
-      'The map is a grid of neutral territories. When you create a guild, you automatically claim one. Your guild\'s color marks everything you own.',
-    ),
-    (
-      '⚔️',
-      'Attacking',
-      'You can attack any territory adjacent to one you already own. The metric is drawn at random — a slot machine spins when you launch. Attacks last 24 hours. Only one attack at a time per guild.',
-    ),
-    (
-      '📊',
-      'How winners are decided',
-      'During the attack window, each guild\'s members sync their health data. The guild with the highest total on the drawn metric wins. Every member counts, even small contributions.',
-    ),
-    (
-      '🤝',
-      'Tie rule',
-      'Equal totals? The defender keeps the territory. Attackers must outperform to conquer.',
-    ),
-    (
-      '⚡',
-      'Boosters',
-      'Before launching, you can spend Sapies on a booster: Boost (+5%, 300α), Surge (+15%, 500α), or Blitz (+20%, 900α). The multiplier applies to your guild\'s total for that attack.',
-    ),
-    (
-      '👥',
-      'Guild slots',
-      'A new guild can hold 5 members. Each territory you conquer unlocks one more slot. Grow your territory to grow your team.',
-    ),
-    (
-      '🐺',
-      'Solo players',
-      'You can claim neutral territories alone, but you can\'t attack guilds without joining one first. Solo players are "guilds of 1".',
-    ),
-  ];
+  List<(String, String, String)> _buildRules(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return [
+      ('🏰', l.rules_territories_title, l.rules_territories_body),
+      ('⚔️', l.rules_attacking_title, l.rules_attacking_body),
+      ('📊', l.rules_winners_title, l.rules_winners_body),
+      ('🤝', l.rules_tie_title, l.rules_tie_body),
+      ('⚡', l.rules_boosters_title, l.rules_boosters_body),
+      ('👥', l.rules_slots_title, l.rules_slots_body),
+      ('🐺', l.rules_solo_title, l.rules_solo_body),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +33,7 @@ class RulesSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final (icon, title, body) in _rules)
+        for (final (icon, title, body) in _buildRules(context))
           _Rule(icon: icon, title: title, body: body),
       ],
     );

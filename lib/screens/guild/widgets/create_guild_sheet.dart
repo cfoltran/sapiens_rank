@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 
 const _colorPalette = [
   '#E74C3C',
@@ -92,7 +93,7 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Create a guild',
+            AppLocalizations.of(context).create_guild_title,
             style: TextStyle(
               color: context.srText,
               fontSize: 18,
@@ -106,7 +107,7 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
             maxLength: 24,
             style: TextStyle(color: context.srText),
             decoration: InputDecoration(
-              hintText: 'Guild name',
+              hintText: AppLocalizations.of(context).create_guild_name_hint,
               hintStyle: TextStyle(color: context.srTextDim),
               filled: true,
               fillColor: context.srBgElev2,
@@ -127,7 +128,7 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
           ),
           const SizedBox(height: 20),
           Text(
-            'COLOR',
+            AppLocalizations.of(context).create_guild_color,
             style: TextStyle(
               color: context.srTextDim,
               fontSize: 11,
@@ -196,9 +197,9 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
                         color: Colors.black,
                       ),
                     )
-                  : const Text(
-                      'Create',
-                      style: TextStyle(
+                  : Text(
+                      AppLocalizations.of(context).create_guild_btn,
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),

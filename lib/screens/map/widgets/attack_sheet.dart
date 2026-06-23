@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
@@ -92,8 +93,8 @@ class _AttackSheetState extends State<AttackSheet> {
                 children: [
                   Text(
                     isNeutral
-                        ? 'Claim neutral territory'
-                        : 'Attack ${owner ?? 'guild'}',
+                        ? AppLocalizations.of(context).attack_claim_title
+                        : AppLocalizations.of(context).attack_guild_title(owner ?? 'guild'),
                     style: TextStyle(
                       color: context.srText,
                       fontSize: 18,
@@ -103,10 +104,10 @@ class _AttackSheetState extends State<AttackSheet> {
                   const SizedBox(height: 4),
                   Text(
                     spinning
-                        ? 'Rolling your metric…'
+                        ? AppLocalizations.of(context).attack_rolling
                         : isNeutral
-                        ? 'No defender, territory is yours in 24h.'
-                        : 'Your guild\'s total beats their guild\'s total.',
+                        ? AppLocalizations.of(context).attack_neutral_hint
+                        : AppLocalizations.of(context).attack_guild_hint,
                     style: TextStyle(color: context.srTextMuted, fontSize: 13),
                   ),
                 ],
@@ -162,7 +163,7 @@ class _AttackSheetState extends State<AttackSheet> {
                       ),
                     ),
                     child: Text(
-                      isNeutral ? 'Claim' : 'Launch attack',
+                      isNeutral ? AppLocalizations.of(context).attack_claim_btn : AppLocalizations.of(context).attack_launch_btn,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -195,14 +196,14 @@ class _ChoosingBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionLabel('BOOST YOUR ATTACK (OPTIONAL)'),
+        _SectionLabel(AppLocalizations.of(context).attack_boost_section),
         const SizedBox(height: 10),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
             _BoosterChip(
-              label: 'None',
+              label: AppLocalizations.of(context).attack_none,
               selected: booster == null,
               canAfford: true,
               onTap: () {

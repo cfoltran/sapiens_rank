@@ -69,6 +69,7 @@ class _MaterialAppRouter extends StatelessWidget {
       theme: DkTheme.light(),
       darkTheme: DkTheme.dark(),
       themeMode: authService.themeMode,
+      locale: authService.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerDelegate: router.routerDelegate,

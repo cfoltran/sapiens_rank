@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/screens/onboarding/sheets/email_auth_sheet.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
@@ -45,7 +46,7 @@ class AuthStep extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Back',
+                      AppLocalizations.of(context).back,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: context.srTextMuted,
                       ),
@@ -54,7 +55,7 @@ class AuthStep extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const OnboardingEyebrow('Almost there.', color: SrColors.magenta),
+              OnboardingEyebrow(AppLocalizations.of(context).onboarding_auth_headline, color: SrColors.magenta),
               const SizedBox(height: 14),
               RichText(
                 text: TextSpan(
@@ -62,16 +63,14 @@ class AuthStep extends StatelessWidget {
                   children: [
                     TextSpan(text: '$name, '),
                     TextSpan(
-                      text: 'discover your ranking.',
+                      text: AppLocalizations.of(context).onboarding_auth_subheadline,
                       style: TextStyle(color: context.srLimeText),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 10),
-              const OnboardingLede(
-                "Create an account to discover your global ranking and keep your score.",
-              ),
+              OnboardingLede(AppLocalizations.of(context).onboarding_auth_body),
               const Spacer(),
               if (isLoading)
                 const Center(child: CircularProgressIndicator())
@@ -93,7 +92,7 @@ class AuthStep extends StatelessWidget {
                     onPressed: () =>
                         EmailAuthSheet.show(context, onAuth: onAuth),
                     child: Text(
-                      'Continue with email',
+                      AppLocalizations.of(context).onboarding_auth_email,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: context.srTextMuted,
                         fontWeight: FontWeight.w500,
@@ -121,7 +120,7 @@ class _Divider extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            'or',
+            AppLocalizations.of(context).onboarding_auth_or,
             style: Theme.of(context).textTheme.labelMedium!.copyWith(
               color: context.srTextDim,
               fontWeight: FontWeight.normal,

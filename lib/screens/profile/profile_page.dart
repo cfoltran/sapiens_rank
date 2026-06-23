@@ -5,6 +5,7 @@ import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/profile_skeleton.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/habits_data.dart';
 import 'package:sapiens_rank/models/health_targets.dart';
 import 'package:sapiens_rank/common/widgets/sr_app_bar.dart';
@@ -46,13 +47,13 @@ class _ErrorBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.srBg,
-      appBar: const SrAppBar(title: 'PROFILE'),
+      appBar: SrAppBar(title: AppLocalizations.of(context).profile_title),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Could not load profile',
+              AppLocalizations.of(context).profile_error,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
                 color: context.srTextMuted,
@@ -62,7 +63,7 @@ class _ErrorBody extends StatelessWidget {
             GestureDetector(
               onTap: onRetry,
               child: Text(
-                'Retry',
+                AppLocalizations.of(context).retry,
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -86,7 +87,7 @@ class _LoadedBody extends StatelessWidget {
     final bottomPad = MediaQuery.of(context).padding.bottom + 96.0;
     return Scaffold(
       backgroundColor: context.srBg,
-      appBar: const SrAppBar(title: 'PROFILE'),
+      appBar: SrAppBar(title: AppLocalizations.of(context).profile_title),
       body: SafeArea(
         bottom: false,
         child: ListView(
@@ -178,13 +179,13 @@ class _IdentityCard extends StatelessWidget {
           ),
           Row(
             children: [
-              _StatCell(label: 'LIFETIME AVG', value: '${data.lifetimeAvg}'),
+              _StatCell(label: AppLocalizations.of(context).profile_lifetime_avg, value: '${data.lifetimeAvg}'),
               _StatDivider(),
-              _StatCell(label: 'W / L', value: '--'),
+              _StatCell(label: AppLocalizations.of(context).profile_wl, value: '--'),
               _StatDivider(),
               _StatCell(
-                label: 'STREAK',
-                value: '${data.streak}d',
+                label: AppLocalizations.of(context).profile_streak,
+                value: AppLocalizations.of(context).profile_streak_days(data.streak),
                 accent: true,
               ),
             ],
@@ -338,7 +339,7 @@ class _TrendCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '30-DAY TREND',
+                      AppLocalizations.of(context).profile_trend,
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 10,
                         color: context.srTextDim,
@@ -374,7 +375,7 @@ class _TrendCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'POINTS',
+                    AppLocalizations.of(context).profile_points,
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 10,
                       color: context.srTextDim,
@@ -534,22 +535,12 @@ class _TargetsCard extends StatelessWidget {
   const _TargetsCard({required this.data});
   final ProfileData data;
 
-  static const _metrics = [
-    (key: 'steps', label: 'Steps', unit: '', icon: Icons.directions_walk),
-    (
-      key: 'kcal',
-      label: 'Active kcal',
-      unit: 'kcal',
-      icon: Icons.local_fire_department,
-    ),
-    (key: 'sleep', label: 'Sleep', unit: 'h', icon: Icons.bedtime),
-    (
-      key: 'stand',
-      label: 'Stand hours',
-      unit: 'h',
-      icon: Icons.accessibility_new,
-    ),
-    (key: 'exercise', label: 'Exercise', unit: 'min/day', icon: Icons.bolt),
+  static const _metricKeys = [
+    (key: 'steps', unit: '', icon: Icons.directions_walk),
+    (key: 'kcal', unit: 'kcal', icon: Icons.local_fire_department),
+    (key: 'sleep', unit: 'h', icon: Icons.bedtime),
+    (key: 'stand', unit: 'h', icon: Icons.accessibility_new),
+    (key: 'exercise', unit: 'min/day', icon: Icons.bolt),
   ];
 
   String _fmt(String key, HealthTargets t) => switch (key) {
@@ -581,6 +572,14 @@ class _TargetsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
+    final metricLabels = [
+      l.profile_steps,
+      l.profile_calories,
+      l.profile_sleep,
+      l.profile_stand,
+      l.profile_exercise,
+    ];
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -594,7 +593,7 @@ class _TargetsCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'MY TARGETS',
+                l.profile_targets,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10,
                   color: context.srTextDim,
@@ -605,7 +604,7 @@ class _TargetsCard extends StatelessWidget {
               GestureDetector(
                 onTap: () => _openEdit(context),
                 child: Text(
-                  'Edit →',
+                  l.profile_edit,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -616,17 +615,17 @@ class _TargetsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          for (var i = 0; i < _metrics.length; i++) ...[
+          for (var i = 0; i < _metricKeys.length; i++) ...[
             if (i > 0) Divider(height: 1, color: context.srTintSm),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
                 children: [
-                  Icon(_metrics[i].icon, size: 16, color: context.srLimeText),
+                  Icon(_metricKeys[i].icon, size: 16, color: context.srLimeText),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      _metrics[i].label,
+                      metricLabels[i],
                       style: tt.bodyMedium!.copyWith(
                         color: context.srTextMuted,
                         fontWeight: FontWeight.w500,
@@ -634,7 +633,7 @@ class _TargetsCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${_fmt(_metrics[i].key, data.targets)} ${_metrics[i].unit}'
+                    '${_fmt(_metricKeys[i].key, data.targets)} ${_metricKeys[i].unit}'
                         .trim(),
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 14,
@@ -656,18 +655,20 @@ class _HabitsCard extends StatelessWidget {
   const _HabitsCard({required this.data});
   final ProfileData data;
 
-  String _smokingText() {
+  String _smokingText(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final h = data.habits;
-    if (h == null || h.smokes == null) return 'Not set';
-    if (!h.smokes!) return 'Non-smoker';
-    return h.cigarettesPerDay != null ? '${h.cigarettesPerDay}/day' : 'Smoker';
+    if (h == null || h.smokes == null) return l.profile_not_set;
+    if (!h.smokes!) return l.profile_non_smoker;
+    return h.cigarettesPerDay != null ? l.profile_cigarettes_per_day(h.cigarettesPerDay!) : l.profile_smoker;
   }
 
-  String _drinkingText() {
+  String _drinkingText(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final h = data.habits;
-    if (h == null || h.drinks == null) return 'Not set';
-    if (!h.drinks!) return 'Non-drinker';
-    return h.drinksPerWeek != null ? '${h.drinksPerWeek}/wk' : 'Drinker';
+    if (h == null || h.drinks == null) return l.profile_not_set;
+    if (!h.drinks!) return l.profile_non_drinker;
+    return h.drinksPerWeek != null ? l.profile_drinks_per_week(h.drinksPerWeek!) : l.profile_drinker;
   }
 
   void _openEdit(BuildContext context) {
@@ -685,9 +686,10 @@ class _HabitsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final rows = [
-      ('🚬', 'Smoking', _smokingText()),
-      ('🍷', 'Alcohol', _drinkingText()),
+      ('🚬', l.profile_smoking, _smokingText(context)),
+      ('🍷', l.profile_alcohol, _drinkingText(context)),
     ];
     return Container(
       padding: const EdgeInsets.all(18),
@@ -702,7 +704,7 @@ class _HabitsCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'HABITS',
+                l.profile_habits,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10,
                   color: context.srTextDim,
@@ -713,7 +715,7 @@ class _HabitsCard extends StatelessWidget {
               GestureDetector(
                 onTap: () => _openEdit(context),
                 child: Text(
-                  'Edit →',
+                  l.profile_edit,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -777,11 +779,12 @@ class _BodyCard extends StatelessWidget {
     return SrColors.rose;
   }
 
-  static String _bmiCategory(double bmi) {
-    if (bmi < 18.5) return 'Underweight';
-    if (bmi < 25) return 'Healthy';
-    if (bmi < 30) return 'Overweight';
-    return 'Obese';
+  String _bmiCategory(BuildContext context, double bmi) {
+    final l = AppLocalizations.of(context);
+    if (bmi < 18.5) return l.profile_bmi_underweight;
+    if (bmi < 25) return l.profile_bmi_healthy;
+    if (bmi < 30) return l.profile_bmi_overweight;
+    return l.profile_bmi_obese;
   }
 
   void _openEdit(BuildContext context) {
@@ -799,17 +802,18 @@ class _BodyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final habits = data.habits;
     final bmi = habits?.bmi;
     final rows = [
       (
         Icons.height,
-        'Height',
+        l.profile_height,
         habits?.heightCm != null ? '${habits!.heightCm} cm' : '—',
       ),
       (
         Icons.monitor_weight_outlined,
-        'Weight',
+        l.profile_weight,
         habits?.weightKg != null
             ? '${habits!.weightKg!.toStringAsFixed(1)} kg'
             : '—',
@@ -828,7 +832,7 @@ class _BodyCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'BODY',
+                l.profile_body,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10,
                   color: context.srTextDim,
@@ -839,7 +843,7 @@ class _BodyCard extends StatelessWidget {
               GestureDetector(
                 onTap: () => _openEdit(context),
                 child: Text(
-                  'Edit →',
+                  l.profile_edit,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -866,7 +870,7 @@ class _BodyCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'BMI',
+                        l.profile_bmi,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
                           color: context.srTextDim,
@@ -892,7 +896,7 @@ class _BodyCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 14),
                   Text(
-                    _bmiCategory(bmi),
+                    _bmiCategory(context, bmi),
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -956,19 +960,19 @@ class _ThemeSelector extends StatelessWidget {
         children: [
           _ThemeOption(
             icon: Icons.light_mode_rounded,
-            label: 'Light',
+            label: AppLocalizations.of(context).profile_theme_light,
             selected: current == ThemeMode.light,
             onTap: () => auth.setThemeMode(ThemeMode.light),
           ),
           _ThemeOption(
             icon: Icons.phone_iphone_rounded,
-            label: 'System',
+            label: AppLocalizations.of(context).profile_theme_system,
             selected: current == ThemeMode.system,
             onTap: () => auth.setThemeMode(ThemeMode.system),
           ),
           _ThemeOption(
             icon: Icons.dark_mode_rounded,
-            label: 'Dark',
+            label: AppLocalizations.of(context).profile_theme_dark,
             selected: current == ThemeMode.dark,
             onTap: () => auth.setThemeMode(ThemeMode.dark),
           ),
@@ -1034,7 +1038,7 @@ class _ContactRow extends StatelessWidget {
             Icon(Icons.mail_outline, size: 18, color: context.srTextMuted),
             const SizedBox(width: 12),
             Text(
-              'Contact us',
+              AppLocalizations.of(context).profile_contact,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
@@ -1063,7 +1067,7 @@ class _DeleteAccountRow extends StatelessWidget {
       onTap: () => _confirmDelete(context),
       child: Center(
         child: Text(
-          'Delete account',
+          AppLocalizations.of(context).profile_delete_account,
           style: GoogleFonts.jetBrainsMono(
             fontSize: 11,
             color: context.srRose.withAlpha(160),
@@ -1077,27 +1081,28 @@ class _DeleteAccountRow extends StatelessWidget {
 
   Future<void> _confirmDelete(BuildContext context) async {
     final cubit = context.read<ProfileCubit>();
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: context.srBgElev,
         title: Text(
-          'Delete your account?',
+          l.profile_delete_confirm_title,
           style: TextStyle(color: context.srText),
         ),
         content: Text(
-          'All your data will be permanently deleted. This action cannot be undone.',
+          l.profile_delete_confirm_body,
           style: TextStyle(color: context.srTextMuted, fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: TextStyle(color: context.srTextMuted)),
+            child: Text(l.cancel, style: TextStyle(color: context.srTextMuted)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Delete',
+              l.profile_delete_button,
               style: TextStyle(
                 color: context.srRose,
                 fontWeight: FontWeight.w700,
@@ -1124,14 +1129,14 @@ class _LegalLinks extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _LegalLink(label: 'Privacy Policy', uri: _privacy),
+        _LegalLink(label: AppLocalizations.of(context).profile_privacy, uri: _privacy),
         Container(
           width: 1,
           height: 12,
           margin: const EdgeInsets.symmetric(horizontal: 12),
           color: context.srLine,
         ),
-        _LegalLink(label: 'Terms & Conditions', uri: _terms),
+        _LegalLink(label: AppLocalizations.of(context).profile_terms, uri: _terms),
       ],
     );
   }
@@ -1165,23 +1170,24 @@ class _SignOutRow extends StatelessWidget {
     final auth = context.read<AuthService>();
     return GestureDetector(
       onTap: () async {
+        final l = AppLocalizations.of(context);
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
             backgroundColor: context.srBgElev,
-            title: Text('Sign out?', style: TextStyle(color: context.srText)),
+            title: Text(l.profile_signout_confirm, style: TextStyle(color: context.srText)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
                 child: Text(
-                  'Cancel',
+                  l.cancel,
                   style: TextStyle(color: context.srTextMuted),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
                 child: Text(
-                  'Sign out',
+                  l.profile_signout,
                   style: TextStyle(color: context.srRose),
                 ),
               ),
@@ -1202,7 +1208,7 @@ class _SignOutRow extends StatelessWidget {
             Icon(Icons.logout, size: 18, color: context.srRose),
             const SizedBox(width: 12),
             Text(
-              'Sign out',
+              AppLocalizations.of(context).profile_signout,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,

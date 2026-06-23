@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logging/logging.dart';
 
 const _kThemeModeKey = 'theme_mode';
+const _kLocaleKey = 'locale';
 const _kOnboardingDoneKey = 'onboarding_done';
 
 class AuthService with ChangeNotifier {
@@ -17,9 +18,13 @@ class AuthService with ChangeNotifier {
   final SupabaseClient _supabase = Supabase.instance.client;
   final Logger logger = Logger('AuthService');
   ThemeMode _themeMode = ThemeMode.system;
+  Locale? _locale;
   bool _onboardingDone = false;
 
   ThemeMode get themeMode => _themeMode;
+
+  /// Null follows the device language; otherwise the user's explicit choice.
+  Locale? get locale => _locale;
   bool get isLoggedIn => _supabase.auth.currentSession != null;
 
   bool get onboardingDone => _onboardingDone;
@@ -33,6 +38,9 @@ class AuthService with ChangeNotifier {
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
+
+    final savedLocale = prefs.getString(_kLocaleKey);
+    _locale = savedLocale == null ? null : Locale(savedLocale);
 
     // Onboarding: if pref is not set but a session already exists, the user
     // is returning after a reinstall — treat them as done.
@@ -56,6 +64,17 @@ class AuthService with ChangeNotifier {
       ThemeMode.dark => 'dark',
       ThemeMode.system => 'system',
     });
+  }
+
+  Future<void> setLocale(Locale? value) async {
+    _locale = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      await prefs.remove(_kLocaleKey);
+    } else {
+      await prefs.setString(_kLocaleKey, value.languageCode);
+    }
   }
 
   Future<void> setOnboardingDone() async {

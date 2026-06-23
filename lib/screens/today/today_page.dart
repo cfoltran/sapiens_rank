@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sapiens_rank/common/data_state.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/theme/today_skeleton.dart';
@@ -75,7 +76,7 @@ class _TodayPageState extends State<TodayPage> {
               const SapieCoin(size: 16),
               const SizedBox(width: 8),
               Text(
-                '+$amount Sapies harvested',
+                AppLocalizations.of(context).today_sapies_harvested(amount),
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -141,7 +142,7 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Could not load health data',
+              AppLocalizations.of(context).today_error,
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium!.copyWith(color: context.srTextMuted),
@@ -150,7 +151,7 @@ class _ErrorBody extends StatelessWidget {
             GestureDetector(
               onTap: onRetry,
               child: Text(
-                'Retry',
+                AppLocalizations.of(context).retry,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: SrColors.lime,
                   fontWeight: FontWeight.w600,
@@ -395,7 +396,7 @@ class _DeltaRow extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              'VS YESTERDAY',
+              AppLocalizations.of(context).today_vs_yesterday,
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
                 color: context.srTextMuted,
@@ -468,7 +469,7 @@ class _RankTeaserCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'WORLD RANK',
+                          AppLocalizations.of(context).today_world_rank,
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -519,7 +520,7 @@ class _RankTeaserCard extends StatelessWidget {
                         Text(
                           data.rankCountry != null
                               ? '${data.countryFlag} #${data.rankCountry}'
-                              : '${data.countryFlag} ranking soon...',
+                              : '${data.countryFlag} ${AppLocalizations.of(context).today_ranking_soon}',
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
                             color: context.srTextMuted,
@@ -574,11 +575,12 @@ class _MetricCard extends StatelessWidget {
         : pct >= 0.6
         ? limeColor.withAlpha(204)
         : SrColors.amber;
+    final l = AppLocalizations.of(context);
     final statusLabel = metric.isMaxed
-        ? 'maxed'
+        ? l.today_maxed
         : metric.isOnTrack
-        ? 'on track'
-        : 'push';
+        ? l.today_on_track
+        : l.today_push;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -753,7 +755,7 @@ class _WorkoutSection extends StatelessWidget {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            "Today's Activity",
+                            AppLocalizations.of(context).today_activity,
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -772,7 +774,7 @@ class _WorkoutSection extends StatelessWidget {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: ' min today',
+                                  text: ' ${AppLocalizations.of(context).today_min}',
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 10,
                                     color: context.srTextDim,
@@ -825,7 +827,9 @@ class _WorkoutSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${workouts.length} workout${workouts.length > 1 ? 's' : ''}',
+                  workouts.length == 1
+                      ? '1 ${AppLocalizations.of(context).today_workout}'
+                      : '${workouts.length} ${AppLocalizations.of(context).today_workouts}',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 10,
                     color: context.srTextDim,

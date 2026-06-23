@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/common/widgets/guild_avatar.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
@@ -26,15 +27,16 @@ class TerritoryInfoSheet extends StatelessWidget {
     );
   }
 
-  String _sinceLabel() {
+  String _sinceLabel(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final at = territory.conqueredAt;
-    if (at == null) return 'Unknown';
+    if (at == null) return l.territory_unknown;
     final diff = DateTime.now().difference(at);
-    if (diff.inDays >= 365) return 'for ${diff.inDays ~/ 365}y';
-    if (diff.inDays >= 30) return 'for ${diff.inDays ~/ 30}mo';
-    if (diff.inDays >= 1) return 'for ${diff.inDays}d';
-    if (diff.inHours >= 1) return 'for ${diff.inHours}h';
-    return 'just claimed';
+    if (diff.inDays >= 365) return l.territory_held_years(diff.inDays ~/ 365);
+    if (diff.inDays >= 30) return l.territory_held_months(diff.inDays ~/ 30);
+    if (diff.inDays >= 1) return l.territory_held_days(diff.inDays);
+    if (diff.inHours >= 1) return l.territory_held_hours(diff.inHours);
+    return l.territory_just_claimed;
   }
 
   @override
@@ -48,10 +50,10 @@ class TerritoryInfoSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _GuildHeader(guild: guild, color: color, since: _sinceLabel()),
+        _GuildHeader(guild: guild, color: color, since: _sinceLabel(context)),
         const SizedBox(height: 20),
         Text(
-          'MEMBERS',
+          AppLocalizations.of(context).territory_members,
           style: TextStyle(
             color: context.srTextDim,
             fontSize: 11,
@@ -76,12 +78,12 @@ class TerritoryInfoSheet extends StatelessWidget {
               ),
             ),
             error: (_) => Text(
-              'Could not load members.',
+              AppLocalizations.of(context).territory_load_error,
               style: TextStyle(color: context.srTextMuted, fontSize: 13),
             ),
             success: (members) => members.isEmpty
                 ? Text(
-                    'No members found.',
+                    AppLocalizations.of(context).territory_no_members,
                     style: TextStyle(color: context.srTextMuted, fontSize: 13),
                   )
                 : Column(
@@ -118,7 +120,7 @@ class _GuildHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                guild?.name ?? 'Unknown guild',
+                guild?.name ?? AppLocalizations.of(context).territory_unknown,
                 style: TextStyle(
                   color: context.srText,
                   fontSize: 17,
@@ -127,7 +129,7 @@ class _GuildHeader extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Text(
-                'Holds this territory $since',
+                since,
                 style: TextStyle(color: context.srTextMuted, fontSize: 13),
               ),
             ],
@@ -193,7 +195,7 @@ class _MemberRow extends StatelessWidget {
                 border: Border.all(color: guildColor.withAlpha(80)),
               ),
               child: Text(
-                'Leader',
+                AppLocalizations.of(context).guild_leader,
                 style: TextStyle(
                   color: guildColor,
                   fontSize: 11,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const playStoreUrl = '';
@@ -21,9 +22,9 @@ class UpdatePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Outdated Version'),
+            Text(AppLocalizations.of(context).update_title),
             ElevatedButton(
-              child: Text('Update'),
+              child: Text(AppLocalizations.of(context).update_btn),
               onPressed: () => _launchInBrowserView(Uri.parse(url)),
             ),
           ],

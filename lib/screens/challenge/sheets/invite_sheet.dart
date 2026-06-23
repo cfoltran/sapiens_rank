@@ -5,6 +5,7 @@ import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/colors.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/common/widgets/sr_bottom_sheet.dart';
+import 'package:sapiens_rank/l10n/app_localizations.dart';
 import 'package:sapiens_rank/models/challenge_models.dart';
 import 'package:sapiens_rank/screens/challenge/cubit/invite_cubit.dart';
 
@@ -35,7 +36,7 @@ class _InviteSheetView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SrBottomSheet(
-      title: 'Challenge Invite',
+      title: AppLocalizations.of(context).invite_title,
       child: BlocBuilder<InviteCubit, DataState<ChallengeRow>>(
         builder: (context, state) {
           if (state.status == DataStatus.error) {
@@ -43,7 +44,7 @@ class _InviteSheetView extends StatelessWidget {
               height: 80,
               child: Center(
                 child: Text(
-                  'Challenge not found',
+                  AppLocalizations.of(context).invite_not_found,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 12,
                     color: context.srTextDim,
@@ -122,7 +123,7 @@ class _InviteContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$firstName challenged you!',
+                      AppLocalizations.of(context).invite_challenged_you(firstName),
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -131,7 +132,7 @@ class _InviteContent extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${_durationLabel(challenge.durationDays)} · ${challenge.stakeIcon} ${challenge.stakeLabel}',
+                      '${_durationLabel(context, challenge.durationDays)} · ${challenge.stakeIcon} ${challenge.stakeLabel}',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 11,
                         color: context.srTextMuted,
@@ -160,7 +161,7 @@ class _InviteContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'IF YOU ACCEPT AND WIN',
+                      AppLocalizations.of(context).invite_if_accept,
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 9,
                         color: context.srTextDim,
@@ -196,7 +197,7 @@ class _InviteContent extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      'Decline',
+                      AppLocalizations.of(context).invite_decline,
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -235,7 +236,7 @@ class _InviteContent extends StatelessWidget {
                             ),
                           )
                         : Text(
-                            'Accept challenge ⚔️',
+                            AppLocalizations.of(context).invite_accept,
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -258,10 +259,11 @@ class _InviteContent extends StatelessWidget {
     return name.substring(0, name.length.clamp(0, 2)).toUpperCase();
   }
 
-  static String _durationLabel(int days) {
-    if (days == 1) return '1 day';
-    if (days == 7) return '1 week';
-    if (days == 30) return '1 month';
-    return '$days days';
+  static String _durationLabel(BuildContext context, int days) {
+    final l = AppLocalizations.of(context);
+    if (days == 1) return l.invite_duration_day;
+    if (days == 7) return l.invite_duration_week;
+    if (days == 30) return l.invite_duration_month;
+    return l.invite_duration_days(days);
   }
 }

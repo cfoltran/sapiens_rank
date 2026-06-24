@@ -151,15 +151,23 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
       }
       return false;
     });
+    final guildColors = {
+      for (final t in data.territories)
+        if (t.guilds != null) t.guilds!.id: t.guilds!.color,
+    };
     activeByTerritory.forEach((territoryId, attack) {
       if (_sieges.containsKey(territoryId)) return;
       final tile = _tiles[territoryId];
       if (tile == null) return;
+      final attackerColor = guildColors[attack.attackerGuildId];
       final ring = SiegeRing(
         center: tile.position.clone(),
         startsAt: attack.startsAt,
         endsAt: attack.endsAt,
         metric: attack.metric,
+        color: attackerColor != null
+            ? guildColorFromHex(attackerColor)
+            : const Color(0xFFFF8A33),
         boosted: attack.booster != null,
       );
       _sieges[territoryId] = ring;

@@ -7,16 +7,16 @@ import 'package:sapiens_rank/common/helpers/guild_visuals.dart';
 import 'package:sapiens_rank/models/guild_models.dart';
 import 'package:sapiens_rank/screens/map/game/hex_geometry.dart';
 
-const _siegeColor = Color(0xFFFF8A33);
-
 /// Animated siege overlay drawn on a territory while an attack is active:
-/// a countdown arc (now -> endsAt) plus pulsing clash rings.
+/// a countdown arc (now -> endsAt) plus pulsing clash rings, tinted with the
+/// attacker guild's color.
 class SiegeRing extends PositionComponent {
   SiegeRing({
     required Vector2 center,
     required this.startsAt,
     required this.endsAt,
     required this.metric,
+    required this.color,
     this.boosted = false,
   }) : super(
          position: center,
@@ -28,6 +28,7 @@ class SiegeRing extends PositionComponent {
   final DateTime startsAt;
   final DateTime endsAt;
   final AttackMetric metric;
+  final Color color;
   final bool boosted;
   double _t = 0;
 
@@ -60,7 +61,7 @@ class SiegeRing extends PositionComponent {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round
-        ..color = _siegeColor,
+        ..color = color,
     );
 
     for (final phase in [_t % 1.0, (_t + 0.5) % 1.0]) {
@@ -71,7 +72,7 @@ class SiegeRing extends PositionComponent {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.5
-          ..color = _siegeColor.withAlpha(((1 - e) * 200).round()),
+          ..color = color.withAlpha(((1 - e) * 200).round()),
       );
     }
 

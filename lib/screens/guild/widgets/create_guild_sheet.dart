@@ -10,6 +10,16 @@ const _colorPalette = [
   '#3498DB',
   '#9B59B6',
   '#E91E63',
+  '#D35400',
+  '#16A085',
+  '#2980B9',
+  '#8E44AD',
+  '#C0392B',
+  '#27AE60',
+  '#00BCD4',
+  '#795548',
+  '#607D8B',
+  '#FF6F91',
 ];
 
 Color _parse(String hex) {
@@ -136,43 +146,39 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
             ),
           ),
           const SizedBox(height: 12),
-          Row(
-            children: _colorPalette.map((hex) {
-              final selected = _color == hex;
-              final taken = widget.takenColors.contains(hex);
-              return GestureDetector(
-                onTap: taken ? null : () => setState(() => _color = hex),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  margin: const EdgeInsets.only(right: 10),
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: _parse(hex).withAlpha(taken ? 60 : 255),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: selected ? Colors.white : Colors.transparent,
-                      width: 2.5,
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: _colorPalette
+                .where((hex) => !widget.takenColors.contains(hex))
+                .map((hex) {
+                  final selected = _color == hex;
+                  return GestureDetector(
+                    onTap: () => setState(() => _color = hex),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: _parse(hex),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selected ? Colors.white : Colors.transparent,
+                          width: 2.5,
+                        ),
+                        boxShadow: selected
+                            ? [
+                                BoxShadow(
+                                  color: _parse(hex).withAlpha(120),
+                                  blurRadius: 8,
+                                ),
+                              ]
+                            : null,
+                      ),
                     ),
-                    boxShadow: selected
-                        ? [
-                            BoxShadow(
-                              color: _parse(hex).withAlpha(120),
-                              blurRadius: 8,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: taken
-                      ? Icon(
-                          Icons.close,
-                          size: 14,
-                          color: _parse(hex).withAlpha(160),
-                        )
-                      : null,
-                ),
-              );
-            }).toList(),
+                  );
+                })
+                .toList(),
           ),
           const SizedBox(height: 28),
           SizedBox(

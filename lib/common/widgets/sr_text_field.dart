@@ -16,6 +16,7 @@ class SrTextField extends StatelessWidget {
     this.focusedBorderColor,
     this.contentPadding,
     this.prefixIcon,
+    this.maxLength,
   });
 
   final TextEditingController controller;
@@ -35,6 +36,7 @@ class SrTextField extends StatelessWidget {
 
   final EdgeInsetsGeometry? contentPadding;
   final Widget? prefixIcon;
+  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,7 @@ class SrTextField extends StatelessWidget {
       textCapitalization: textCapitalization,
       autocorrect: autocorrect,
       autofocus: autofocus,
+      maxLength: maxLength,
       style: resolvedStyle,
       decoration: InputDecoration(
         hintText: hintText,
@@ -60,6 +63,7 @@ class SrTextField extends StatelessWidget {
         prefixIconConstraints: prefixIcon != null
             ? const BoxConstraints(minWidth: 0)
             : null,
+        counterText: '',
         filled: true,
         fillColor: context.srTintXs,
         contentPadding:

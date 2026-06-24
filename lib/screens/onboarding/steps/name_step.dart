@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/arena_button.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/onboarding_text.dart';
-import 'package:sapiens_rank/screens/onboarding/widgets/sr_text_field.dart';
+import 'package:sapiens_rank/common/widgets/sr_text_field.dart';
 import 'package:sapiens_rank/screens/onboarding/widgets/step_shell.dart';
 
 class NameStep extends StatefulWidget {

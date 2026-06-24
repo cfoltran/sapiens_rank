@@ -64,14 +64,6 @@ class GuildCubit extends Cubit<DataState<GuildData>> {
     }
   }
 
-  Future<void> createGuild({
-    required String name,
-    required String color,
-  }) async {
-    await _guildService.createGuild(name: name, color: color);
-    load();
-  }
-
   Future<void> joinGuild(String guildId) async {
     await _guildService.joinGuild(guildId);
     load();

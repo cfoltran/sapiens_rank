@@ -65,10 +65,8 @@ class _NoGuildBody extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => CreateGuildSheet(
-        takenColors: takenColors,
-        onCreate: (name, color) => cubit.createGuild(name: name, color: color),
-      ),
+      builder: (_) =>
+          CreateGuildSheet(takenColors: takenColors, onCreated: cubit.load),
     );
   }
 

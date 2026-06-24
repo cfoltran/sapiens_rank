@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sapiens_rank/common/data_state.dart';
 import 'package:sapiens_rank/common/theme/sr_theme.dart';
+import 'package:sapiens_rank/common/widgets/sr_text_field.dart';
+import 'package:sapiens_rank/models/guild_models.dart';
+import 'package:sapiens_rank/screens/guild/cubit/create_guild_cubit.dart';
 
 const _colorPalette = [
   '#E74C3C',
@@ -27,24 +32,38 @@ Color _parse(String hex) {
   return Color(int.parse('FF$h', radix: 16));
 }
 
-class CreateGuildSheet extends StatefulWidget {
+class CreateGuildSheet extends StatelessWidget {
   const CreateGuildSheet({
     super.key,
-    required this.onCreate,
+    required this.onCreated,
     this.takenColors = const {},
   });
 
-  final void Function(String name, String color) onCreate;
+  final VoidCallback onCreated;
   final Set<String> takenColors;
 
   @override
-  State<CreateGuildSheet> createState() => _CreateGuildSheetState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CreateGuildCubit(),
+      child: _CreateGuildForm(onCreated: onCreated, takenColors: takenColors),
+    );
+  }
 }
 
-class _CreateGuildSheetState extends State<CreateGuildSheet> {
+class _CreateGuildForm extends StatefulWidget {
+  const _CreateGuildForm({required this.onCreated, required this.takenColors});
+
+  final VoidCallback onCreated;
+  final Set<String> takenColors;
+
+  @override
+  State<_CreateGuildForm> createState() => _CreateGuildFormState();
+}
+
+class _CreateGuildFormState extends State<_CreateGuildForm> {
   final _controller = TextEditingController();
   late String _color;
-  bool _loading = false;
 
   @override
   void initState() {
@@ -61,157 +80,164 @@ class _CreateGuildSheetState extends State<CreateGuildSheet> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
+  void _submit() {
     final name = _controller.text.trim();
     if (name.isEmpty) return;
-    setState(() => _loading = true);
-    try {
-      Navigator.pop(context);
-      widget.onCreate(name, _color);
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    context.read<CreateGuildCubit>().create(name: name, color: _color);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.srBgElev,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: EdgeInsets.fromLTRB(
-        24,
-        16,
-        24,
-        MediaQuery.of(context).viewInsets.bottom + 32,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: context.srLine,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Create a guild',
-            style: TextStyle(
-              color: context.srText,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _controller,
-            autofocus: true,
-            maxLength: 24,
-            style: TextStyle(color: context.srText),
-            decoration: InputDecoration(
-              hintText: 'Guild name',
-              hintStyle: TextStyle(color: context.srTextDim),
-              filled: true,
-              fillColor: context.srBgElev2,
-              counterText: '',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: context.srLine),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: context.srLine),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: context.srLime),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'COLOR',
-            style: TextStyle(
-              color: context.srTextDim,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: _colorPalette
-                .where((hex) => !widget.takenColors.contains(hex))
-                .map((hex) {
-                  final selected = _color == hex;
-                  return GestureDetector(
-                    onTap: () => setState(() => _color = hex),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: _parse(hex),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: selected ? Colors.white : Colors.transparent,
-                          width: 2.5,
-                        ),
-                        boxShadow: selected
-                            ? [
-                                BoxShadow(
-                                  color: _parse(hex).withAlpha(120),
-                                  blurRadius: 8,
-                                ),
-                              ]
-                            : null,
-                      ),
-                    ),
-                  );
-                })
-                .toList(),
-          ),
-          const SizedBox(height: 28),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: _loading ? null : _submit,
-              style: FilledButton.styleFrom(
-                backgroundColor: context.srLime,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+    return BlocListener<CreateGuildCubit, DataState<GuildRow>>(
+      listener: (context, state) {
+        if (state.status == DataStatus.success) {
+          Navigator.pop(context);
+          widget.onCreated();
+        } else if (state.status == DataStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not create guild. Try again.')),
+          );
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: context.srBgElev,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          16,
+          24,
+          MediaQuery.of(context).viewInsets.bottom + 32,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: context.srLine,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              child: _loading
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.black,
-                      ),
-                    )
-                  : const Text(
-                      'Create',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Create a guild',
+              style: TextStyle(
+                color: context.srText,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 20),
+            SrTextField(
+              controller: _controller,
+              hintText: 'Guild name',
+              autofocus: true,
+              maxLength: 24,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'COLOR',
+              style: TextStyle(
+                color: context.srTextDim,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: _colorPalette
+                  .where((hex) => !widget.takenColors.contains(hex))
+                  .map(
+                    (hex) => _ColorDot(
+                      hex: hex,
+                      selected: _color == hex,
+                      onTap: () => setState(() => _color = hex),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 28),
+            BlocBuilder<CreateGuildCubit, DataState<GuildRow>>(
+              builder: (context, state) {
+                final loading = state.status == DataStatus.loading;
+                return SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: loading ? null : _submit,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: context.srLime,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    child: loading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.black,
+                            ),
+                          )
+                        : const Text(
+                            'Create',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  ),
+                );
+              },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ColorDot extends StatelessWidget {
+  const _ColorDot({
+    required this.hex,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String hex;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: _parse(hex),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: selected ? Colors.white : Colors.transparent,
+            width: 2.5,
           ),
-        ],
+          boxShadow: selected
+              ? [BoxShadow(color: _parse(hex).withAlpha(120), blurRadius: 8)]
+              : null,
+        ),
       ),
     );
   }

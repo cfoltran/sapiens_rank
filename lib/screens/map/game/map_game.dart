@@ -62,7 +62,7 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
   double _clock = 0;
   double _fitZoom = 1;
   _CamMove? _camMove;
-  double _startZoom = 1;
+  double _lastScale = 1;
   Vector2? _doubleTapWorld;
 
   double get clock => _clock;
@@ -233,21 +233,25 @@ class MapGame extends FlameGame with ScaleDetector, DoubleTapDetector {
   @override
   void onScaleStart(ScaleStartInfo info) {
     _camMove = null;
-    _startZoom = camera.viewfinder.zoom;
+    _lastScale = 1;
   }
 
   @override
   void onScaleUpdate(ScaleUpdateInfo info) {
-    final scale = info.scale.global;
-    if ((scale.y - 1).abs() > 0.01) {
-      camera.viewfinder.zoom = (_startZoom * scale.y).clamp(
-        _fitZoom * 0.6,
-        _fitZoom * 2.5,
-      );
-    } else {
-      final delta = info.delta.global;
-      camera.viewfinder.position += -delta / camera.viewfinder.zoom;
-    }
+    final viewfinder = camera.viewfinder;
+    final focal = info.eventPosition.widget;
+
+    viewfinder.position += -info.delta.global / viewfinder.zoom;
+
+    final relative = info.raw.scale / _lastScale;
+    _lastScale = info.raw.scale;
+    final before = camera.globalToLocal(focal);
+    viewfinder.zoom = (viewfinder.zoom * relative).clamp(
+      _fitZoom * 0.6,
+      _fitZoom * 2.5,
+    );
+    final after = camera.globalToLocal(focal);
+    viewfinder.position += before - after;
   }
 
   @override

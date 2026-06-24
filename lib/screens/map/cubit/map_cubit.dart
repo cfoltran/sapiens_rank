@@ -14,7 +14,8 @@ class MapCubit extends Cubit<DataState<MapData>> {
   final _guildService = GuildService.instance;
 
   Future<void> load() async {
-    emit(const DataState.loading());
+    final hadData = state.data != null;
+    if (!hadData) emit(const DataState.loading());
     try {
       final results = await Future.wait([
         _mapService.fetchTerritories(),
@@ -39,7 +40,9 @@ class MapCubit extends Cubit<DataState<MapData>> {
         ),
       );
     } catch (e, st) {
-      emit(DataState.error('fetch_failed', error: e, stackTrace: st));
+      if (!hadData) {
+        emit(DataState.error('fetch_failed', error: e, stackTrace: st));
+      }
     }
   }
 

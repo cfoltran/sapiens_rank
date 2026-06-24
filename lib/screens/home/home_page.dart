@@ -136,7 +136,7 @@ class _SrTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Padding(
-      padding: EdgeInsets.fromLTRB(14, 0, 14, bottomPad),
+      padding: EdgeInsets.fromLTRB(14, 0, 14, bottomPad == 0 ? 12 : bottomPad),
       child: LayoutBuilder(
         builder: (_, constraints) {
           final totalW = constraints.maxWidth;

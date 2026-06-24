@@ -96,14 +96,16 @@ class _MapViewState extends State<_MapView> {
     AttackSheet.show(
       context,
       territory: territory,
-      onConfirm: ({required metric, required endsAt, booster}) =>
-          cubit.launchAttack(
-            territoryId: territory.id,
-            defenderGuildId: territory.ownerGuildId,
-            metric: metric,
-            endsAt: endsAt,
-            booster: booster,
-          ),
+      onConfirm:
+          ({required metric, required endsAt, booster, required chooseMetric}) =>
+              cubit.launchAttack(
+                territoryId: territory.id,
+                defenderGuildId: territory.ownerGuildId,
+                metric: metric,
+                endsAt: endsAt,
+                booster: booster,
+                chooseMetric: chooseMetric,
+              ),
     );
   }
 

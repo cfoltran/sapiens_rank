@@ -55,6 +55,7 @@ class MapService {
     required AttackMetric metric,
     required DateTime endsAt,
     BoosterType? booster,
+    bool chooseMetric = false,
   }) async {
     final boosterValue = switch (booster) {
       BoosterType.boost => 'boost',
@@ -71,6 +72,7 @@ class MapService {
         'p_metric': metric.name,
         'p_ends_at': endsAt.toIso8601String(),
         'p_booster': boosterValue,
+        'p_choose_metric': chooseMetric,
       },
     );
   }

@@ -22,7 +22,7 @@ class RulesSheet extends StatelessWidget {
     (
       '⚔️',
       'Attacking',
-      'You can attack any territory adjacent to one you already own. The metric is drawn at random — a slot machine spins when you launch. Attacks last 24 hours. Only one attack at a time per guild.',
+      'You can attack any territory adjacent to one you already own. The metric is drawn at random when you launch, or pay 200α to pick it yourself. Attacks last 24 hours. Only one attack at a time per guild.',
     ),
     (
       '📊',

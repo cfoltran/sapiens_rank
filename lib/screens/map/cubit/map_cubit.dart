@@ -49,6 +49,7 @@ class MapCubit extends Cubit<DataState<MapData>> {
     required AttackMetric metric,
     required DateTime endsAt,
     BoosterType? booster,
+    bool chooseMetric = false,
   }) async {
     if (state.data?.myGuildId == null) return;
 
@@ -58,6 +59,7 @@ class MapCubit extends Cubit<DataState<MapData>> {
       metric: metric,
       endsAt: endsAt,
       booster: booster,
+      chooseMetric: chooseMetric,
     );
     load();
   }

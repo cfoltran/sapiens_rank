@@ -3,6 +3,8 @@ import 'package:sapiens_rank/common/theme/colors.dart';
 
 enum BoosterType { boost, surge, blitz }
 
+const int kChooseMetricCost = 200;
+
 extension BoosterTypeX on BoosterType {
   String get emoji => switch (this) {
     BoosterType.boost => '⚡',

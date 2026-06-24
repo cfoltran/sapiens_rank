@@ -25,6 +25,7 @@ class AttackSheet extends StatefulWidget {
     required AttackMetric metric,
     required DateTime endsAt,
     BoosterType? booster,
+    required bool chooseMetric,
   })
   onConfirm;
 
@@ -35,6 +36,7 @@ class AttackSheet extends StatefulWidget {
       required AttackMetric metric,
       required DateTime endsAt,
       BoosterType? booster,
+      required bool chooseMetric,
     })
     onConfirm,
   }) {
@@ -51,6 +53,8 @@ class AttackSheet extends StatefulWidget {
 class _AttackSheetState extends State<AttackSheet> {
   _Phase _phase = _Phase.choosing;
   BoosterType? _booster;
+  bool _chooseMetric = false;
+  AttackMetric? _chosenMetric;
   bool _buttonPressed = false;
   int _sapiesBalance = 0;
 
@@ -65,12 +69,21 @@ class _AttackSheetState extends State<AttackSheet> {
     if (mounted) setState(() => _sapiesBalance = wallet.balance);
   }
 
-  void _onConfirm(AttackMetric metric) {
+  int get _totalCost =>
+      (_booster?.cost ?? 0) + (_chooseMetric ? kChooseMetricCost : 0);
+
+  bool get _canLaunch {
+    final ready = !_chooseMetric || _chosenMetric != null;
+    return ready && _sapiesBalance >= _totalCost;
+  }
+
+  void _launch(AttackMetric metric) {
     Navigator.pop(context);
     widget.onConfirm(
       metric: metric,
       endsAt: DateTime.now().add(const Duration(hours: 24)),
       booster: _booster,
+      chooseMetric: _chooseMetric,
     );
   }
 
@@ -125,10 +138,17 @@ class _AttackSheetState extends State<AttackSheet> {
           curve: Curves.easeInOutCubic,
           alignment: Alignment.topCenter,
           child: spinning
-              ? _SlotMachine(onSpinComplete: _onConfirm)
+              ? _SlotMachine(onSpinComplete: _launch)
               : _ChoosingBody(
                   booster: _booster,
+                  chooseMetric: _chooseMetric,
+                  chosenMetric: _chosenMetric,
                   sapiesBalance: _sapiesBalance,
+                  onMetricModeChanged: (v) => setState(() {
+                    _chooseMetric = v;
+                    if (!v) _chosenMetric = null;
+                  }),
+                  onMetricChanged: (m) => setState(() => _chosenMetric = m),
                   onBoosterChanged: (b) => setState(() => _booster = b),
                 ),
         ),
@@ -149,10 +169,16 @@ class _AttackSheetState extends State<AttackSheet> {
                 child: SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: () {
-                      HapticFeedback.mediumImpact();
-                      setState(() => _phase = _Phase.spinning);
-                    },
+                    onPressed: _canLaunch
+                        ? () {
+                            HapticFeedback.mediumImpact();
+                            if (_chooseMetric) {
+                              _launch(_chosenMetric!);
+                            } else {
+                              setState(() => _phase = _Phase.spinning);
+                            }
+                          }
+                        : null,
                     style: FilledButton.styleFrom(
                       backgroundColor: context.srLime,
                       foregroundColor: Colors.black,
@@ -162,7 +188,9 @@ class _AttackSheetState extends State<AttackSheet> {
                       ),
                     ),
                     child: Text(
-                      isNeutral ? 'Claim' : 'Launch attack',
+                      _totalCost > 0
+                          ? '${isNeutral ? 'Claim' : 'Launch attack'} · $_totalCost α'
+                          : (isNeutral ? 'Claim' : 'Launch attack'),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -182,12 +210,20 @@ class _AttackSheetState extends State<AttackSheet> {
 class _ChoosingBody extends StatelessWidget {
   const _ChoosingBody({
     required this.booster,
+    required this.chooseMetric,
+    required this.chosenMetric,
     required this.sapiesBalance,
+    required this.onMetricModeChanged,
+    required this.onMetricChanged,
     required this.onBoosterChanged,
   });
 
   final BoosterType? booster;
+  final bool chooseMetric;
+  final AttackMetric? chosenMetric;
   final int sapiesBalance;
+  final void Function(bool) onMetricModeChanged;
+  final void Function(AttackMetric) onMetricChanged;
   final void Function(BoosterType?) onBoosterChanged;
 
   @override
@@ -195,6 +231,59 @@ class _ChoosingBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _SectionLabel('ATTACK METRIC'),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _BoosterChip(
+              label: '🎲 Random',
+              selected: !chooseMetric,
+              canAfford: true,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                onMetricModeChanged(false);
+              },
+            ),
+            _BoosterChip(
+              label: '🎯 Choose',
+              cost: kChooseMetricCost,
+              selected: chooseMetric,
+              canAfford: sapiesBalance >= kChooseMetricCost,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                onMetricModeChanged(true);
+              },
+            ),
+          ],
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 240),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: chooseMetric
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final m in AttackMetric.values)
+                        _MetricChoice(
+                          metric: m,
+                          selected: chosenMetric == m,
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            onMetricChanged(m);
+                          },
+                        ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
+        const SizedBox(height: 20),
         _SectionLabel('BOOST YOUR ATTACK (OPTIONAL)'),
         const SizedBox(height: 10),
         Wrap(
@@ -224,6 +313,52 @@ class _ChoosingBody extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _MetricChoice extends StatelessWidget {
+  const _MetricChoice({
+    required this.metric,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final AttackMetric metric;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? context.srLime.withAlpha(28) : context.srBgElev2,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? context.srLime : context.srLine,
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(metric.emoji, style: const TextStyle(fontSize: 15)),
+            const SizedBox(width: 7),
+            Text(
+              metric.label,
+              style: TextStyle(
+                color: selected ? context.srLimeText : context.srText,
+                fontSize: 13,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

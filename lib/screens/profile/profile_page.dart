@@ -138,56 +138,34 @@ class _IdentityCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _ProfileAvatar(data: data),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.name,
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: context.srText,
-                        letterSpacing: 22 * -0.02,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${data.handle} · ${data.joinedLabel}',
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 12,
-                        color: context.srTextMuted,
-                      ),
-                    ),
-                  ],
+          _ProfileAvatar(data: data),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.name,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: context.srText,
+                    letterSpacing: 22 * -0.02,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 18),
-            child: Container(height: 1, color: context.srLine),
-          ),
-          Row(
-            children: [
-              _StatCell(label: 'LIFETIME AVG', value: '${data.lifetimeAvg}'),
-              _StatDivider(),
-              _StatCell(label: 'W / L', value: '--'),
-              _StatDivider(),
-              _StatCell(
-                label: 'STREAK',
-                value: '${data.streak}d',
-                accent: true,
-              ),
-            ],
+                const SizedBox(height: 2),
+                Text(
+                  '${data.handle} · ${data.joinedLabel}',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 12,
+                    color: context.srTextMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -256,59 +234,6 @@ class _ProfileAvatar extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _StatCell extends StatelessWidget {
-  const _StatCell({
-    required this.label,
-    required this.value,
-    this.accent = false,
-  });
-  final String label;
-  final String value;
-  final bool accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 9,
-              color: context.srTextDim,
-              letterSpacing: 9 * 0.15,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: accent ? context.srLimeText : context.srText,
-              letterSpacing: 22 * -0.03,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 36,
-      color: context.srLine,
-      margin: const EdgeInsets.only(right: 16),
     );
   }
 }

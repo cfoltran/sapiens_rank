@@ -30,17 +30,13 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
             )
             .eq('id', uid)
             .single(),
-        _db.from('scores').select('score, personal_score').eq('user_id', uid),
-        ScoreService.instance.getStreak(),
         ScoreService.instance.getPersonalScoreHistoryDated(days: 30),
         HabitsService.instance.getHabits(),
       ]);
 
       final profile = results[0] as Map<String, dynamic>;
-      final allScoresRaw = results[1] as List<dynamic>;
-      final streak = results[2] as int;
-      final history30d = results[3] as List<(DateTime, int)>;
-      final habits = (results[4] as HabitsData?) ?? const HabitsData();
+      final history30d = results[1] as List<(DateTime, int)>;
+      final habits = (results[2] as HabitsData?) ?? const HabitsData();
 
       final name = (profile['name'] as String?) ?? 'Sapien';
       final country = (profile['country'] as String?) ?? 'FR';
@@ -57,18 +53,6 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
             (profile['target_daily_exercise_minutes'] as int?) ??
             d.dailyExerciseMinutes,
       );
-
-      final lifetimeAvg = allScoresRaw.isEmpty
-          ? 0
-          : (allScoresRaw
-                        .map(
-                          (r) =>
-                              (r['personal_score'] as int?) ??
-                              (r['score'] as int),
-                        )
-                        .reduce((a, b) => a + b) /
-                    allScoresRaw.length)
-                .round();
 
       // Trend: compare second half vs first half of available data
       double trendDelta = 0;
@@ -91,8 +75,6 @@ class ProfileCubit extends Cubit<DataState<ProfileData>> {
             name: name,
             country: country,
             joinedAt: createdAt,
-            lifetimeAvg: lifetimeAvg,
-            streak: streak,
             scoreHistory30d: history30d,
             trendDelta: trendDelta,
             trendLabel: trendLabel,

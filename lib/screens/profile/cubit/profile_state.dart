@@ -7,8 +7,6 @@ class ProfileData extends Equatable {
     required this.name,
     required this.country,
     required this.joinedAt,
-    required this.lifetimeAvg,
-    required this.streak,
     required this.scoreHistory30d,
     required this.trendDelta,
     required this.trendLabel,
@@ -19,8 +17,6 @@ class ProfileData extends Equatable {
   final String name;
   final String country;
   final DateTime joinedAt;
-  final int lifetimeAvg;
-  final int streak;
   final List<(DateTime, int)> scoreHistory30d;
   final double trendDelta;
   final String trendLabel;
@@ -70,8 +66,6 @@ class ProfileData extends Equatable {
         name: name,
         country: country,
         joinedAt: joinedAt,
-        lifetimeAvg: lifetimeAvg,
-        streak: streak,
         scoreHistory30d: scoreHistory30d,
         trendDelta: trendDelta,
         trendLabel: trendLabel,
@@ -80,5 +74,5 @@ class ProfileData extends Equatable {
       );
 
   @override
-  List<Object?> get props => [name, lifetimeAvg, streak, targets, habits];
+  List<Object?> get props => [name, targets, habits];
 }

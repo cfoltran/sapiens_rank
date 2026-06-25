@@ -81,7 +81,7 @@ class ScoreService {
       final workoutRows = <Map<String, dynamic>>[];
       for (final w in snap.workouts) {
         final type = _workoutType(w.type);
-        if (type == null || w.distanceKm == null || w.durationSeconds <= 0) {
+        if (type == null || w.durationSeconds <= 0) {
           continue;
         }
         workoutRows.add({

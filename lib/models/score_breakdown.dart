@@ -51,6 +51,10 @@ class ScoreBreakdown {
   /// | false  | true     |  28   |  24   |  20  |  17   |   0 |    11    |
   /// | true   | false    |  29   |  26   |  21  |   0   |  12 |    12    |
   /// | false  | false    |  33   |  29   |  24  |   0   |   0 |    14    |
+  ///
+  /// A second, independent redistribution then runs on these caps: non-step
+  /// cardio (cycling/swimming/rowing/elliptical) shifts part of the steps cap
+  /// onto kcal + exercise — see the [_nonStepCardio] block below.
   static ScoreBreakdown compute(
     HealthSnapshot snap, {
     HealthTargets targets = HealthTargets.defaults,
@@ -61,11 +65,11 @@ class ScoreBreakdown {
     final hasStand = snap.standHours != null;
 
     final double sleepMax;
-    final double stepsMax;
-    final double kcalMax;
+    double stepsMax;
+    double kcalMax;
     final double standMax;
     final double hrvMax;
-    final double exerciseMax;
+    double exerciseMax;
 
     if (hasHrv && hasStand) {
       sleepMax = 25;
@@ -97,10 +101,28 @@ class ScoreBreakdown {
       exerciseMax = 14;
     }
 
-    final exerciseMinutes = snap.workouts.fold(
-      0,
-      (s, w) => s + w.durationMinutes,
-    );
+    final exerciseMinutes = snap.exerciseMinutes;
+
+    // Non-step cardio (cycling, swimming, rowing, elliptical) burns calories the
+    // steps metric can't see. Shift the steps weight by the share of active
+    // calories that came from those workouts onto kcal + exercise, so non-step
+    // athletes aren't penalised twice for the same effort. Total weight is
+    // preserved; a normal walking day has no shift.
+    final nonStepKcal = snap.workouts
+        .where((w) => _nonStepCardio.contains(w.type))
+        .fold<double>(0, (s, w) => s + w.kcal);
+    final stepShift = snap.kcal > 0
+        ? (nonStepKcal / snap.kcal).clamp(0.0, 1.0)
+        : 0.0;
+    if (stepShift > 0) {
+      final moved = stepsMax * stepShift;
+      final pool = kcalMax + exerciseMax;
+      if (pool > 0) {
+        stepsMax -= moved;
+        kcalMax += moved * kcalMax / pool;
+        exerciseMax += moved * exerciseMax / pool;
+      }
+    }
 
     double volume(num value, num target) => rewardOvershoot
         ? _overshootRatio(value / target)
@@ -153,6 +175,8 @@ class ScoreBreakdown {
   /// Diminishing returns above target: linear up to 1.0, then
   /// 1 + 0.5*sqrt(r-1), capped at 1.5 (reached at 2x the target).
   /// Sleep, stand and HRV stay hard-clamped — exceeding them is not healthier.
+  static const _nonStepCardio = {'Cycling', 'Swimming', 'Rowing', 'Elliptical'};
+
   static double _overshootRatio(double r) {
     if (r <= 1.0) return max(r, 0.0);
     return min(1.0 + 0.5 * sqrt(r - 1.0), 1.5);

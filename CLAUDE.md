@@ -28,11 +28,15 @@ There are two distinct scores, both out of 100, computed on-device from 6 Health
 | HRV      | 10      | 60 ms         |
 | Exercise | 10      | 30 min        |
 
-Each metric is scored as a 0–1 ratio against its target, multiplied by its max. When HRV and/or stand data is missing (e.g. Garmin users lack `APPLE_STAND_TIME`), the missing metric's points are redistributed proportionally across the others so no user is structurally penalised by their device. **Sleep is never redistributed** — a missing sleep value just scores 0.
+Each metric is scored as a 0–1 ratio against its target, multiplied by its max. Exercise minutes come from `APPLE_EXERCISE_TIME` (falling back to the larger of that and the summed workout durations), so effort lands even when no discrete `WORKOUT` sample does. Two redistributions keep the weights fair so no user is structurally penalised:
+1. **Device gap** — when HRV and/or stand data is missing (e.g. Garmin users lack `APPLE_STAND_TIME`), the missing metric's points are spread proportionally across the others.
+2. **Non-step cardio** — on days with cycling/swimming/rowing/elliptical workouts, the **steps** weight is cut by the share of active calories that came from those workouts and shifted onto calories + exercise. Steps only proxy movement for walking/running, so without this a cyclist/swimmer is double-penalised for effort the calories metric already rewards. A pure walking day has no shift.
+
+Both preserve the 100-point total. **Sleep is never redistributed** — a missing sleep value just scores 0.
 
 **Personal score** — computed with the user's own targets (`HealthTargets` from `profiles.target_*`), each metric hard-clamped 0–1. Shown in the Today ring, sparkline, delta, and profile chart. Stored in `scores.personal_score`.
 
-**Global / ranking score** — computed with fixed universal targets (`HealthTargets.defaults`). Used for the leaderboard, world rank, and challenges. Stored in `scores.score`. Unlike the personal score, exceeding a **volume** target (steps, calories, exercise) earns bonus points with diminishing returns (`1 + 0.5·√(ratio−1)`, capped at 1.5× the metric's points at 2× target), so big training days are rewarded without one outlier day dominating. Sleep, stand and HRV stay hard-clamped (exceeding them isn't healthier). Total still capped at 100.
+**Global / ranking score** — computed with fixed universal targets (`HealthTargets.defaults`). Used for the leaderboard, world rank, and challenges. Stored in `scores.score`. Unlike the personal score, exceeding a **volume** target (steps, calories, exercise) earns bonus points with diminishing returns (`1 + 0.5·√(ratio−1)`, capped at 1.5× the metric's points at 2× target), so big training days are rewarded without one outlier day dominating. Sleep, stand and HRV stay hard-clamped (exceeding them isn't healthier). The daily global total is **not** capped at 100 — it's allowed up to 200 so a big training day rewards real output instead of being wasted. The personal score stays capped at 100.
 
 `ScoreBreakdown.compute(snap, targets: targets)` → personal. `ScoreBreakdown.computeRanking(snap)` → global (`compute` with `rewardOvershoot: true`).
 

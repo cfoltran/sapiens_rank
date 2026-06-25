@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:health/health.dart';
 
 class WorkoutEntry {
@@ -31,6 +33,7 @@ class HealthSnapshot {
     this.hrv,
     this.restingHr,
     this.workouts = const [],
+    this.exerciseMinutes = 0,
     this.weeklyExerciseMinutes = 0,
   });
 
@@ -43,6 +46,11 @@ class HealthSnapshot {
   final double? hrv;
   final double? restingHr;
   final List<WorkoutEntry> workouts;
+
+  /// Daily exercise minutes: the larger of APPLE_EXERCISE_TIME and the summed
+  /// workout durations, so rides that only land as the exercise-time series
+  /// (no discrete WORKOUT sample) still count.
+  final int exerciseMinutes;
   final int weeklyExerciseMinutes;
 
   static const empty = HealthSnapshot(sleepHours: 0, steps: 0, kcal: 0);
@@ -61,7 +69,9 @@ class HealthService {
     HealthDataType.RESTING_HEART_RATE,
     HealthDataType.STEPS,
     HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.EXERCISE_TIME,
     HealthDataType.DISTANCE_WALKING_RUNNING,
+    HealthDataType.DISTANCE_CYCLING,
     HealthDataType.SLEEP_ASLEEP,
     HealthDataType.SLEEP_AWAKE,
     HealthDataType.SLEEP_IN_BED,
@@ -132,6 +142,7 @@ class HealthService {
     } catch (_) {}
 
     double kcal = 0;
+    List<HealthDataPoint> activeKcalPts = [];
     try {
       final raw = await _health.getHealthDataFromTypes(
         startTime: dayStart,
@@ -145,10 +156,28 @@ class HealthService {
       final watchPts = pts
           .where((p) => p.sourceName.toLowerCase().contains('watch'))
           .toList();
-      kcal = (watchPts.isNotEmpty ? watchPts : pts).fold(
+      activeKcalPts = watchPts.isNotEmpty ? watchPts : pts;
+      kcal = activeKcalPts.fold(
         0.0,
         (s, p) => s + (p.value as NumericHealthValue).numericValue.toDouble(),
       );
+    } catch (_) {}
+
+    double exerciseTime = 0;
+    try {
+      final raw = await _health.getHealthDataFromTypes(
+        startTime: dayStart,
+        endTime: dayEnd,
+        types: [HealthDataType.EXERCISE_TIME],
+      );
+      exerciseTime = _health
+          .removeDuplicates(raw)
+          .where((p) => p.value is NumericHealthValue)
+          .fold(
+            0.0,
+            (s, p) =>
+                s + (p.value as NumericHealthValue).numericValue.toDouble(),
+          );
     } catch (_) {}
 
     double? latestOf(HealthDataType type) {
@@ -244,7 +273,27 @@ class HealthService {
         }
       }
       todayWorkouts.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+      // Add each workout's energy when the active-energy series didn't already
+      // cover its window (e.g. Garmin writes ride kcal only inside the WORKOUT
+      // sample, not as minute-by-minute ACTIVE_ENERGY_BURNED). Avoids double
+      // counting Apple Watch rides where active energy already includes them.
+      for (final w in todayWorkouts) {
+        if (w.kcal <= 0) continue;
+        final wEnd = w.startTime.add(Duration(seconds: w.durationSeconds));
+        final covered = activeKcalPts.any(
+          (p) =>
+              p.dateFrom.toLocal().isBefore(wEnd) &&
+              p.dateTo.toLocal().isAfter(w.startTime),
+        );
+        if (!covered) kcal += w.kcal;
+      }
     } catch (_) {}
+
+    final workoutMinutes = todayWorkouts.fold(
+      0,
+      (s, w) => s + w.durationMinutes,
+    );
 
     return HealthSnapshot(
       sleepHours: sleepHours(),
@@ -254,6 +303,7 @@ class HealthService {
       hrv: latestOf(HealthDataType.HEART_RATE_VARIABILITY_SDNN),
       restingHr: latestOf(HealthDataType.RESTING_HEART_RATE),
       workouts: todayWorkouts,
+      exerciseMinutes: max(exerciseTime.round(), workoutMinutes),
       weeklyExerciseMinutes: weeklyExerciseMinutes,
     );
   }
@@ -264,6 +314,8 @@ class HealthService {
     HealthWorkoutActivityType.HIKING => 'Hiking',
     HealthWorkoutActivityType.BIKING => 'Cycling',
     HealthWorkoutActivityType.SWIMMING => 'Swimming',
+    HealthWorkoutActivityType.SWIMMING_POOL => 'Swimming',
+    HealthWorkoutActivityType.SWIMMING_OPEN_WATER => 'Swimming',
     HealthWorkoutActivityType.YOGA => 'Yoga',
     HealthWorkoutActivityType.HIGH_INTENSITY_INTERVAL_TRAINING => 'HIIT',
     HealthWorkoutActivityType.TRADITIONAL_STRENGTH_TRAINING => 'Strength',
@@ -291,6 +343,8 @@ class HealthService {
     HealthWorkoutActivityType.HIKING => '🥾',
     HealthWorkoutActivityType.BIKING => '🚴',
     HealthWorkoutActivityType.SWIMMING => '🏊',
+    HealthWorkoutActivityType.SWIMMING_POOL => '🏊',
+    HealthWorkoutActivityType.SWIMMING_OPEN_WATER => '🏊',
     HealthWorkoutActivityType.YOGA => '🧘',
     HealthWorkoutActivityType.HIGH_INTENSITY_INTERVAL_TRAINING => '⚡',
     HealthWorkoutActivityType.TRADITIONAL_STRENGTH_TRAINING => '💪',
